@@ -23,6 +23,7 @@ call ./Build_Windows_lib_libsquish.bat %debug% %rebuild%
 call ./Build_Windows_lib_tinyxml.bat %debug% %rebuild%
 call ./Build_Windows_lib_zlib.bat %debug% %rebuild%
 call ./Build_Windows_lib_zziplib.bat %debug% %rebuild%
+call ./Build_Windows_lib_glad.bat %debug% %rebuild%
 call ./Build_Windows_lib_glfw.bat %debug% %rebuild%
 call ./Build_Windows_lib_imgui.bat %debug% %rebuild%
 call ./Build_Windows_lib_assimp.bat %debug% %rebuild%

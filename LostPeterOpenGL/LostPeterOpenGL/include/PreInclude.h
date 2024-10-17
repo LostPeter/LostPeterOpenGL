@@ -1,0 +1,41 @@
+/****************************************************************************
+* LostPeterOpenGL - Copyright (C) 2022 by LostPeter
+* 
+* Author:   LostPeter
+* Time:     2022-10-30
+* Github:   https://github.com/LostPeter/LostPeterOpenGL
+* Document: https://www.zhihu.com/people/lostpeter/posts
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+****************************************************************************/
+
+#ifndef _PRE_INCLUDE_H_
+#define _PRE_INCLUDE_H_
+
+#include "FPreInclude.h"
+
+#include "PreDefine.h"
+#include "OpenGLDefine.h"
+
+#include "App.h"
+#include "OpenGLBase.h"
+#include "OpenGLWindow.h"
+
+#include "Base.h"
+#include "EditorBase.h"
+#include "EditorCameraAxis.h"
+#include "EditorCoordinateAxis.h"
+#include "EditorGrid.h"
+#include "EditorLineFlat2DCollector.h"
+#include "EditorLineFlat3DCollector.h"
+
+#include "Mesh.h"
+#include "MeshSub.h"
+#include "Texture.h"
+
+namespace LostPeterOpenGL
+{	
+
+}; //LostPeterOpenGL
+
+#endif

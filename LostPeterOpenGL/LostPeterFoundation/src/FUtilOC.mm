@@ -33,7 +33,7 @@ std::string F_OCGetPathExecute()
 
 CFBundleRef F_OCMac_LoadExeBundle(const char* name)
 {
-    CFBundleRef baseBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.lostpeter.vulkan"));
+    CFBundleRef baseBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.lostpeter.opengl3"));
     CFBundleRef mainBundle = CFBundleGetMainBundle();
     CFStringRef nameRef = CFStringCreateWithCString(nullptr, name, kCFStringEncodingASCII);
     CFURLRef bundleURL = 0; //URL of bundle to load
