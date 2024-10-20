@@ -23,6 +23,7 @@ namespace LostPeterOpenGL
         OpenGLWindow(int width, int height, String name);
         virtual ~OpenGLWindow();
 
+    ///////////////////////// Internal /////////////////////////
     public:
         FVector2 poFramebufferSize;
         FVector2 poWindowContentScale;

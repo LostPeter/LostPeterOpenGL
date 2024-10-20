@@ -25,10 +25,10 @@ namespace LostPeterOpenGL
         virtual ~Base();
 
     public:
-        static OpenGLWindow* ms_pOpenGLWindow;
+        static OpenGLWindow* ms_pWindow;
 
     public:
-        static OpenGLWindow* GetWindowPtr() { return ms_pOpenGLWindow; }
+        static OpenGLWindow* GetWindowPtr() { return ms_pWindow; }
 
     protected:
         uint32 group;

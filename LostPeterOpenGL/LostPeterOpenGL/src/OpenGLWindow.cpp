@@ -30,7 +30,7 @@ namespace LostPeterOpenGL
     OpenGLWindow::OpenGLWindow(int width, int height, String name)
         : OpenGLBase(width, height, name)
     {
-        Base::ms_pOpenGLWindow = this;
+        Base::ms_pWindow = this;
     }
 
     OpenGLWindow::~OpenGLWindow()

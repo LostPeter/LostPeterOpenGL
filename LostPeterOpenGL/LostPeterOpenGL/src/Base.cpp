@@ -14,7 +14,7 @@
 
 namespace LostPeterOpenGL
 {
-    OpenGLWindow* Base::ms_pOpenGLWindow = nullptr;
+    OpenGLWindow* Base::ms_pWindow = nullptr;
     Base::Base(const String& _name)
         : group(0)
         , name(_name)
