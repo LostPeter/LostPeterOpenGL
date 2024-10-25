@@ -692,6 +692,10 @@ namespace LostPeterFoundation
         vAxis = glm::axis(qRot);
     }
 
+    FVector3 FMath::TransformMatrix3(const FMatrix3& mat3, const FVector3& vScale)
+    {
+        return mat3 * vScale;
+    }
     FVector3 FMath::Transform(const FMatrix4& mat4, const FVector3& v)
     {
         FVector4 vRet = mat4 * FVector4(v.x, v.y, v.z, 1.0f);
@@ -3498,9 +3502,9 @@ namespace LostPeterFoundation
             return false;
         if (frustum.GetPlane(F_FrustumPlane_Right).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
             return false;
-        if (frustum.GetPlane(F_FrustumPlane_Top).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
+        if (frustum.GetPlane(F_FrustumPlane_Down).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
             return false;
-        if (frustum.GetPlane(F_FrustumPlane_Bottom).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
+        if (frustum.GetPlane(F_FrustumPlane_Up).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
             return false;
         if (frustum.GetPlane(F_FrustumPlane_Near).GetDistance(sphere.GetCenter()) > sphere.GetRadius())
             return false;
