@@ -29,6 +29,9 @@ namespace LostPeterOpenGL
     /////////////////////////// OpenGLWindow //////////////////////
     OpenGLWindow::OpenGLWindow(int width, int height, String name)
         : OpenGLBase(width, height, name)
+
+        , isFrameBufferResized(false)
+
     {
         Base::ms_pWindow = this;
     }
@@ -40,7 +43,7 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnInit()
     {
-
+        createPipeline();
     }
 
     void OpenGLWindow::OnLoad()
@@ -302,5 +305,63 @@ namespace LostPeterOpenGL
     {
 
     }   
+
+
+
+    void OpenGLWindow::createPipeline()
+    {
+        F_LogInfo("**********<1> OpenGLWindow::createPipeline start **********");
+        {
+            //1> Create Resize callback
+            createWindowCallback();
+        
+            //2> Create Device
+            createDevice();
+
+            //3> Create Feature Support
+            createFeatureSupport();
+
+
+
+        }
+        F_LogInfo("**********<1> OpenGLWindow::createPipeline finish **********");
+    }
+    //glfw: whenever the window size changed (by OS or user resize) this callback function executes
+    void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+    {
+        OpenGLWindow* pWnd = (OpenGLWindow*)glfwGetWindowUserPointer(window);
+        pWnd->isFrameBufferResized = true;
+        pWnd->OnResize(width, height, false);
+    }
+    void OpenGLWindow::createWindowCallback()
+    {   
+        glfwSetWindowUserPointer(this->pWindow, this);
+        glfwSetFramebufferSizeCallback(this->pWindow, framebuffer_size_callback);
+
+        F_LogInfo("*****<1-1> OpenGLWindow::createWindowCallback finish *****");
+    }
+    void OpenGLWindow::createDevice()
+    {
+        F_LogInfo("*****<1-2> OpenGLWindow::createDevice start *****");
+        {
+            //1> make window
+            glfwMakeContextCurrent(this->pWindow);
+            glfwSetFramebufferSizeCallback(this->pWindow, framebuffer_size_callback);
+
+            //2> glad load all OpenGL function pointers 
+            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+                std::cout << "OpenGLWindow::createDevice: gladLoadGLLoader failed !" << std::endl;
+                glfwTerminate();
+                return;
+            }
+        }
+        F_LogInfo("*****<1-2> OpenGLWindow::createDevice finish *****");
+    }
+
+
+    void OpenGLWindow::createFeatureSupport()
+    {
+
+    }
 
 }; //LostPeterOpenGL

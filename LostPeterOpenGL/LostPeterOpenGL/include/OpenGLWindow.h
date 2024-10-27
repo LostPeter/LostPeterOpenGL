@@ -23,13 +23,21 @@ namespace LostPeterOpenGL
         OpenGLWindow(int width, int height, String name);
         virtual ~OpenGLWindow();
 
-    ///////////////////////// Internal /////////////////////////
     public:
+        
+
+    ///////////////////////// Internal /////////////////////////
+
+
+    public:
+
         FVector2 poFramebufferSize;
         FVector2 poWindowContentScale;
 
 
-         //Mouse
+        bool isFrameBufferResized;
+
+        //Mouse
         FVector2 mousePosLast;
         bool mouseButtonDownLeft;
         bool mouseButtonDownRight;
@@ -82,6 +90,22 @@ namespace LostPeterOpenGL
         virtual void OnEditorCoordinateMouseMove(double x, double y);
         virtual void OnEditorCoordinateMouseLeftUp(double x, double y);
         virtual void OnEditorCoordinateMouseHover(double x, double y);
+
+    public:
+
+
+    public:
+
+
+    public:
+        //Create Pipeline
+        virtual void createPipeline();
+            virtual void createWindowCallback();
+            virtual void createDevice();
+
+
+            virtual void createFeatureSupport();
+
     };
 
 }; //LostPeterOpenGL

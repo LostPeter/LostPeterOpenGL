@@ -26,6 +26,10 @@ namespace LostPeterOpenGL
         static FLogManager* ms_pLogManager;
 
     public:
+        int versionGL_Major;
+        int versionGL_Minor;    
+
+    public:
         int width;
         int height;
         float aspectRatio;

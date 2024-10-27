@@ -16,7 +16,9 @@ namespace LostPeterOpenGL
 {
     FLogManager* OpenGLBase::ms_pLogManager = FLogManager::GetInstance();
     OpenGLBase::OpenGLBase(int width, int height, String name)
-        : width(width)
+        : versionGL_Major(3)
+        , versionGL_Minor(3)
+        , width(width)
         , height(height)
         , nameTitle(name)
         , pWindow(nullptr)

@@ -67,7 +67,8 @@ elseif (ANDROID)
 
 
 elseif (APPLE)
-    SET(LIB_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/assimp-5.2.4"
+    SET(LIB_INCLUDE "/System/Library/Frameworks/OpenGL.framework"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/assimp-5.2.4"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glad-3.3"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glfw-3.3.6"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glm-0.9.9.8"
@@ -78,6 +79,7 @@ elseif (APPLE)
                     "${CMAKE_CURRENT_SOURCE_DIR}/../LostPeterFoundation/include")
 
     SET(SYS_FRAMEWORKS_DIR /System/Library/Frameworks)
+    SET(OPENGL_LIBS ${SYS_FRAMEWORKS_DIR}/OpenGL.framework)
     SET(COCOA_LIBS ${SYS_FRAMEWORKS_DIR}/Cocoa.framework)
     SET(COREVIDEO_LIBS ${SYS_FRAMEWORKS_DIR}/CoreVideo.framework)
     SET(IOKIT_LIBS ${SYS_FRAMEWORKS_DIR}/IOKit.framework)
@@ -191,7 +193,8 @@ elseif (APPLE)
                        ${LIB_PLUGINS_DIR}/libLostPeterFoundation.dylib)
     endif()
     ADD_LIBRARY(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES_CPP} ${SOURCE_FILES_C} ${SOURCE_FILES_MM})
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME})
+    TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+                          ${SYS_VULKAN_LIBS})
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES BUNDLE TRUE)
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ENABLE_EXPORTS ON)
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES CMAKE_ENABLE_EXPORTS TRUE)   

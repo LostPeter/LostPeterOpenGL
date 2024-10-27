@@ -31,7 +31,13 @@ namespace LostPeterOpenGL
             F_LogError("*********************** App::Run: glfwInit failed !");
             return -1;
         }
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, pBase->versionGL_Major);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, pBase->versionGL_Minor);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    #ifdef __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
         //3> glfw window creation
         s_pWindow = glfwCreateWindow(pBase->width, pBase->height, pBase->GetTitle().c_str(), NULL, NULL);
