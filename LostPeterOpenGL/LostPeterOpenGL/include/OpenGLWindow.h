@@ -53,14 +53,23 @@ namespace LostPeterOpenGL
         virtual void OnLoad();
         virtual bool OnIsInit();
         virtual void OnResize(int w, int h, bool force);
-        virtual bool OnBeginCompute();
-            virtual void OnUpdateCompute();
-            virtual void OnCompute();
-        virtual void OnEndCompute();
+
+        virtual bool OnBeginCompute_BeforeRender();
+            virtual void OnUpdateCompute_BeforeRender();
+            virtual void OnCompute_BeforeRender();
+        virtual void OnEndCompute_BeforeRender();
+
         virtual bool OnBeginRender();
             virtual void OnUpdateRender();
             virtual void OnRender();
         virtual void OnEndRender();
+
+        virtual bool OnBeginCompute_AfterRender();
+            virtual void OnUpdateCompute_AfterRender();
+            virtual void OnCompute_AfterRender();
+        virtual void OnEndCompute_AfterRender();
+
+        virtual void OnPresent();
         virtual void OnDestroy();
 
         // Mouse Input
@@ -106,6 +115,36 @@ namespace LostPeterOpenGL
 
             virtual void createFeatureSupport();
 
+
+        //Load Assets
+        virtual void loadAssets();
+
+
+        //Resize
+        virtual void resizeWindow(int w, int h, bool force);
+
+        
+        //Compute Before Render
+
+
+        //Compute After Render
+
+
+
+        //Render/Update
+        virtual bool beginRender();
+            virtual void updateRender();
+                virtual void updateCBs_Default();
+                    virtual void updateCBs_Pass();
+
+                    virtual void updateCBs_Objects();
+
+                    virtual void updateCBs_Materials();
+
+                    virtual void updateCBs_Instances();
+
+            virtual void render();
+        virtual void endRender();
     };
 
 }; //LostPeterOpenGL

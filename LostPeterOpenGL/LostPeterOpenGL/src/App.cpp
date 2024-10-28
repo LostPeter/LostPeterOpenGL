@@ -86,12 +86,12 @@ namespace LostPeterOpenGL
                 {
                     pBase->CalculateFrameStats(s_pWindow);
 
-                    //Compute
-                    if (pBase->OnBeginCompute())
+                    //Compute Before Render
+                    if (pBase->OnBeginCompute_BeforeRender())
                     {
-                        pBase->OnUpdateCompute();
-                        pBase->OnCompute();
-                        pBase->OnEndCompute();
+                        pBase->OnUpdateCompute_BeforeRender();
+                        pBase->OnCompute_BeforeRender();
+                        pBase->OnEndCompute_BeforeRender();
                     }
 
                     //Render
@@ -101,6 +101,16 @@ namespace LostPeterOpenGL
                         pBase->OnRender();
                         pBase->OnEndRender();
                     }
+
+                    //Compute After Render
+                    if (pBase->OnBeginCompute_AfterRender())
+                    {
+                        pBase->OnUpdateCompute_AfterRender();
+                        pBase->OnCompute_AfterRender();
+                        pBase->OnEndCompute_AfterRender();
+                    }
+
+                    pBase->OnPresent();
 
                     if (pBase->isMinimizedWindowNeedClose) 
                     {

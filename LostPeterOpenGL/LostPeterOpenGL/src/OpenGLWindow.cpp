@@ -62,40 +62,64 @@ namespace LostPeterOpenGL
 
     }
 
-    bool OpenGLWindow::OnBeginCompute()
+    bool OpenGLWindow::OnBeginCompute_BeforeRender()
     {
         return false;
     }
-        void OpenGLWindow::OnUpdateCompute()
+        void OpenGLWindow::OnUpdateCompute_BeforeRender()
         {
 
         }
-        void OpenGLWindow::OnCompute()
+        void OpenGLWindow::OnCompute_BeforeRender()
         {
 
         }
-    void OpenGLWindow::OnEndCompute()
+    void OpenGLWindow::OnEndCompute_BeforeRender()
     {
 
     }
+
+
+    bool OpenGLWindow::OnBeginCompute_AfterRender()
+    {
+        return false;
+    }
+        void OpenGLWindow::OnUpdateCompute_AfterRender()
+        {
+
+        }
+        void OpenGLWindow::OnCompute_AfterRender()
+        {
+
+        }
+    void OpenGLWindow::OnEndCompute_AfterRender()
+    {
+
+    }
+
 
     bool OpenGLWindow::OnBeginRender()
     {
-        return false;
+        return beginRender();
     }
         void OpenGLWindow::OnUpdateRender()
         {
-
+            updateRender();
         }
         void OpenGLWindow::OnRender()
         {
-
+            render();
         }
     void OpenGLWindow::OnEndRender()
     {
-
+        endRender();
     }
 
+
+    void OpenGLWindow::OnPresent()
+    {
+
+    }
     void OpenGLWindow::OnDestroy()
     {
         
@@ -360,6 +384,56 @@ namespace LostPeterOpenGL
 
 
     void OpenGLWindow::createFeatureSupport()
+    {
+
+    }
+
+
+
+    void OpenGLWindow::loadAssets()
+    {
+
+    }
+
+
+    void OpenGLWindow::resizeWindow(int w, int h, bool force)
+    {
+
+    }
+
+    bool OpenGLWindow::beginRender()
+    {
+        return false;
+    }
+        void OpenGLWindow::updateRender()
+        {
+
+        }
+            void OpenGLWindow::updateCBs_Default()
+            {
+
+            }
+                void OpenGLWindow::updateCBs_Pass()
+                {
+
+                }
+                void OpenGLWindow::updateCBs_Objects()
+                {
+
+                }
+                void OpenGLWindow::updateCBs_Materials()    
+                {
+
+                }
+                void OpenGLWindow::updateCBs_Instances()
+                {
+
+                }
+        void OpenGLWindow::render()
+        {
+
+        }
+    void OpenGLWindow::endRender()
     {
 
     }
