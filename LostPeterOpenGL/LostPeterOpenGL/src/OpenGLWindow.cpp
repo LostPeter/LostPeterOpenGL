@@ -44,6 +44,10 @@ namespace LostPeterOpenGL
         , cfg_colorBackground(0.0f, 0.2f, 0.4f, 1.0f)
 
 
+        , cfg_isMSAA(false)
+        , cfg_isImgui(false)
+        , cfg_isWireFrame(false)
+
         , cfg_cameraPos(0.0f, 0.0f, -5.0f)
         , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
         , cfg_cameraUp(0.0f, 1.0f, 0.0f)
@@ -66,6 +70,11 @@ namespace LostPeterOpenGL
         , cfg_terrainHeightStart(0.0f)
         , cfg_terrainHeightMax(200.0f)
 
+
+        , imgui_IsEnable(false)
+        , imgui_MinimalSwapchainImages(0)
+        , imgui_PathIni("")
+        , imgui_PathLog("")
 
         , pCamera(nullptr)
         , pCameraRight(nullptr)
@@ -384,6 +393,24 @@ namespace LostPeterOpenGL
 
     }   
 
+    bool OpenGLWindow::HasConfig_MASS()
+    {
+        return this->cfg_isMSAA;
+    }
+    bool OpenGLWindow::HasConfig_Imgui()
+    {
+        return this->cfg_isImgui;
+    }
+
+    bool OpenGLWindow::IsEnable_MASS()
+    {
+        return this->cfg_isMSAA;
+    }
+    bool OpenGLWindow::IsEnable_Imgui()
+    {
+        return this->cfg_isImgui &&
+               this->imgui_IsEnable;
+    }
 
 
     void OpenGLWindow::createPipeline()
@@ -399,6 +426,21 @@ namespace LostPeterOpenGL
             //3> Create Feature Support
             createFeatureSupport();
 
+            //4> Create Command Objects
+            createCommandObjects();
+
+            //5> Create Swap Chain Objects
+            createSwapChainObjects();
+
+
+            //8> Camera/Light/Shadow/Terrain
+            createCamera();
+            createLightMain();
+            createShadowLightMain();
+            createTerrain();
+
+            //9> Create Pipeline Objects
+            createPipelineObjects();
 
 
 
@@ -445,6 +487,232 @@ namespace LostPeterOpenGL
 
     }
 
+    void OpenGLWindow::createCamera()
+    {
+        if (this->pCamera == nullptr)
+        {
+            this->pCamera = new FCamera();
+        }
+    }
+    void OpenGLWindow::createLightMain()
+    {
+
+    }
+    void OpenGLWindow::createShadowLightMain()
+    {
+
+    }
+    void OpenGLWindow::createTerrain()
+    {
+
+    }
+
+
+    void OpenGLWindow::createCommandObjects()
+    {
+        F_LogInfo("*****<1-4> OpenGLWindow::createCommandObjects start *****");
+        {
+            
+
+
+        }
+        F_LogInfo("*****<1-4> OpenGLWindow::createCommandObjects finish *****");
+    }
+
+
+    void OpenGLWindow::createSwapChainObjects()
+    {
+        F_LogInfo("*****<1-5> OpenGLWindow::createSwapChainObjects start *****");
+        {
+            //1> createSwapChain
+            createSwapChain();
+
+            //2> createSwapChainImageViews
+            createSwapChainImageViews();
+
+            //3> createColorResources
+            if (HasConfig_MASS())
+            {
+                createColorResources();
+            }
+
+            //4> createDepthResources
+            createDepthResources();
+
+            //5> createColorResourceLists
+            createColorResourceLists();
+        }
+        F_LogInfo("*****<1-5> OpenGLWindow::createSwapChainObjects finish *****");
+    }
+        void OpenGLWindow::createSwapChain()
+        {
+
+        }
+            void OpenGLWindow::createViewport()
+            {
+
+            }
+        void OpenGLWindow::createSwapChainImageViews()
+        {
+
+        }
+            void OpenGLWindow::createColorResources()
+            {
+
+            }
+            void OpenGLWindow::createDepthResources()
+            {
+
+            }
+        void OpenGLWindow::createColorResourceLists()
+        {
+
+        }
+
+
+    void OpenGLWindow::createPipelineObjects()
+    {
+        F_LogInfo("*****<1-9> OpenGLWindow::createPipelineObjects start *****");
+        {
+            //1> createRenderPasses
+            createRenderPasses();
+            F_LogInfo("<1-9-1> OpenGLWindow::createPipelineObjects: Success to create RenderPasses !");
+
+            //2> createFramebuffers
+            createFramebuffers();
+            F_LogInfo("<1-9-2> OpenGLWindow::createPipelineObjects: Success to create Framebuffers !");
+        }
+        F_LogInfo("*****<1-9> OpenGLWindow::createPipelineObjects finish *****");
+    }
+        void OpenGLWindow::createRenderPasses()
+        {
+            createRenderPass_ShadowMap();
+            createRenderPass_Default();
+            createRenderPass_Cull();
+            createRenderPass_Terrain();
+            createRenderPass_Custom();
+        }
+            void OpenGLWindow::createRenderPass_ShadowMap()
+            {
+
+            }
+            void OpenGLWindow::createRenderPass_Default()
+            {
+
+            }
+            void OpenGLWindow::createRenderPass_Cull()
+            {
+
+            }
+            void OpenGLWindow::createRenderPass_Terrain()
+            {
+
+            }
+            void OpenGLWindow::createRenderPass_Custom()
+            {
+
+            }
+
+                GLRenderPass* OpenGLWindow::createRenderPass_DefaultCustom()
+                {
+                    return nullptr;
+                }
+                GLRenderPass* OpenGLWindow::createRenderPass_KhrDepth(int formatSwapChain, int formatDepth)
+                {
+                    return nullptr;
+                }
+                GLRenderPass* OpenGLWindow::createRenderPass_KhrDepthImgui(int formatColor, int formatDepth, int formatSwapChain)
+                {
+                    return nullptr;
+                }
+                GLRenderPass* OpenGLWindow::createRenderPass_ColorDepthMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples)
+                {
+                    return nullptr;
+                }
+                GLRenderPass* OpenGLWindow::createRenderPass_ColorDepthImguiMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples)
+                {
+                    return nullptr;
+                }
+
+            
+
+
+        void OpenGLWindow::createFramebuffers()
+        {
+            //1> createFramebuffer_Default
+            createFramebuffer_Default();
+
+            //2> createFramebuffer_Custom
+            createFramebuffer_Custom();
+        }
+            void OpenGLWindow::createFramebuffer_Default()
+            {
+
+            }
+            void OpenGLWindow::createFramebuffer_Custom()
+            {
+
+            }
+                void OpenGLWindow::createFramebuffer_DefaultCustom()
+                {
+
+                }
+
+            GLFrameBuffer* OpenGLWindow::createGLFrameBuffer(const String& nameFrameBuffer,
+                                                             uint32_t width,
+                                                             uint32_t height,
+                                                             uint32_t layers)
+            {
+                GLFrameBuffer* pGLFrameBuffer = new GLFrameBuffer(nameFrameBuffer);
+                if (!pGLFrameBuffer->Init(width, 
+                                          height,
+                                          layers))
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, Name: [%s] !", nameFrameBuffer.c_str());
+                    F_DELETE(pGLFrameBuffer)
+                    return nullptr;
+                }   
+
+                return pGLFrameBuffer;
+            }
+            uint32 OpenGLWindow::createGLFrameBuffer()
+            {
+                uint32 nGLFrameBuffer = 0;
+                glGenFramebuffers(1, &nGLFrameBuffer);
+                if (nGLFrameBuffer <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, id: [%d] !", nGLFrameBuffer);
+                    return 0;
+                }
+                return nGLFrameBuffer;
+            }
+            void OpenGLWindow::bindGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer)
+            {
+                if (!pGLFrameBuffer)
+                    return;
+                bindGLFrameBuffer(pGLFrameBuffer->nFrameBufferID);
+            }
+            void OpenGLWindow::bindGLFrameBuffer(uint32 nGLFrameBuffer)
+            {
+                if (nGLFrameBuffer <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::bindGLFrameBuffer: FrameBuffer id [%d] is not valid !", nGLFrameBuffer);
+                    return;
+                }
+                glBindFramebuffer(GL_FRAMEBUFFER, nGLFrameBuffer);
+            }
+            void OpenGLWindow::destroyGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer)
+            {
+                if (!pGLFrameBuffer)
+                    return;
+                destroyGLFrameBuffer(pGLFrameBuffer->nFrameBufferID);
+            }
+            void OpenGLWindow::destroyGLFrameBuffer(uint32 nGLFrameBuffer)
+            {
+                if (nGLFrameBuffer <= 0)
+                    return;
+                glDeleteFramebuffers(1, &nGLFrameBuffer);
+            }
 
 
     void OpenGLWindow::loadAssets()
@@ -458,7 +726,7 @@ namespace LostPeterOpenGL
             terrainReset();
 
             //1> loadGeometry
-            //loadGeometry();
+            loadGeometry();
 
 
             
@@ -467,7 +735,68 @@ namespace LostPeterOpenGL
         }
         F_LogInfo("**********<2> OpenGLWindow::loadAssets finish **********");
     }
+        void OpenGLWindow::loadGeometry()
+        {
 
+        }
+            void OpenGLWindow::loadVertexIndexBuffer()
+            {
+
+            }
+                void OpenGLWindow::loadModel()
+                {
+
+                }
+                    void OpenGLWindow::loadModel_Default()
+                    {
+
+                    }
+                    void OpenGLWindow::loadModel_Custom()
+                    {
+
+                    }
+                GLBuffer* OpenGLWindow::createVertexBuffer(const String& nameBuffer,
+                                                           size_t bufSize, 
+                                                           void* pBuf)
+                {
+                    return nullptr;
+                }
+                void OpenGLWindow::updateVertexBuffer(size_t bufSize, 
+                                                      void* pBuf, 
+                                                      GLBuffer* pBuffer)
+                {
+
+                }
+                GLBuffer* OpenGLWindow::createIndexBuffer(const String& nameBuffer,
+                                                          size_t bufSize, 
+                                                          void* pBuf)
+                {
+                    return nullptr;
+                }
+                void OpenGLWindow::updateIndexBuffer(size_t bufSize, 
+                                                     void* pBuf, 
+                                                     GLBuffer* pBuffer)
+                {
+
+                }
+                GLBuffer* OpenGLWindow::createGLBuffer(const String& nameBuffer,
+                                                       size_t bufSize)
+                {
+                    return nullptr;
+                }
+                void OpenGLWindow::copyGLBuffer(GLBuffer* pBufferSrc, GLBuffer* pBufferDst, size_t bufSize)
+                {
+
+                }
+                void OpenGLWindow::updateGLBuffer(size_t offset, size_t bufSize, void* pBuf, GLBuffer* pBuffer)
+                {
+
+                }
+
+                void OpenGLWindow::destroyGLBuffer(GLBuffer* pBuffer)
+                {
+
+                }
 
     void OpenGLWindow::resizeWindow(int w, int h, bool force)
     {

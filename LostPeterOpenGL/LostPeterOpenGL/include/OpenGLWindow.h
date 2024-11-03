@@ -58,6 +58,9 @@ namespace LostPeterOpenGL
         FVector4Vector cfg_colorValues;
 
 
+        bool cfg_isMSAA;
+        bool cfg_isImgui;
+        bool cfg_isWireFrame;
 
 
         FVector3 cfg_cameraPos;
@@ -84,6 +87,11 @@ namespace LostPeterOpenGL
         float cfg_terrainHeightStart;
         float cfg_terrainHeightMax;
         
+        //Imgui
+        bool imgui_IsEnable;
+        int	imgui_MinimalSwapchainImages;
+        String imgui_PathIni;
+        String imgui_PathLog;
 
         //Camera
         FCamera* pCamera; //Eye Left
@@ -158,7 +166,11 @@ namespace LostPeterOpenGL
         virtual void OnEditorCoordinateMouseHover(double x, double y);
 
     public:
+        virtual bool HasConfig_MASS();
+        virtual bool HasConfig_Imgui();
 
+        virtual bool IsEnable_MASS();
+        virtual bool IsEnable_Imgui();
 
     public:
 
@@ -172,10 +184,83 @@ namespace LostPeterOpenGL
 
             virtual void createFeatureSupport();
 
+            //Camera/Light
+            virtual void createCamera();
+            virtual void createLightMain();
+            virtual void createShadowLightMain();
+            virtual void createTerrain();
+
+            virtual void createCommandObjects();
+
+            virtual void createSwapChainObjects();
+                virtual void createSwapChain();
+                    virtual void createViewport();
+                virtual void createSwapChainImageViews();
+                    virtual void createColorResources();
+                    virtual void createDepthResources();
+                virtual void createColorResourceLists();
+
+            virtual void createPipelineObjects();
+                virtual void createRenderPasses();
+                    virtual void createRenderPass_ShadowMap();
+                    virtual void createRenderPass_Default();
+                    virtual void createRenderPass_Cull();
+                    virtual void createRenderPass_Terrain();
+                    virtual void createRenderPass_Custom();
+                        virtual GLRenderPass* createRenderPass_DefaultCustom();
+                        virtual GLRenderPass* createRenderPass_KhrDepth(int formatSwapChain, int formatDepth);
+                        virtual GLRenderPass* createRenderPass_KhrDepthImgui(int formatColor, int formatDepth, int formatSwapChain);
+                        virtual GLRenderPass* createRenderPass_ColorDepthMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples);
+                        virtual GLRenderPass* createRenderPass_ColorDepthImguiMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples);
+
+
+
+                virtual void createFramebuffers();
+                    virtual void createFramebuffer_Default();
+                    virtual void createFramebuffer_Custom();
+                        virtual void createFramebuffer_DefaultCustom();
+
+
+                    virtual GLFrameBuffer* createGLFrameBuffer(const String& nameFrameBuffer,
+                                                               uint32_t width,
+                                                               uint32_t height,
+                                                               uint32_t layers);
+                    virtual uint32 createGLFrameBuffer();
+                    virtual void bindGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer);
+                    virtual void bindGLFrameBuffer(uint32 nGLFrameBuffer);
+                    virtual void destroyGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer);
+                    virtual void destroyGLFrameBuffer(uint32 nGLFrameBuffer);
+
 
         //Load Assets
         virtual void loadAssets();
 
+            //Geometry
+            virtual void loadGeometry();
+                virtual void loadVertexIndexBuffer();
+                    virtual void loadModel();
+                        virtual void loadModel_Default();
+                        virtual void loadModel_Custom();
+                    virtual GLBuffer* createVertexBuffer(const String& nameBuffer,
+                                                         size_t bufSize, 
+                                                         void* pBuf);
+                    virtual void updateVertexBuffer(size_t bufSize, 
+                                                    void* pBuf, 
+                                                    GLBuffer* pBuffer);
+                    virtual GLBuffer* createIndexBuffer(const String& nameBuffer,
+                                                        size_t bufSize, 
+                                                        void* pBuf);
+                    virtual void updateIndexBuffer(size_t bufSize, 
+                                                   void* pBuf, 
+                                                   GLBuffer* pBuffer);
+
+                    virtual GLBuffer* createGLBuffer(const String& nameBuffer,
+                                                     size_t bufSize);
+                    virtual void copyGLBuffer(GLBuffer* pBufferSrc, GLBuffer* pBufferDst, size_t bufSize);
+                    virtual void updateGLBuffer(size_t offset, size_t bufSize, void* pBuf, GLBuffer* pBuffer);
+
+                    
+                    virtual void destroyGLBuffer(GLBuffer* pBuffer);
 
         //Resize
         virtual void resizeWindow(int w, int h, bool force);

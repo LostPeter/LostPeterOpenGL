@@ -9,15 +9,16 @@
 # This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 #****************************************************************************/
 
-debug=${1}
-
 name_folder="glsl"
-dirSrc="./$name_folder"
+dirSrc="./$name_folder/sample"
 dirDst="../Assets/Shader"
-dirInclude="./$name_folder"
 
-rm -rf $dirDst
 mkdir -p $dirDst
+rm -rf $dirDst"/Common"
+rm -rf $dirDst"/MacOS"
+
+cp -pr $dirSrc"/Common" $dirDst
+cp -pr $dirSrc"/MacOS" $dirDst
 
 function read_dir() {
     for file in `ls $1`
@@ -30,25 +31,9 @@ function read_dir() {
     done
 }
 
-function compile_shader() {
-    for file in `ls $1`
-    do 
-        if [ -d $1"/"$file ]; then
-            compile_shader $1"/"$file
-        else
-            ./Build_MacOS_Shader_GLSL.sh $file $1 $dirInclude $debug
-        fi
-    done
-}
 
-echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
-{
-    compile_shader $dirSrc
-}
-echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
-
-echo "************** Shader Compile .spv ********************************************"
+echo "************** Shader Copy ********************************************"
 {
     read_dir $dirDst
 }
-echo "************** Shader Compile .spv ********************************************"
+echo "************** Shader Copy ********************************************"

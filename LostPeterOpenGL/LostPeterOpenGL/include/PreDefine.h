@@ -306,6 +306,34 @@ namespace LostPeterOpenGL
     class OpenGLBase;
     class OpenGLWindow;
 
+    class GLBuffer;
+    class GLBufferVertex;
+    class GLBufferIndex;
+    class GLBufferVertexIndex;
+    class GLFrameBuffer;
+    class GLRenderPass;
+    class GLShader;
+
+    typedef std::vector<GLBuffer*> GLBufferPtrVector;
+    typedef std::map<String, GLBuffer*> GLBufferPtrMap;
+    typedef std::vector<GLBufferVertex*> GLBufferVertexPtrVector;
+    typedef std::map<String, GLBufferVertex*> GLBufferVertexPtrMap;
+    typedef std::vector<GLBufferIndex*> GLBufferIndexPtrVector;
+    typedef std::map<String, GLBufferIndex*> GLBufferIndexPtrMap;
+    typedef std::vector<GLBufferVertexIndex*> GLBufferVertexIndexPtrVector;
+    typedef std::map<String, GLBufferVertexIndex*> GLBufferVertexIndexPtrMap;
+
+    typedef std::vector<GLFrameBuffer*> GLFrameBufferPtrVector;
+    typedef std::map<String, GLFrameBuffer*> GLFrameBufferPtrMap;
+
+    typedef std::vector<GLRenderPass*> GLRenderPassPtrVector;
+    typedef std::map<String, GLRenderPass*> GLRenderPassPtrMap;
+
+    typedef std::vector<GLShader*> GLShaderPtrVector;
+    typedef std::map<String, GLShader*> GLShaderPtrMap;
+    typedef std::map<int32, GLShader*> GLShaderPtrIDMap;
+
+
 
     class Base;
     class EditorBase;

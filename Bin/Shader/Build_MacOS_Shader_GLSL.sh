@@ -11,42 +11,8 @@
 
 name_shader=${1}
 folder_shader=${2}
-folder_include=${3}
-debug=${4}
 
-name_vert="\.vert"
-name_tesc="\.tesc"
-name_tese="\.tese"
-name_geom="\.geom"
-name_frag="\.frag"
-name_comp="\.comp"
+folderSrc="./glsl/sample"
+folderDst="../Assets/Shader"
 
-name_profile=""
-if [[ $name_shader =~ $name_vert ]]; then
-    name_profile="vs_6_1"
-	# echo "file is .vert !"
-elif [[ $name_shader =~ $name_tesc ]]; then
-    name_profile="hs_6_1"
-	# echo "file is .tesc !"
-elif [[ $name_shader =~ $name_tese ]]; then
-    name_profile="ds_6_1"
-	# echo "file is .tese !"
-elif [[ $name_shader =~ $name_geom ]]; then
-    name_profile="gs_6_1"
-	# echo "file is .geom !"
-elif [[ $name_shader =~ $name_frag ]]; then
-    name_profile="ps_6_1"
-	# echo "file is .frag !"
-elif [[ $name_shader =~ $name_comp ]]; then
-    name_profile="cs_6_1"
-	# echo "file is .comp !"
-else
-	echo "Ignore file, is not [.vert/.tesc/.tese/.geom/.frag.comp], name: $name_shader"
-	exit
-fi
-
-
-folderSrc=$folder_shader
-folderShader="../Assets/Shader"
-mkdir -p $folderShader
-
+cp -rf $folderSrc"/"$folder_shader"/"$name_shader $folderDst"/"$folder_shader

@@ -21,6 +21,15 @@
 #include "OpenGLBase.h"
 #include "OpenGLWindow.h"
 
+#include "GLBuffer.h"
+#include "GLBufferVertex.h"
+#include "GLBufferIndex.h"
+#include "GLBufferVertexIndex.h"
+#include "GLFrameBuffer.h"
+#include "GLRenderPass.h"
+#include "GLShader.h"
+
+
 #include "Base.h"
 #include "EditorBase.h"
 #include "EditorCameraAxis.h"
