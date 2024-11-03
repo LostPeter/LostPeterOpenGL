@@ -118,6 +118,9 @@ namespace LostPeterOpenGL
                     }
                 }  
             }
+
+            //4) glfw swap buffers
+            glfwSwapBuffers(s_pWindow);
         }
 
         //9> OnDestroy

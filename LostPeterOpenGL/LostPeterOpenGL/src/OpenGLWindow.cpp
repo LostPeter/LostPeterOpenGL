@@ -30,15 +30,63 @@ namespace LostPeterOpenGL
     OpenGLWindow::OpenGLWindow(int width, int height, String name)
         : OpenGLBase(width, height, name)
 
+
+        , poVertexCount(0)
+        , poVertexBuffer_Size(0)
+        , poVertexBuffer_Data(nullptr)
+        , poIndexCount(0)
+        , poIndexBuffer_Size(0)
+        , poIndexBuffer_Data(nullptr)
+
         , isFrameBufferResized(false)
 
+
+        , cfg_colorBackground(0.0f, 0.2f, 0.4f, 1.0f)
+
+
+        , cfg_cameraPos(0.0f, 0.0f, -5.0f)
+        , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
+        , cfg_cameraUp(0.0f, 1.0f, 0.0f)
+        , cfg_cameraFov(45.0f)
+        , cfg_cameraNear(0.05f)
+        , cfg_cameraFar(1000.0f)
+        , cfg_cameraSpeedMove(1000.0f)
+        , cfg_cameraSpeedZoom(0.1f)
+        , cfg_cameraSpeedRotate(0.1f)
+
+
+        , cfg_model_Path("")
+        , cfg_shaderVertex_Path("")
+        , cfg_shaderFragment_Path("")
+        , cfg_texture_Path("")
+        , cfg_terrain_Path("")
+        , cfg_terrainTextureDiffuse_Path("Assets/Texture/Terrain/shore_sand_albedo.png;Assets/Texture/Terrain/moss_albedo.png;Assets/Texture/Terrain/rock_cliff_albedo.png;Assets/Texture/Terrain/cliff_albedo.png")
+        , cfg_terrainTextureNormal_Path("Assets/Texture/Terrain/shore_sand_norm.png;Assets/Texture/Terrain/moss_norm.tga;Assets/Texture/Terrain/rock_cliff_norm.tga;Assets/Texture/Terrain/cliff_norm.png")
+        , cfg_terrainTextureControl_Path("Assets/Texture/Terrain/terrain_control.png")
+        , cfg_terrainHeightStart(0.0f)
+        , cfg_terrainHeightMax(200.0f)
+
+
+        , pCamera(nullptr)
+        , pCameraRight(nullptr)
+        , pCameraMainLight(new FCamera)
+
+
+        , mouseButtonDownLeft(false)
+        , mouseButtonDownRight(false)
+        , mouseButtonDownMiddle(false)
+
+
     {
+
         Base::ms_pWindow = this;
     }
 
     OpenGLWindow::~OpenGLWindow()
     {
-
+        F_DELETE(pCamera)
+        F_DELETE(pCameraRight)
+        F_DELETE(pCameraMainLight)
     }
 
     void OpenGLWindow::OnInit()
@@ -48,7 +96,7 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnLoad()
     {
-
+        loadAssets();
     }
 
     bool OpenGLWindow::OnIsInit()
@@ -122,7 +170,13 @@ namespace LostPeterOpenGL
     }
     void OpenGLWindow::OnDestroy()
     {
-        
+        //1> Wait
+        if (this->isCreateDevice)
+        {
+
+            //2> Cleanup
+            cleanup();
+        }
     }
 
     void OpenGLWindow::OnMouseInput()
@@ -347,6 +401,9 @@ namespace LostPeterOpenGL
 
 
 
+
+            //13> isCreateDevice
+            this->isCreateDevice = true;
         }
         F_LogInfo("**********<1> OpenGLWindow::createPipeline finish **********");
     }
@@ -392,7 +449,23 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::loadAssets()
     {
+        F_LogInfo("**********<2> OpenGLWindow::loadAssets start **********");
+        {
+            //0> Camera/Light/Shadow
+            cameraReset();
+            lightMainReset();
+            shadowReset();
+            terrainReset();
 
+            //1> loadGeometry
+            //loadGeometry();
+
+
+            
+
+            this->isLoadAsset = true;
+        }
+        F_LogInfo("**********<2> OpenGLWindow::loadAssets finish **********");
     }
 
 
@@ -403,11 +476,31 @@ namespace LostPeterOpenGL
 
     bool OpenGLWindow::beginRender()
     {
-        return false;
+        return true;
     }
         void OpenGLWindow::updateRender()
         {
+            //1> updateCBs_Default
+            updateCBs_Default();
 
+            //2> updateCBs_Terrain
+            updateCBs_Terrain();
+
+            //3> updateCBs_ImGUI
+            updateCBs_ImGUI();
+
+            //4> updateCBs_Editor
+            updateCBs_Editor();
+
+            //5> CB Custom
+            updateCBs_Custom();
+
+            //6> CommandBuffers
+            updateRenderCommandBuffers_CustomBeforeDefault();
+            {
+                updateRenderCommandBuffers_Default();
+            }
+            updateRenderCommandBuffers_CustomAfterDefault();
         }
             void OpenGLWindow::updateCBs_Default()
             {
@@ -417,18 +510,244 @@ namespace LostPeterOpenGL
                 {
 
                 }
+                    void OpenGLWindow::updateCBs_PassTransformAndCamera(PassConstants& pass, FCamera* pCam, int nIndex)
+                    {
+
+                    }
                 void OpenGLWindow::updateCBs_Objects()
                 {
 
                 }
+                    void OpenGLWindow::updateCBs_ObjectsContent()
+                    {
+
+                    }
                 void OpenGLWindow::updateCBs_Materials()    
                 {
 
                 }
+                    void OpenGLWindow::updateCBs_MaterialsContent()
+                    {
+
+                    }
                 void OpenGLWindow::updateCBs_Instances()
                 {
 
                 }
+                    void OpenGLWindow::updateCBs_InstancesContent()
+                    {
+
+                    }
+                void OpenGLWindow::updateCBs_Terrain()
+                {
+
+                }
+                void OpenGLWindow::updateCBs_ImGUI()
+                {
+
+                }
+                    bool OpenGLWindow::beginRenderImgui()
+                    {   
+                        return true;
+                    }
+                        void OpenGLWindow::commonConfig()
+                        {
+
+                        }
+                            void OpenGLWindow::commonShowConfig()
+                            {
+
+                            }
+                            void OpenGLWindow::commonEditorConfig()
+                            {
+
+                            }
+                        void OpenGLWindow::cameraConfig()
+                        {
+
+                        }
+                            void OpenGLWindow::cameraReset()
+                            {
+
+                            }
+                        void OpenGLWindow::lightConfig()
+                        {
+
+                        }
+                            void OpenGLWindow::lightConfigItem(LightConstants& lc, const String& name, int index, bool canChangeType, bool bIsMainLight)
+                            {
+
+                            }
+                            void OpenGLWindow::lightMainReset()
+                            {
+
+                            }
+                        void OpenGLWindow::shadowConfig()
+                        {
+
+                        }
+                            void OpenGLWindow::shadowConfigItem(ShadowConstants& sc, const String& name, bool bIsMainLight)
+                            {
+
+                            }
+                            void OpenGLWindow::shadowReset()
+                            {
+
+                            }
+                        void OpenGLWindow::cullConfig()
+                        {
+
+                        }
+                        void OpenGLWindow::terrainConfig()
+                        {
+
+                        }
+                            void OpenGLWindow::terrainConfigItem(TerrainConstants& tc, const String& name)
+                            {
+
+                            }
+                                bool OpenGLWindow::terrainConfigSplatItem(TerrainSplatConstants& tsc, const String& name)
+                                {
+                                    return true;
+                                }
+                            void OpenGLWindow::terrainReset()
+                            {
+
+                            }
+                        void OpenGLWindow::passConstantsConfig()
+                        {
+
+                        }
+                        void OpenGLWindow::modelConfig()
+                        {
+
+                        }
+                void OpenGLWindow::endRenderImgui()
+                {
+
+                }
+            void OpenGLWindow::updateCBs_Editor()
+            {
+
+            }
+            void OpenGLWindow::updateCBs_Custom()
+            {
+
+            }
+
+            void OpenGLWindow::updateRenderCommandBuffers_CustomBeforeDefault()
+            {
+
+            }
+            void OpenGLWindow::updateRenderCommandBuffers_Default()
+            {
+
+                {
+                    updateRenderPass_CustomBeforeDefault();
+                    {
+                        updateRenderPass_Default();
+                    }
+                    updateRenderPass_CustomAfterDefault();
+                }
+
+            }
+                void OpenGLWindow::updateRenderPass_CustomBeforeDefault()
+                {
+
+                }
+                void OpenGLWindow::updateRenderPass_Default()
+                {
+                    updateMeshDefault_Before();
+                    {
+                        beginRenderPass("[RenderPass-Default]",
+                                        this->poOffset,
+                                        this->poExtent,
+                                        this->cfg_colorBackground,
+                                        1.0f,
+                                        0);
+                        {
+                            //1> Viewport
+                            
+
+                            //2> Default
+                            drawMeshDefault();
+                            drawMeshTerrain();
+                            drawMeshDefault_Custom();
+                            drawMeshDefault_Editor();
+                            drawMeshDefault_CustomBeforeImgui();
+
+                            //3> ImGui 
+                            drawMeshDefault_Imgui();
+                        }
+                        endRenderPass();
+                    }
+                    updateMeshDefault_After();
+                }
+                    void OpenGLWindow::updateMeshDefault_Before()
+                    {
+
+                    }
+                        void OpenGLWindow::drawMeshDefault()
+                        {
+
+                        }
+                        void OpenGLWindow::drawMeshTerrain()
+                        {
+
+                        }
+                        void OpenGLWindow::drawMeshDefault_Custom()
+                        {
+
+                        }
+                        void OpenGLWindow::drawMeshDefault_Editor()
+                        {
+
+                        }
+                        void OpenGLWindow::drawMeshDefault_CustomBeforeImgui()
+                        {
+
+                        }
+                        void OpenGLWindow::drawMeshDefault_Imgui()
+                        {
+
+                        }
+                    void OpenGLWindow::updateMeshDefault_After()
+                    {
+
+                    }
+                void OpenGLWindow::updateRenderPass_CustomAfterDefault()
+                {
+
+                }
+
+
+
+                void OpenGLWindow::beginRenderPass(const String& nameRenderPass,
+                                                   const FSizeI& offset,
+                                                   const FSizeI& extent,
+                                                   const FVector4& clBg,
+                                                   float depth,
+                                                   uint32_t stencil)
+                {
+                    
+                    glClearColor(clBg.x, clBg.y, clBg.z, clBg.w);
+                    glClear(GL_COLOR_BUFFER_BIT);
+                }
+
+
+
+                void OpenGLWindow::endRenderPass()
+                {
+
+                }
+
+
+            void OpenGLWindow::updateRenderCommandBuffers_CustomAfterDefault()
+            {
+
+            }
+
+
         void OpenGLWindow::render()
         {
 
@@ -437,5 +756,87 @@ namespace LostPeterOpenGL
     {
 
     }
+
+    void OpenGLWindow::cleanup()
+    {
+        F_LogInfo("---------- OpenGLWindow::cleanup start ----------");
+        {
+            //0> cleanupSwapChain
+            cleanupSwapChain();
+
+            //1> cleanupCustom/cleanupEditor/cleanupImGUI/cleanupDefault/cleanupInternal
+            cleanupCustom();
+            cleanupEditor();
+            cleanupImGUI();
+            cleanupDefault();
+            //cleanupInternal();
+
+
+        }
+        F_LogInfo("---------- OpenGLWindow::cleanup finish ----------");
+    }
+        void OpenGLWindow::cleanupDefault()
+        {
+
+            cleanupTexture();
+            cleanupVertexIndexBuffer();
+        }
+            void OpenGLWindow::cleanupTexture()
+            {
+
+            }
+            void OpenGLWindow::cleanupVertexIndexBuffer()
+            {
+
+            }
+        void OpenGLWindow::cleanupImGUI()
+        {
+
+        }
+        void OpenGLWindow::cleanupEditor()
+        {
+
+        }
+        void OpenGLWindow::cleanupCustom()
+        {
+
+        }
+
+        void OpenGLWindow::cleanupSwapChain()
+        {
+            F_LogInfo("----- OpenGLWindow::cleanupSwapChain start -----");
+            {
+
+            }
+            F_LogInfo("----- OpenGLWindow::cleanupSwapChain finish -----");
+        }
+            void OpenGLWindow::cleanupSwapChain_Default()
+            {
+
+            }
+            void OpenGLWindow::cleanupSwapChain_Editor()
+            {
+
+            }
+            void OpenGLWindow::cleanupSwapChain_Custom()
+            {
+
+            }
+        void OpenGLWindow::recreateSwapChain()
+        {
+            F_LogInfo("++++++++++ OpenGLWindow::recreateSwapChain start ++++++++++");
+            {
+
+            }
+            F_LogInfo("++++++++++ OpenGLWindow::recreateSwapChain finish ++++++++++");
+        }
+            void OpenGLWindow::recreateSwapChain_Editor()
+            {
+
+            }
+            void OpenGLWindow::recreateSwapChain_Custom()
+            {
+
+            }
 
 }; //LostPeterOpenGL

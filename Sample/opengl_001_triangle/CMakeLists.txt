@@ -137,12 +137,10 @@ elseif (APPLE)
     ADD_EXECUTABLE(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES_CPP} ${SOURCE_FILES_MM})
     if (DEBUG)
         TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-                              ${SYS_VULKAN_LIBS}
                               ${LIB_PLUGINS_DIR}/libLostPeterFoundation_d.dylib
                               ${LIB_PLUGINS_DIR}/libLostPeterOpenGL_d.dylib)
     else ()
         TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-                              ${SYS_VULKAN_LIBS}
                               ${LIB_PLUGINS_DIR}/libLostPeterFoundation.dylib
                               ${LIB_PLUGINS_DIR}/libLostPeterOpenGL.dylib)
     endif()

@@ -1664,7 +1664,7 @@ namespace LostPeterFoundation
 
 		F_PixelFormat_Count,                                    //174: Count
 
-    #if VULKAN_ENDIAN == VULKAN_ENDIAN_BIG
+    #if F_ENDIAN == F_ENDIAN_BIG
 		F_PixelFormat_BYTE_RGB_UNORM  = F_PixelFormat_BYTE_R8G8B8_UNORM,
 		F_PixelFormat_BYTE_BGR_UNORM  = F_PixelFormat_BYTE_B8G8R8_UNORM,
 		F_PixelFormat_BYTE_BGRA_UNORM = F_PixelFormat_BYTE_A8B8G8R8_UNORM,
