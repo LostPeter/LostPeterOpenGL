@@ -16,6 +16,13 @@ namespace LostPeterOpenGL
 {
     GLBufferVertex::GLBufferVertex(const String& nameRenderPass)
         : GLBuffer(nameRenderPass)
+        , nVAO(0)
+        , nVBO(0)
+
+        , typeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
+        , nBufferSize(0)
+        , pBuffer(nullptr)
+        , bIsDelete(true)
     {
 
     }
@@ -26,7 +33,40 @@ namespace LostPeterOpenGL
 
     void GLBufferVertex::Destroy()
     {
+        if (this->bIsDelete && this->pBuffer != nullptr)
+        {
+            F_DELETE_T(this->pBuffer)
+        }
+        this->pBuffer = nullptr;
 
+        if (this->nVAO > 0 && this->nVBO > 0)
+        {
+            Base::GetWindowPtr()->destroyGLBufferVertex(this->nVAO, this->nVBO);
+        }
+        this->nVAO = 0;
+        this->nVBO = 0;
+    }
+
+    bool GLBufferVertex::Init(FMeshVertexType type,
+                              size_t bufSize, 
+                              uint8* pBuf,
+                              bool isDelete)
+    {
+        this->typeVertex = type;
+        this->nBufferSize = bufSize;
+        this->pBuffer = pBuf;
+        this->bIsDelete = isDelete;
+
+        if (!Base::GetWindowPtr()->createGLBufferVertex(type,
+                                                        bufSize, 
+                                                        pBuf, 
+                                                        this->nVAO, 
+                                                        this->nVBO))
+        {
+            F_LogError("*********************** GLBufferVertex::Init: Failed to create buffer vertex: [%s] !", GetName().c_str());
+            return false;
+        }
+        return true;
     }
 
 }; //LostPeterOpenGL

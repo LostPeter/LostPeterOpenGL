@@ -23,11 +23,20 @@ namespace LostPeterOpenGL
         virtual ~GLBufferVertex();
 
     public:
-        
+        uint32 nVAO;
+        uint32 nVBO;
+
+        FMeshVertexType typeVertex;
+        size_t nBufferSize;
+        uint8* pBuffer;
+        bool bIsDelete;
 
     public:
         virtual void Destroy();
-
+        virtual bool Init(FMeshVertexType type,
+                          size_t bufSize, 
+                          uint8* pBuf,
+                          bool isDelete);
 
     };
 

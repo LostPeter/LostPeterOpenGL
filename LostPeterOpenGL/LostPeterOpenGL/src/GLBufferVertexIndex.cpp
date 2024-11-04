@@ -14,8 +14,19 @@
 
 namespace LostPeterOpenGL
 {
-    GLBufferVertexIndex::GLBufferVertexIndex(const String& nameRenderPass)
-        : GLBuffer(nameRenderPass)
+    GLBufferVertexIndex::GLBufferVertexIndex(const String& nameBuffer)
+        : GLBuffer(nameBuffer)
+        , nVAO(0)
+        , nVBO(0)
+        , nVEO(0)
+
+        , typeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
+        , nBufferSize_Vertex(0)
+        , pBuffer_Vertex(nullptr)
+        , bIsDelete_Vertex(true)
+        , nBufferSize_Index(0)
+        , pBuffer_Index(nullptr)
+        , bIsDelete_Index(true)
     {
 
     }
@@ -26,7 +37,54 @@ namespace LostPeterOpenGL
 
     void GLBufferVertexIndex::Destroy()
     {
+        if (this->bIsDelete_Vertex && this->pBuffer_Vertex != nullptr)
+        {
+            F_DELETE_T(this->pBuffer_Vertex)
+        }
+        this->pBuffer_Vertex = nullptr;
+        if (this->bIsDelete_Index && this->pBuffer_Index != nullptr)
+        {
+            F_DELETE_T(this->pBuffer_Index)
+        }
+        this->pBuffer_Index = nullptr;
 
+        if (this->nVAO > 0 && this->nVBO > 0 && this->nVEO > 0)
+        {
+            Base::GetWindowPtr()->destroyGLBufferVertexIndex(this->nVAO, this->nVBO, this->nVEO);
+        }
+        this->nVAO = 0;
+        this->nVBO = 0;
+        this->nVEO = 0;
+    }
+    bool GLBufferVertexIndex::Init(FMeshVertexType type,
+                                   size_t bufSize_Vertex, 
+                                   uint8* pBuf_Vertex,
+                                   bool isDelete_Vertex,
+                                   size_t bufSize_Index, 
+                                   uint8* pBuf_Index,
+                                   bool isDelete_Index)
+    {
+        this->typeVertex = type;
+        this->nBufferSize_Vertex = bufSize_Vertex;
+        this->pBuffer_Vertex = pBuf_Vertex;
+        this->bIsDelete_Vertex = isDelete_Vertex;
+        this->nBufferSize_Index = bufSize_Index;
+        this->pBuffer_Index = pBuf_Index;
+        this->bIsDelete_Index = isDelete_Index;
+
+        if (!Base::GetWindowPtr()->createGLBufferVertexIndex(type,
+                                                             bufSize_Vertex, 
+                                                             pBuf_Vertex, 
+                                                             bufSize_Index,
+                                                             pBuf_Index,
+                                                             this->nVAO, 
+                                                             this->nVBO,
+                                                             this->nVEO))
+        {
+            F_LogError("*********************** GLBufferVertexIndex::Init: Failed to create buffer vertex index: [%s] !", GetName().c_str());
+            return false;
+        }
+        return true;
     }
 
 }; //LostPeterOpenGL

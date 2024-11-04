@@ -23,9 +23,11 @@ namespace LostPeterOpenGL
         virtual ~GLBuffer();
 
     public:
-        virtual void Destroy() = 0;
         
 
+    public:
+        virtual void Destroy() = 0;
+        
     };
 
 }; //LostPeterOpenGL

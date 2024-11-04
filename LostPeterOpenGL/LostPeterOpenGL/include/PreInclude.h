@@ -23,7 +23,6 @@
 
 #include "GLBuffer.h"
 #include "GLBufferVertex.h"
-#include "GLBufferIndex.h"
 #include "GLBufferVertexIndex.h"
 #include "GLFrameBuffer.h"
 #include "GLRenderPass.h"

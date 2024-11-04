@@ -308,7 +308,6 @@ namespace LostPeterOpenGL
 
     class GLBuffer;
     class GLBufferVertex;
-    class GLBufferIndex;
     class GLBufferVertexIndex;
     class GLFrameBuffer;
     class GLRenderPass;
@@ -318,8 +317,6 @@ namespace LostPeterOpenGL
     typedef std::map<String, GLBuffer*> GLBufferPtrMap;
     typedef std::vector<GLBufferVertex*> GLBufferVertexPtrVector;
     typedef std::map<String, GLBufferVertex*> GLBufferVertexPtrMap;
-    typedef std::vector<GLBufferIndex*> GLBufferIndexPtrVector;
-    typedef std::map<String, GLBufferIndex*> GLBufferIndexPtrMap;
     typedef std::vector<GLBufferVertexIndex*> GLBufferVertexIndexPtrVector;
     typedef std::map<String, GLBufferVertexIndex*> GLBufferVertexIndexPtrMap;
 
