@@ -21,97 +21,271 @@ namespace LostPeterOpenGL
 /////Struct
     //////////////////////////////// Vertex_Pos2Color4 //////////////////////////////
     //0: F_MeshVertex_Pos2Color4
-    struct openglExport Vertex_Pos2Color4
+    struct openglExport Vertex_Pos2Color4 : FVertex_Pos2Color4
     {
-        
+
+        static void createAttributeDescriptions()
+        {
+            //Pos2
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4), (void*)offsetof(Vertex_Pos2Color4, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4), (void*)offsetof(Vertex_Pos2Color4, color));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4 //////////////////////////////
     //1: F_MeshVertex_Pos3Color4
-    struct openglExport Vertex_Pos3Color4
+    struct openglExport Vertex_Pos3Color4 : FVertex_Pos3Color4
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4), (void*)offsetof(Vertex_Pos3Color4, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4), (void*)offsetof(Vertex_Pos3Color4, color));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Normal3 /////////////////////////////
     //2: F_MeshVertex_Pos3Normal3
-    struct openglExport Vertex_Pos3Normal3
+    struct openglExport Vertex_Pos3Normal3 : FVertex_Pos3Normal3
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3), (void*)offsetof(Vertex_Pos3Normal3, pos));
+            //Normal3
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3), (void*)offsetof(Vertex_Pos3Normal3, normal));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Normal3Tex2 /////////////////////////
     //3: F_MeshVertex_Pos3Normal3Tex2
-    struct openglExport Vertex_Pos3Normal3Tex2
+    struct openglExport Vertex_Pos3Normal3Tex2 : FVertex_Pos3Normal3Tex2
     {
        
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, pos));
+            //Normal3
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, normal));
+            //Tex2
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos2Color4Tex2 //////////////////////////
     //4: F_MeshVertex_Pos2Color4Tex2
-    struct openglExport Vertex_Pos2Color4Tex2
+    struct openglExport Vertex_Pos2Color4Tex2 : FVertex_Pos2Color4Tex2
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos2
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, color));
+            //Tex2
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Tex2 //////////////////////////
     //5: F_MeshVertex_Pos3Color4Tex2
-    struct openglExport Vertex_Pos3Color4Tex2
+    struct openglExport Vertex_Pos3Color4Tex2 : FVertex_Pos3Color4Tex2
     {
        
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, color));
+            //Tex2
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Normal3Tex2 ///////////////////
     //6: F_MeshVertex_Pos3Color4Normal3Tex2 
-    struct openglExport Vertex_Pos3Color4Normal3Tex2
+    struct openglExport Vertex_Pos3Color4Normal3Tex2 : FVertex_Pos3Color4Normal3Tex2
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, color));
+            //Normal3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, normal));
+            //Tex2
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Normal3Tex4 ///////////////////
     //7: F_MeshVertex_Pos3Color4Normal3Tex4
-    struct openglExport Vertex_Pos3Color4Normal3Tex4
+    struct openglExport Vertex_Pos3Color4Normal3Tex4 : FVertex_Pos3Color4Normal3Tex4
     {
-       
+        
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, color));
+            //Normal3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, normal));
+            //Tex4
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Normal3Tangent3Tex2 ///////////////
     //8: F_MeshVertex_Pos3Color4Normal3Tangent3Tex2
-    struct openglExport Vertex_Pos3Color4Normal3Tangent3Tex2
+    struct openglExport Vertex_Pos3Color4Normal3Tangent3Tex2 : FVertex_Pos3Color4Normal3Tangent3Tex2
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, color));
+            //Normal3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, normal));
+            //Tangent3
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, tangent));
+            //Tex2
+            glEnableVertexAttribArray(4);
+            glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Normal3Tangent3Tex4 ///////////////
     //9: F_MeshVertex_Pos3Color4Normal3Tangent3Tex4
-    struct openglExport Vertex_Pos3Color4Normal3Tangent3Tex4
+    struct openglExport Vertex_Pos3Color4Normal3Tangent3Tex4 : FVertex_Pos3Color4Normal3Tangent3Tex4
     {
         
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, color));
+            //Normal3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, normal));
+            //Tangent3
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, tangent));
+            //Tex4
+            glEnableVertexAttribArray(4);
+            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Normal3Tangent3BlendWI8Tex2 //////////
     //10: F_MeshVertex_Pos3Normal3Tangent3BlendWI8Tex2
-    struct Vertex_Pos3Normal3Tangent3BlendWI8Tex2
+    struct Vertex_Pos3Normal3Tangent3BlendWI8Tex2 : FVertex_Pos3Normal3Tangent3BlendWI8Tex2
     {
-       
+        
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, pos));
+            //Normal3
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, normal));
+            //Tangent3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, tangent));
+            //BlendW
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, blendweight));
+            //BlendI
+            glEnableVertexAttribArray(4);
+            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, blendindex));
+            //Tex2
+            glEnableVertexAttribArray(5);
+            glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, texCoord));
+        }
     };
 
 
     //////////////////////////////// Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2 ////
     //11: F_MeshVertex_Pos3Color4Normal3Tangent3BlendWI8Tex2
-    struct Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2 
+    struct Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2 : FVertex_Pos3Color4Normal3Tangent3BlendWI8Tex2
     {
        
+        static void createAttributeDescriptions()
+        {
+            //Pos3
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, pos));
+            //Color4
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, color));
+            //Normal3
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, normal));
+            //Tangent3
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, tangent));
+            //BlendW
+            glEnableVertexAttribArray(4);
+            glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, blendweight));
+            //BlendI
+            glEnableVertexAttribArray(5);
+            glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, blendindex));
+            //Tex2
+            glEnableVertexAttribArray(6);
+            glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, texCoord));
+        }
     };
 
 

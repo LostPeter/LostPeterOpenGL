@@ -25,6 +25,10 @@ namespace LostPeterOpenGL
     public:
         
 
+    public:
+        void Destroy();
+        bool Init();
+
 
     };
 

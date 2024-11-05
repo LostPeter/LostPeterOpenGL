@@ -41,14 +41,17 @@ namespace LostPeterOpenGL
         FVector2 poWindowContentScale;
 
 
-
         uint32_t poVertexCount;
         size_t poVertexBuffer_Size;
         uint8* poVertexBuffer_Data;
         uint32_t poIndexCount;
         size_t poIndexBuffer_Size;
         uint8* poIndexBuffer_Data;
+        GLBufferVertex* pBufferVertex;
+        GLBufferVertexIndex* pBufferVertexIndex;
         FMatrix4 poMatWorld;
+
+        FMeshVertexType typeVertex;
 
 
         bool isFrameBufferResized;
@@ -242,31 +245,46 @@ namespace LostPeterOpenGL
                         virtual void loadModel_Default();
                         virtual void loadModel_Custom();
                     virtual GLBufferVertex* createBufferVertex(const String& nameBuffer,
-                                                               FMeshVertexType typeVertex,
+                                                               FMeshVertexType type,
                                                                size_t bufSize, 
                                                                uint8* pBuf,
                                                                bool isDelete);
-                    virtual void updateVertexBuffer(size_t bufSize, 
-                                                    uint8* pBuf, 
-                                                    GLBuffer* pBuffer);
+                    virtual void updateBufferVertex(GLBufferVertex* pBufferVertex,
+                                                    FMeshVertexType type,
+                                                    size_t bufSize, 
+                                                    uint8* pBuf,
+                                                    bool isDelete);
+
                     virtual GLBufferVertexIndex* createBufferVertexIndex(const String& nameBuffer,
-                                                                         FMeshVertexType typeVertex,
+                                                                         FMeshVertexType type,
                                                                          size_t bufSize_Vertex, 
                                                                          uint8* pBuf_Vertex,
                                                                          bool isDelete_Vertex,
                                                                          size_t bufSize_Index, 
                                                                          uint8* pBuf_Index,
                                                                          bool isDelete_Index);
-                    virtual void updateIndexBuffer(size_t bufSize, 
-                                                   uint8* pBuf, 
-                                                   GLBuffer* pBuffer);
+                    virtual void updateBufferVertexIndex(GLBufferVertexIndex* pBufferVertexIndex,
+                                                         FMeshVertexType type,
+                                                         size_t bufSize_Vertex, 
+                                                         uint8* pBuf_Vertex,
+                                                         bool isDelete_Vertex,
+                                                         size_t bufSize_Index, 
+                                                         uint8* pBuf_Index,
+                                                         bool isDelete_Index);
 
-                    virtual bool createGLBufferVertex(FMeshVertexType typeVertex,
+                    virtual bool createGLBufferVertex(FMeshVertexType type,
                                                       size_t bufSize,
                                                       uint8* pBuf,
                                                       uint32& nVAO,
                                                       uint32& nVBO);
-                    virtual bool createGLBufferVertexIndex(FMeshVertexType typeVertex,
+                    virtual void updateGLBufferVertex(FMeshVertexType type,
+                                                      size_t bufSize,
+                                                      uint8* pBuf,
+                                                      uint32 nVAO,
+                                                      uint32 nVBO);
+                    virtual void destroyGLBufferVertex(uint32 nVAO, uint32 nVBO);
+
+                    virtual bool createGLBufferVertexIndex(FMeshVertexType type,
                                                            size_t bufSize_Vertex,
                                                            uint8* pBuf_Vertex,
                                                            size_t bufSize_Index,
@@ -274,13 +292,45 @@ namespace LostPeterOpenGL
                                                            uint32& nVAO,
                                                            uint32& nVBO,
                                                            uint32& nVEO);
-
-                    virtual void copyGLBuffer(GLBuffer* pBufferSrc, GLBuffer* pBufferDst, size_t bufSize);
-                    virtual void updateGLBuffer(size_t offset, size_t bufSize, uint8* pBuf, GLBuffer* pBuffer);
-
-
-                    virtual void destroyGLBufferVertex(uint32 nVAO, uint32 nVBO);
+                    virtual void updateGLBufferVertexIndex(FMeshVertexType type,
+                                                           size_t bufSize_Vertex,
+                                                           uint8* pBuf_Vertex,
+                                                           size_t bufSize_Index,
+                                                           uint8* pBuf_Index,
+                                                           uint32 nVAO,
+                                                           uint32 nVBO,
+                                                           uint32 nVEO);
                     virtual void destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO);
+
+
+                virtual void loadTexture();
+                    virtual void loadTexture_Default();
+                    virtual void loadTexture_Custom();
+
+
+                virtual void createConstBuffers();
+                    virtual void createObjectCB();
+                        virtual void buildObjectCB();
+                    virtual void createMaterialCB();
+                        virtual void buildMaterialCB();
+                    virtual void createInstanceCB();
+                        virtual void buildInstanceCB();
+                    virtual void createCustomCB();
+
+                virtual GLShader* createShader();
+
+                virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID);
+                virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID);
+                virtual void destroyGLShader(uint32 nShaderID);
+
+                
+                virtual bool createGLShaderProgram(uint32 nShaderVertexID,
+                                                   uint32 nShaderTessellationControlID,
+                                                   uint32 nShaderTessellationEvaluationID,
+                                                   uint32 nShaderGeometryID,
+                                                   uint32 nShaderFragmentID);
+                virtual bool createGLShaderProgram(uint32 nShaderComputeID);
+                virtual void destroyGLShaderProgram(uint32 nShaderProgramID);
 
         //Resize
         virtual void resizeWindow(int w, int h, bool force);

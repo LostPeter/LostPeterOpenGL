@@ -18,3 +18,8 @@ OpenGL_001_Triangle::OpenGL_001_Triangle(int width, int height, String name)
 {
     
 }
+
+void OpenGL_001_Triangle::loadModel_Custom()
+{
+    
+}

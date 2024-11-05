@@ -46,6 +46,16 @@ namespace LostPeterOpenGL
                           uint8* pBuf_Index,
                           bool isDelete_Index);
 
+        virtual void Update(FMeshVertexType type,
+                            size_t bufSize_Vertex,
+                            uint8* pBuf_Vertex,
+                            bool isDelete_Vertex,
+                            size_t bufSize_Index,
+                            uint8* pBuf_Index,
+                            bool isDelete_Index);
+
+    protected:
+        virtual void destroyBuffer();
     };
 
 }; //LostPeterOpenGL

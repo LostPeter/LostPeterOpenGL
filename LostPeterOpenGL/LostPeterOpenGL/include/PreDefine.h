@@ -78,6 +78,8 @@ namespace LostPeterOpenGL
 ////////////////////////////// Typedef /////////////////////////////
     
 
+    
+
 
 ////////////////////////////// Enum ////////////////////////////////
     enum WindowType
@@ -247,6 +249,14 @@ namespace LostPeterOpenGL
         Lighting_AmbientDiffuseLambertSpecularBlinnPhong, //11:   Ambient + DiffuseLambert + SpecularBlinnPhong
     };
     
+
+////////////////////////////// OpenGL //////////////////////////////
+
+    openglExport void Util_CreateAttributeDescriptions(FMeshVertexType type);
+
+    openglExport GLenum Util_Transform2GLShaderType(FShaderType type);
+    
+
 
 ////////////////////////////// Class ///////////////////////////////
     struct LightConstants;

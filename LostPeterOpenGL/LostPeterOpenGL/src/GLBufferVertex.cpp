@@ -33,12 +33,7 @@ namespace LostPeterOpenGL
 
     void GLBufferVertex::Destroy()
     {
-        if (this->bIsDelete && this->pBuffer != nullptr)
-        {
-            F_DELETE_T(this->pBuffer)
-        }
-        this->pBuffer = nullptr;
-
+        destroyBuffer();
         if (this->nVAO > 0 && this->nVBO > 0)
         {
             Base::GetWindowPtr()->destroyGLBufferVertex(this->nVAO, this->nVBO);
@@ -46,6 +41,14 @@ namespace LostPeterOpenGL
         this->nVAO = 0;
         this->nVBO = 0;
     }
+        void GLBufferVertex::destroyBuffer()
+        {
+            if (this->bIsDelete && this->pBuffer != nullptr)
+            {
+                F_DELETE_T(this->pBuffer)
+            }
+            this->pBuffer = nullptr;
+        }
 
     bool GLBufferVertex::Init(FMeshVertexType type,
                               size_t bufSize, 
@@ -67,6 +70,25 @@ namespace LostPeterOpenGL
             return false;
         }
         return true;
+    }
+
+    void GLBufferVertex::Update(FMeshVertexType type,
+                                size_t bufSize, 
+                                uint8* pBuf,
+                                bool isDelete)
+    {
+        destroyBuffer();
+
+        this->typeVertex = type;
+        this->nBufferSize = bufSize;
+        this->pBuffer = pBuf;
+        this->bIsDelete = isDelete;
+
+        Base::GetWindowPtr()->updateGLBufferVertex(type,
+                                                   bufSize, 
+                                                   pBuf, 
+                                                   this->nVAO, 
+                                                   this->nVBO);
     }
 
 }; //LostPeterOpenGL

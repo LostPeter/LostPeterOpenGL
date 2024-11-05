@@ -71,11 +71,57 @@ namespace LostPeterOpenGL
     }
 
 
-   
+////////////////////////////// OpenGL //////////////////////////////   
+    void Util_CreateAttributeDescriptions(FMeshVertexType type)
+    {
+        switch ((int)type)
+        {
+            case F_MeshVertex_Pos2Color4:
+                Vertex_Pos2Color4::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4:
+                Vertex_Pos3Color4::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Normal3:
+                Vertex_Pos3Normal3::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Normal3Tex2:
+                Vertex_Pos3Normal3Tex2::createAttributeDescriptions();
+            case F_MeshVertex_Pos2Color4Tex2:
+                Vertex_Pos2Color4Tex2::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4Tex2:
+                Vertex_Pos3Color4Tex2::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4Normal3Tex2:
+                Vertex_Pos3Color4Normal3Tex2::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4Normal3Tex4:
+                Vertex_Pos3Color4Normal3Tex4::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4Normal3Tangent3Tex2:
+                Vertex_Pos3Color4Normal3Tangent3Tex2::createAttributeDescriptions();
+            case F_MeshVertex_Pos3Color4Normal3Tangent3Tex4:
+                Vertex_Pos3Color4Normal3Tangent3Tex4::createAttributeDescriptions();
+        }
+        F_Assert(false && "Util_CreateAttributeDescriptions: Wrong type !")
+    }
 
+    GLenum Util_Transform2GLShaderType(FShaderType type)
+    {
+        switch ((int)type)
+        {
+            case F_Shader_Vertex:
+                return GL_VERTEX_SHADER;
+            case F_Shader_TessellationControl:
+                //return GL_TESS_CONTROL_SHADER;
+            case F_Shader_TessellationEvaluation:
+                //return GL_TESS_EVALUATION_SHADER;
+            case F_Shader_Geometry:
+                return GL_GEOMETRY_SHADER;
+            case F_Shader_Fragment:
+                return GL_FRAGMENT_SHADER;
+            case F_Shader_Compute:
+                //return GL_COMPUTE_SHADER;
+        }
+        F_Assert(false && "Util_Transform2GLShaderType: Wrong type !")
+    }
   
 
-    ////////////////////////////// Class ///////////////////////////////
+////////////////////////////// Class ///////////////////////////////
     MeshInfo::MeshInfo()
         : group(0)
         , nameMesh("")

@@ -37,6 +37,11 @@ namespace LostPeterOpenGL
         , poIndexCount(0)
         , poIndexBuffer_Size(0)
         , poIndexBuffer_Data(nullptr)
+        , pBufferVertex(nullptr)
+        , pBufferVertexIndex(nullptr)
+
+        , typeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
+
 
         , isFrameBufferResized(false)
 
@@ -728,7 +733,7 @@ namespace LostPeterOpenGL
             //1> loadGeometry
             loadGeometry();
 
-
+            //2> Imgui
             
 
             this->isLoadAsset = true;
@@ -737,11 +742,53 @@ namespace LostPeterOpenGL
     }
         void OpenGLWindow::loadGeometry()
         {
+            F_LogInfo("*****<2-1> OpenGLWindow::loadGeometry start *****");
+            {
+                //1> loadVertexIndexBuffer
+                loadVertexIndexBuffer();
 
+                //2> loadTexture
+                loadTexture();
+
+
+            }
+            F_LogInfo("*****<2-1> OpenGLWindow::loadGeometry finish *****");
         }
             void OpenGLWindow::loadVertexIndexBuffer()
             {
+                F_LogInfo("**<2-1-1> OpenGLWindow::loadVertexIndexBuffer start **");
+                {
+                    //1> loadModel
+                    loadModel();
 
+                    //2> createBufferVertexIndex
+                    if (this->poVertexBuffer_Size > 0 &&
+                        this->poVertexBuffer_Data != nullptr &&
+                        this->poIndexBuffer_Size > 0 &&
+                        this->poIndexBuffer_Data != nullptr)
+                    {
+                        this->pBufferVertexIndex = createBufferVertexIndex("VertexIndex-" + this->nameTitle,
+                                                                           this->typeVertex,
+                                                                           this->poVertexBuffer_Size,
+                                                                           this->poVertexBuffer_Data,
+                                                                           false,
+                                                                           this->poIndexBuffer_Size,
+                                                                           this->poIndexBuffer_Data,
+                                                                           false);
+                    }
+
+                    //3> createBufferVertex
+                    if (this->poVertexBuffer_Size > 0 &&
+                        this->poVertexBuffer_Data != nullptr)
+                    {
+                        this->pBufferVertex = createBufferVertex("Vertex-" + this->nameTitle,
+                                                                 this->typeVertex,
+                                                                 this->poVertexBuffer_Size, 
+                                                                 this->poVertexBuffer_Data, 
+                                                                 false);
+                    }
+                }
+                F_LogInfo("**<2-1-1> OpenGLWindow::loadVertexIndexBuffer finish **");
             }
                 void OpenGLWindow::loadModel()
                 {
@@ -756,13 +803,13 @@ namespace LostPeterOpenGL
 
                     }
                 GLBufferVertex* OpenGLWindow::createBufferVertex(const String& nameBuffer,
-                                                                 FMeshVertexType typeVertex,
+                                                                 FMeshVertexType type,
                                                                  size_t bufSize, 
                                                                  uint8* pBuf,
                                                                  bool isDelete)
                 {
                     GLBufferVertex* pBufferVertex = new GLBufferVertex(nameBuffer);
-                    if (!pBufferVertex->Init(typeVertex, 
+                    if (!pBufferVertex->Init(type, 
                                              bufSize, 
                                              pBuf, 
                                              isDelete))
@@ -773,15 +820,23 @@ namespace LostPeterOpenGL
                     }
                     return pBufferVertex;
                 }
-                void OpenGLWindow::updateVertexBuffer(size_t bufSize, 
-                                                      uint8* pBuf, 
-                                                      GLBuffer* pBuffer)
+                void OpenGLWindow::updateBufferVertex(GLBufferVertex* pBufferVertex,
+                                                      FMeshVertexType type,
+                                                      size_t bufSize, 
+                                                      uint8* pBuf,
+                                                      bool isDelete)
                 {
+                    if (pBufferVertex == nullptr)
+                        return;
 
+                    pBufferVertex->Update(type,
+                                          bufSize,
+                                          pBuf,
+                                          isDelete);
                 }
 
                 GLBufferVertexIndex* OpenGLWindow::createBufferVertexIndex(const String& nameBuffer,
-                                                                           FMeshVertexType typeVertex,
+                                                                           FMeshVertexType type,
                                                                            size_t bufSize_Vertex, 
                                                                            uint8* pBuf_Vertex,
                                                                            bool isDelete_Vertex,
@@ -790,7 +845,7 @@ namespace LostPeterOpenGL
                                                                            bool isDelete_Index)
                 {
                     GLBufferVertexIndex* pBufferVertexIndex = new GLBufferVertexIndex(nameBuffer);
-                    if (!pBufferVertexIndex->Init(typeVertex,
+                    if (!pBufferVertexIndex->Init(type,
                                                   bufSize_Vertex, 
                                                   pBuf_Vertex, 
                                                   isDelete_Vertex,
@@ -804,14 +859,28 @@ namespace LostPeterOpenGL
                     }
                     return pBufferVertexIndex;
                 }
-                void OpenGLWindow::updateIndexBuffer(size_t bufSize, 
-                                                     uint8* pBuf, 
-                                                     GLBuffer* pBuffer)
+                void OpenGLWindow::updateBufferVertexIndex(GLBufferVertexIndex* pBufferVertexIndex,
+                                                           FMeshVertexType type,
+                                                           size_t bufSize_Vertex, 
+                                                           uint8* pBuf_Vertex,
+                                                           bool isDelete_Vertex,
+                                                           size_t bufSize_Index, 
+                                                           uint8* pBuf_Index,
+                                                           bool isDelete_Index)
                 {
+                    if (pBufferVertexIndex == nullptr)
+                        return;
 
-                }
+                    pBufferVertexIndex->Update(type,  
+                                               bufSize_Vertex,
+                                               pBuf_Vertex,
+                                               isDelete_Vertex,
+                                               bufSize_Index,
+                                               pBuf_Index,
+                                               isDelete_Index);
+                }   
 
-                bool OpenGLWindow::createGLBufferVertex(FMeshVertexType typeVertex,
+                bool OpenGLWindow::createGLBufferVertex(FMeshVertexType type,
                                                         size_t bufSize,
                                                         uint8* pBuf,
                                                         uint32& nVAO,
@@ -820,17 +889,42 @@ namespace LostPeterOpenGL
                     glGenVertexArrays(1, &nVAO);
                     glGenBuffers(1, &nVBO);
 
+                    updateGLBufferVertex(type, 
+                                         bufSize,
+                                         pBuf,
+                                         nVAO,
+                                         nVBO);
+                    return true;
+                }
+                void OpenGLWindow::updateGLBufferVertex(FMeshVertexType type,
+                                                        size_t bufSize,
+                                                        uint8* pBuf,
+                                                        uint32 nVAO,
+                                                        uint32 nVBO)
+                {
                     glBindVertexArray(nVAO);
 
                     glBindBuffer(GL_ARRAY_BUFFER, nVBO);
                     glBufferData(GL_ARRAY_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
 
+                    Util_CreateAttributeDescriptions(type);
+
                     glBindBuffer(GL_ARRAY_BUFFER, 0); 
                     glBindVertexArray(0); 
-
-                    return true;
                 }
-                bool OpenGLWindow::createGLBufferVertexIndex(FMeshVertexType typeVertex,
+                void OpenGLWindow::destroyGLBufferVertex(uint32 nVAO, uint32 nVBO)
+                {
+                    if (nVAO > 0)
+                    {
+                        glDeleteVertexArrays(1, &nVAO);
+                    }
+                    if (nVBO > 0)
+                    {
+                        glDeleteBuffers(1, &nVBO);
+                    }
+                }
+
+                bool OpenGLWindow::createGLBufferVertexIndex(FMeshVertexType type,
                                                              size_t bufSize_Vertex,
                                                              uint8* pBuf_Vertex,
                                                              size_t bufSize_Index,
@@ -843,6 +937,25 @@ namespace LostPeterOpenGL
                     glGenBuffers(1, &nVBO);
                     glGenBuffers(1, &nVEO);
 
+                    updateGLBufferVertexIndex(type, 
+                                              bufSize_Vertex,
+                                              pBuf_Vertex,
+                                              bufSize_Index,
+                                              pBuf_Index,
+                                              nVAO,
+                                              nVBO,
+                                              nVEO);
+                    return true;
+                }
+                void OpenGLWindow::updateGLBufferVertexIndex(FMeshVertexType type,
+                                                             size_t bufSize_Vertex,
+                                                             uint8* pBuf_Vertex,
+                                                             size_t bufSize_Index,
+                                                             uint8* pBuf_Index,
+                                                             uint32 nVAO,
+                                                             uint32 nVBO,
+                                                             uint32 nVEO)
+                {
                     glBindVertexArray(nVAO);
 
                     glBindBuffer(GL_ARRAY_BUFFER, nVBO);
@@ -851,31 +964,11 @@ namespace LostPeterOpenGL
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nVEO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufSize_Index, pBuf_Index, GL_STATIC_DRAW);
 
+                    Util_CreateAttributeDescriptions(type);
+
                     glBindBuffer(GL_ARRAY_BUFFER, 0); 
                     glBindVertexArray(0); 
-
-                    return true;
-                }
-                void OpenGLWindow::copyGLBuffer(GLBuffer* pBufferSrc, GLBuffer* pBufferDst, size_t bufSize)
-                {
-
-                }
-                void OpenGLWindow::updateGLBuffer(size_t offset, size_t bufSize, uint8* pBuf, GLBuffer* pBuffer)
-                {
-
-                }
-
-                void OpenGLWindow::destroyGLBufferVertex(uint32 nVAO, uint32 nVBO)
-                {
-                    if (nVAO > 0)
-                    {
-                        glDeleteVertexArrays(1, &nVAO);
-                    }
-                    if (nVBO > 0)
-                    {
-                        glDeleteBuffers(1, &nVBO);
-                    }
-                }
+                }       
                 void OpenGLWindow::destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO)
                 {
                     if (nVAO > 0)
@@ -891,6 +984,104 @@ namespace LostPeterOpenGL
                         glDeleteBuffers(1, &nVEO);
                     }
                 }
+
+            void OpenGLWindow::loadTexture()
+            {
+
+            }
+                void OpenGLWindow::loadTexture_Default()
+                {
+
+                }
+                void OpenGLWindow::loadTexture_Custom()
+                {
+
+                }
+
+
+            void OpenGLWindow::createConstBuffers()
+            {
+
+            }
+                void OpenGLWindow::createObjectCB()
+                {
+
+                }
+                    void OpenGLWindow::buildObjectCB()
+                    {
+
+                    }
+                void OpenGLWindow::createMaterialCB()
+                {
+
+                }
+                    void OpenGLWindow::buildMaterialCB()
+                    {
+
+                    }
+                void OpenGLWindow::createInstanceCB()
+                {
+
+                }
+                    void OpenGLWindow::buildInstanceCB()
+                    {
+
+                    }
+                void OpenGLWindow::createCustomCB()
+                {
+
+                }
+
+            GLShader* OpenGLWindow::createShader()
+            {
+                
+                return nullptr;
+            }
+
+            bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID)
+            {
+                const String& strTypeShader = F_GetShaderTypeName(typeShader);
+                return createGLShader(nameShader, typeShader, strTypeShader, pathFile, nShaderID);
+            }
+            bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID)
+            {
+                GLenum shaderType = Util_Transform2GLShaderType(typeShader);
+                nShaderID = glCreateShader(shaderType);
+
+                
+                return true;
+            }
+            void OpenGLWindow::destroyGLShader(uint32 nShaderID)
+            {
+                if (nShaderID > 0)
+                {
+                    glDeleteShader(nShaderID);
+                }
+            }
+
+            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderVertexID,
+                                                     uint32 nShaderTessellationControlID,
+                                                     uint32 nShaderTessellationEvaluationID,
+                                                     uint32 nShaderGeometryID,
+                                                     uint32 nShaderFragmentID)
+            {
+                
+                return true;
+            }
+            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderComputeID)
+            {
+                
+
+                return true;
+            }
+            void OpenGLWindow::destroyGLShaderProgram(uint32 nShaderProgramID)
+            {
+                if (nShaderProgramID > 0)
+                {
+                    glDeleteProgram(nShaderProgramID);
+                }
+            }
+            
 
     void OpenGLWindow::resizeWindow(int w, int h, bool force)
     {
@@ -1210,7 +1401,17 @@ namespace LostPeterOpenGL
             }
             void OpenGLWindow::cleanupVertexIndexBuffer()
             {
+                //1> VertexBuffer/pBufferVertexIndex
+                F_DELETE(this->pBufferVertex)
+                F_DELETE(this->pBufferVertexIndex)
 
+                //2> Data
+                this->poVertexCount = 0;
+                this->poVertexBuffer_Size = 0;
+                this->poVertexBuffer_Data = nullptr;
+                this->poIndexCount = 0;
+                this->poIndexBuffer_Size = 0;
+                this->poIndexBuffer_Data = nullptr;
             }
         void OpenGLWindow::cleanupImGUI()
         {
