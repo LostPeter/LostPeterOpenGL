@@ -54,7 +54,7 @@ endif ()
 #LIB_INCLUDE
 if (WIN32)
     SET(LIB_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/assimp-5.2.4"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/glad-3.3"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/glad-4.6"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/glfw-3.3.6"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/glm-0.9.9.8"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/Windows/imgui-1.85_glfw_gl3"
@@ -69,7 +69,7 @@ elseif (ANDROID)
 elseif (APPLE)
     SET(LIB_INCLUDE "/System/Library/Frameworks/OpenGL.framework"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/assimp-5.2.4"
-                    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glad-3.3"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glad-4.1"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glfw-3.3.6"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/glm-0.9.9.8"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../../Dependencies/Include/MacOS/imgui-1.85_glfw_gl3"
@@ -137,7 +137,7 @@ if (WIN32)
     if (DEBUG)
         LINK_LIBRARIES(shlwapi.lib
                        ${LIB_DEPENDENCIES_DIR}/assimp-5.2.4_d.lib
-                       ${LIB_DEPENDENCIES_DIR}/glad-3.3_d.lib
+                       ${LIB_DEPENDENCIES_DIR}/glad-4.6_d.lib
                        ${LIB_DEPENDENCIES_DIR}/glfw-3.3.6_d.lib
                        ${LIB_DEPENDENCIES_DIR}/imgui-1.85_glfw_gl3_d.lib
                        ${LIB_DEPENDENCIES_DIR}/libnoise-1.0.0_d.lib
@@ -148,7 +148,7 @@ if (WIN32)
     else ()
         LINK_LIBRARIES(shlwapi.lib
                        ${LIB_DEPENDENCIES_DIR}/assimp-5.2.4.lib
-                       ${LIB_DEPENDENCIES_DIR}/glad-3.3.lib
+                       ${LIB_DEPENDENCIES_DIR}/glad-4.6.lib
                        ${LIB_DEPENDENCIES_DIR}/glfw-3.3.6.lib
                        ${LIB_DEPENDENCIES_DIR}/imgui-1.85_glfw_gl3.lib
                        ${LIB_DEPENDENCIES_DIR}/libnoise-1.0.0.lib
@@ -173,7 +173,7 @@ elseif (APPLE)
 
     if (DEBUG)
         LINK_LIBRARIES(${LIB_DEPENDENCIES_DIR}/libassimp-5.2.4_d.a
-                       ${LIB_DEPENDENCIES_DIR}/libglad-3.3_d.a
+                       ${LIB_DEPENDENCIES_DIR}/libglad-4.1_d.a
                        ${LIB_DEPENDENCIES_DIR}/libglfw-3.3.6_d.a
                        "-Wl,-all_load ${LIB_DEPENDENCIES_DIR}/libimgui-1.85_glfw_gl3_d.a -Wl"
                        ${LIB_DEPENDENCIES_DIR}/libnoise-1.0.0_d.a
@@ -183,7 +183,7 @@ elseif (APPLE)
                        ${LIB_PLUGINS_DIR}/libLostPeterFoundation_d.dylib)
     else ()
         LINK_LIBRARIES(${LIB_DEPENDENCIES_DIR}/libassimp-5.2.4.a
-                       ${LIB_DEPENDENCIES_DIR}/libglad-3.3.a
+                       ${LIB_DEPENDENCIES_DIR}/libglad-4.1.a
                        ${LIB_DEPENDENCIES_DIR}/libglfw-3.3.6.a
                        "-Wl,-all_load ${LIB_DEPENDENCIES_DIR}/libimgui-1.85_glfw_gl3.a -Wl"
                        ${LIB_DEPENDENCIES_DIR}/libnoise-1.0.0.a

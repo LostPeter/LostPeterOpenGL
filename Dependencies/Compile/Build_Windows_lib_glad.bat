@@ -10,13 +10,15 @@
 @REM #****************************************************************************/
 
 @echo off
-set debug=%1
-set rebuild=%2
+set version=%1
+set debug=%2
+set rebuild=%3
 
+echo %version%
 echo %debug%
 echo %rebuild%
 
-set name="glad-3.3"
+set name="glad-"%version%
 if "%debug%" == "debug" (
     set name_project=%name%"_d"
     set name_lib=%name%"_d.lib"

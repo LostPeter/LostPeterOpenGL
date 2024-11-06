@@ -23,11 +23,20 @@ namespace LostPeterOpenGL
         virtual ~GLShader();
 
     public:
-        
+        FShaderType typeShader;
+        String pathFile;
+
+        uint32 nShaderID;
+
 
     public:
         void Destroy();
-        bool Init();
+        bool Init(FShaderType type, const String& path);
+
+    public:
+
+
+    public:
 
 
     };

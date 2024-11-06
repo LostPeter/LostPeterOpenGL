@@ -15,4 +15,4 @@ folder_shader=${2}
 folderSrc="./glsl/sample"
 folderDst="../Assets/Shader"
 
-cp -rf $folderSrc"/"$folder_shader"/"$name_shader $folderDst"/"$folder_shader
+cp -rf $folderSrc/$folder_shader/$name_shader $folderDst/$folder_shader/$name_shader.spv

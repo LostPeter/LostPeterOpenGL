@@ -17,8 +17,16 @@ mkdir -p $dirDst
 rm -rf $dirDst"/Common"
 rm -rf $dirDst"/MacOS"
 
-cp -pr $dirSrc"/Common" $dirDst
-cp -pr $dirSrc"/MacOS" $dirDst
+mkdir -p $dirDst"/Common"
+mkdir -p $dirDst"/MacOS"
+
+function compile_shader() {
+    for file in `ls $1`
+    do 
+        echo $1/$file
+        ./Build_MacOS_Shader_GLSL.sh $file $2
+    done
+}
 
 function read_dir() {
     for file in `ls $1`
@@ -32,8 +40,16 @@ function read_dir() {
 }
 
 
-echo "************** Shader Copy ********************************************"
+echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
+{
+    compile_shader $dirSrc/Common Common
+    compile_shader $dirSrc/MacOS MacOS
+}
+echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
+
+
+echo "************** Shader Copy ****************************************************"
 {
     read_dir $dirDst
 }
-echo "************** Shader Copy ********************************************"
+echo "************** Shader Copy ****************************************************"

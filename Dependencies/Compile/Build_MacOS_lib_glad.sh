@@ -9,10 +9,11 @@
 # This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 #****************************************************************************/
 
-debug=${1}
-rebuild=${2}
+version=${1}
+debug=${2}
+rebuild=${3}
 
-name=glad-3.3
+name=glad-$version
 if [ "$debug" == "debug" ]; then
     name_project=$name"_d"
     name_lib="lib"$name"_d.a"

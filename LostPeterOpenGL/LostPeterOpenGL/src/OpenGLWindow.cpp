@@ -27,6 +27,7 @@ namespace LostPeterOpenGL
     
 
     /////////////////////////// OpenGLWindow //////////////////////
+    const String OpenGLWindow::c_strShaderProgram = "ShaderProgram";
     OpenGLWindow::OpenGLWindow(int width, int height, String name)
         : OpenGLBase(width, height, name)
 
@@ -40,8 +41,10 @@ namespace LostPeterOpenGL
         , pBufferVertex(nullptr)
         , pBufferVertexIndex(nullptr)
 
-        , typeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
-
+        , poTypeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
+        , poShaderVertex(nullptr)
+        , poShaderFragment(nullptr)
+        , poShaderProgram(nullptr)
 
         , isFrameBufferResized(false)
 
@@ -750,6 +753,18 @@ namespace LostPeterOpenGL
                 //2> loadTexture
                 loadTexture();
 
+                //3> createConstBuffers
+                createConstBuffers();
+
+                //4> createCustomBeforePipeline
+                createCustomBeforePipeline();
+
+                //5> createGraphicsPipeline
+                createGraphicsPipeline();
+
+                //6> createComputePipeline
+                createComputePipeline();
+
 
             }
             F_LogInfo("*****<2-1> OpenGLWindow::loadGeometry finish *****");
@@ -768,7 +783,7 @@ namespace LostPeterOpenGL
                         this->poIndexBuffer_Data != nullptr)
                     {
                         this->pBufferVertexIndex = createBufferVertexIndex("VertexIndex-" + this->nameTitle,
-                                                                           this->typeVertex,
+                                                                           this->poTypeVertex,
                                                                            this->poVertexBuffer_Size,
                                                                            this->poVertexBuffer_Data,
                                                                            false,
@@ -776,13 +791,12 @@ namespace LostPeterOpenGL
                                                                            this->poIndexBuffer_Data,
                                                                            false);
                     }
-
                     //3> createBufferVertex
-                    if (this->poVertexBuffer_Size > 0 &&
-                        this->poVertexBuffer_Data != nullptr)
+                    else if (this->poVertexBuffer_Size > 0 &&
+                             this->poVertexBuffer_Data != nullptr)
                     {
                         this->pBufferVertex = createBufferVertex("Vertex-" + this->nameTitle,
-                                                                 this->typeVertex,
+                                                                 this->poTypeVertex,
                                                                  this->poVertexBuffer_Size, 
                                                                  this->poVertexBuffer_Data, 
                                                                  false);
@@ -792,7 +806,20 @@ namespace LostPeterOpenGL
             }
                 void OpenGLWindow::loadModel()
                 {
-
+                    F_LogInfo("**<2-1-1-1> OpenGLWindow::loadModel start **");
+                    {
+                        //1> model 
+                        if (!this->cfg_model_Path.empty())
+                        {
+                            loadModel_Default();
+                        }
+                        //2> model user
+                        else
+                        {
+                            loadModel_Custom();
+                        }
+                    }
+                    F_LogInfo("**<2-1-1-1> OpenGLWindow::loadModel finish **");
                 }
                     void OpenGLWindow::loadModel_Default()
                     {
@@ -987,7 +1014,15 @@ namespace LostPeterOpenGL
 
             void OpenGLWindow::loadTexture()
             {
+                F_LogInfo("**<2-1-2> OpenGLWindow::loadTexture start **");
+                {
+                    //1> Texture Default 
+                    loadTexture_Default();
 
+                    //2> Texture Custom
+                    loadTexture_Custom();
+                }
+                F_LogInfo("**<2-1-2> OpenGLWindow::loadTexture finish **");
             }
                 void OpenGLWindow::loadTexture_Default()
                 {
@@ -1032,10 +1067,38 @@ namespace LostPeterOpenGL
 
                 }
 
-            GLShader* OpenGLWindow::createShader()
+            GLShader* OpenGLWindow::createShader(const String& nameShader, FShaderType typeShader, const String& pathFile)
             {
-                
-                return nullptr;
+                GLShader* pShader = new GLShader(nameShader);
+                if (!pShader->Init(typeShader, pathFile))
+                {
+                    F_LogError("*********************** OpenGLWindow::createShader failed, name: [%s], path: [%s] !", nameShader.c_str(), pathFile.c_str());
+                    return nullptr;
+                }
+                return pShader;
+            }
+            String OpenGLWindow::getShaderPathRelative(const String& nameShader, ShaderSortType type)
+            {
+                String pathRelative = "Assets/Shader/";
+                if (type == ShaderSort_Common)
+                {
+                    pathRelative += "Common/";
+                } 
+                else
+                {
+                #if F_PLATFORM == F_PLATFORM_MAC
+                    pathRelative += "MacOS/";
+                #else
+                    pathRelative += "Windows/";
+                #endif
+                }
+                pathRelative += nameShader;
+                return pathRelative;
+            }
+            String OpenGLWindow::getShaderPath(const String& nameShader, ShaderSortType type)
+            {
+                String pathRelative = getShaderPathRelative(nameShader, type);
+                return GetAssetFullPath(pathRelative);
             }
 
             bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID)
@@ -1045,10 +1108,33 @@ namespace LostPeterOpenGL
             }
             bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID)
             {
+                if (pathFile.empty())
+                    return false;
+
+                CharVector code;
+                if (!FUtil::LoadAssetFileContent(pathFile.c_str(), code, true))
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLShader failed, path: [%s] !", pathFile.c_str());
+                    return false;
+                }
+                if (code.size() <= 0)
+                {
+                    return false;
+                }
+                const char* pCode = code.data();
+
                 GLenum shaderType = Util_Transform2GLShaderType(typeShader);
                 nShaderID = glCreateShader(shaderType);
 
-                
+                glShaderSource(nShaderID, 1, &pCode, nullptr);
+                glCompileShader(nShaderID);
+                if (checkGLShaderCompileErrors(nShaderID, strTypeShader))
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLShader: Failed to create shader, name: [%s], type: [%s], path: [%s] !", nameShader.c_str(), strTypeShader.c_str(), pathFile.c_str());
+                    return false;
+                }
+                F_LogInfo("OpenGLWindow::createGLShader success, id: [%u], type: [%s], name: [%s], path: [%s] !", nShaderID, strTypeShader.c_str(), nameShader.c_str(), pathFile.c_str());
+
                 return true;
             }
             void OpenGLWindow::destroyGLShader(uint32 nShaderID)
@@ -1059,21 +1145,124 @@ namespace LostPeterOpenGL
                 }
             }
 
+            GLShaderProgram* OpenGLWindow::createShaderProgram(const String& nameShaderProgram,
+                                                               GLShader* pShaderVertex,
+                                                               GLShader* pShaderTessellationControl,
+                                                               GLShader* pShaderTessellationEvaluation,
+                                                               GLShader* pShaderGeometry,
+                                                               GLShader* pShaderFragment)
+            {
+                GLShaderProgram* pShaderProgram = new GLShaderProgram(nameShaderProgram);
+                if (!pShaderProgram->Init(pShaderVertex, 
+                                          pShaderTessellationControl,
+                                          pShaderTessellationEvaluation,
+                                          pShaderGeometry,
+                                          pShaderFragment))
+                {
+                    F_LogError("*********************** OpenGLWindow::createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
+                    return nullptr;
+                }
+                return pShaderProgram;
+            }
+            GLShaderProgram* OpenGLWindow::createShaderProgram(const String& nameShaderProgram,
+                                                               GLShader* pShaderCompute)
+            {
+                GLShaderProgram* pShaderProgram = new GLShaderProgram(nameShaderProgram);
+                if (!pShaderProgram->Init(pShaderCompute))
+                {
+                    F_LogError("*********************** OpenGLWindow::createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
+                    return nullptr;
+                }
+                return pShaderProgram;
+            }
+
+            uint32 OpenGLWindow::createGLShaderProgram()
+            {
+                uint32 nShaderComputeID = glCreateProgram();
+                if (nShaderComputeID <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLShaderProgram: Failed to create shader program !");
+                    return 0;
+                }
+                return nShaderComputeID;
+            }
             bool OpenGLWindow::createGLShaderProgram(uint32 nShaderVertexID,
                                                      uint32 nShaderTessellationControlID,
                                                      uint32 nShaderTessellationEvaluationID,
                                                      uint32 nShaderGeometryID,
-                                                     uint32 nShaderFragmentID)
+                                                     uint32 nShaderFragmentID,
+                                                     uint32& nShaderProgramID)
             {
-                
-                return true;
-            }
-            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderComputeID)
-            {
-                
+                if (nShaderVertexID <= 0 && nShaderFragmentID <= 0)
+                    return false;
+                nShaderProgramID = createGLShaderProgram();
+                if (nShaderProgramID <= 0)
+                    return false;
+
+                //Shader Vertex
+                if (nShaderVertexID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderVertexID);
+                }
+                //Shader Tessellation Control
+                if (nShaderTessellationControlID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderTessellationControlID);
+                }
+                //Shader Tessellation Evaluation
+                if (nShaderTessellationEvaluationID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderTessellationEvaluationID);
+                }
+                //Shader Geometry
+                if (nShaderGeometryID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderGeometryID);
+                }
+                //Shader Fragment
+                if (nShaderFragmentID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderFragmentID);
+                }
+
+                glLinkProgram(nShaderProgramID);
+                if (checkGLShaderCompileErrors(nShaderProgramID, c_strShaderProgram))
+                {
+                    return false;
+                }
 
                 return true;
             }
+            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderComputeID,
+                                                     uint32& nShaderProgramID)
+            {
+                if (nShaderComputeID <= 0)
+                    return false;
+                nShaderProgramID = createGLShaderProgram();
+                if (nShaderProgramID <= 0)
+                    return false;
+
+                //Shader Compute
+                if (nShaderComputeID > 0)
+                {
+                    glAttachShader(nShaderProgramID, nShaderComputeID);
+                }
+
+                glLinkProgram(nShaderProgramID);
+                if (checkGLShaderCompileErrors(nShaderProgramID, c_strShaderProgram))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            void OpenGLWindow::bindGLShaderProgram(uint32 nShaderProgramID)
+            {
+                if (nShaderProgramID > 0)
+                {
+                    glUseProgram(nShaderProgramID); 
+                }
+            }   
             void OpenGLWindow::destroyGLShaderProgram(uint32 nShaderProgramID)
             {
                 if (nShaderProgramID > 0)
@@ -1081,7 +1270,109 @@ namespace LostPeterOpenGL
                     glDeleteProgram(nShaderProgramID);
                 }
             }
+            bool OpenGLWindow::checkGLShaderCompileErrors(uint32 nShader, const String& type)
+            {
+                int32 nSuccess;
+                char infoLog[1024];
+                if (type != c_strShaderProgram)
+                {
+                    glGetShaderiv(nShader, GL_COMPILE_STATUS, &nSuccess);
+                    if (!nSuccess)
+                    {
+                        glGetShaderInfoLog(nShader, 1024, NULL, infoLog);
+                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), infoLog);
+                        return true;
+                    }
+                }
+                else
+                {
+                    glGetProgramiv(nShader, GL_LINK_STATUS, &nSuccess);
+                    if (!nSuccess)
+                    {
+                        glGetProgramInfoLog(nShader, 1024, NULL, infoLog);
+                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), infoLog);
+                        return true;
+                    }
+                }
+                return false;
+            }   
             
+
+            void OpenGLWindow::createCustomBeforePipeline()
+            {
+                F_LogInfo("**<2-1-4> OpenGLWindow::createCustomBeforePipeline finish **");
+            }
+            void OpenGLWindow::createGraphicsPipeline()
+            {
+                F_LogInfo("**<2-1-5> OpenGLWindow::createGraphicsPipeline start **");
+                {
+                    //1> createGraphicsPipeline_Default
+                    createGraphicsPipeline_Default();
+                    F_LogInfo("<2-1-5-1> OpenGLWindow::createGraphicsPipeline: createGraphicsPipeline_Default finish !");
+
+                    //2> createGraphicsPipeline_Custom
+                    createGraphicsPipeline_Custom();
+                    F_LogInfo("<2-1-5-2> OpenGLWindow::createGraphicsPipeline: createGraphicsPipeline_Custom finish !");
+                }
+                F_LogInfo("**<2-1-5> OpenGLWindow::createGraphicsPipeline finish **");
+            }
+                void OpenGLWindow::createGraphicsPipeline_Default()
+                {
+                    if (this->cfg_shaderVertex_Path.empty() ||
+                        this->cfg_shaderFragment_Path.empty())
+                    {
+                        return;
+                    }
+
+                    //1> Shader
+                    String nameVertexShader;
+                    String namePathBase;
+                    FUtilString::SplitFileName(this->cfg_shaderVertex_Path, nameVertexShader, namePathBase);
+                    this->poShaderVertex = createShader(nameVertexShader, F_Shader_Vertex, this->cfg_shaderVertex_Path);
+                    if (this->poShaderVertex == nullptr)
+                    {
+                        String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader vertex: " + this->cfg_shaderVertex_Path;
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+                    
+                    String nameFragmentShader;
+                    FUtilString::SplitFileName(this->cfg_shaderFragment_Path, nameFragmentShader, namePathBase);
+                    this->poShaderFragment = createShader(nameFragmentShader, F_Shader_Fragment, this->cfg_shaderFragment_Path);
+                    if (this->poShaderFragment == nullptr)
+                    {
+                        String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader fragment: " + this->cfg_shaderFragment_Path;
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+                    
+                }
+                void OpenGLWindow::createGraphicsPipeline_Custom()
+                {
+
+                }
+
+            void OpenGLWindow::createComputePipeline()
+            {
+                F_LogInfo("**<2-1-6> OpenGLWindow::createComputePipeline start **");
+                {
+                    //1> createComputePipeline_Default
+                    createComputePipeline_Default();
+
+                    //2> createComputePipeline_Custom
+                    createComputePipeline_Custom();
+                }
+                F_LogInfo("**<2-1-6> OpenGLWindow::createComputePipeline finish **");
+            }
+                void OpenGLWindow::createComputePipeline_Default()
+                {
+
+                }
+                void OpenGLWindow::createComputePipeline_Custom()
+                {
+
+                }
+
 
     void OpenGLWindow::resizeWindow(int w, int h, bool force)
     {
@@ -1430,12 +1721,32 @@ namespace LostPeterOpenGL
         {
             F_LogInfo("----- OpenGLWindow::cleanupSwapChain start -----");
             {
+                //0> Custom/Editor/Terrain/Default
+                cleanupSwapChain_Custom();
+                cleanupSwapChain_Editor();
+                cleanupSwapChain_Default();
+
+                //1> DepthImage/ColorImage    
+
+                //2> SwapChainFrameBuffers
+
+                //3> CommandBuffers
+
+
 
             }
             F_LogInfo("----- OpenGLWindow::cleanupSwapChain finish -----");
         }
             void OpenGLWindow::cleanupSwapChain_Default()
             {
+                size_t count = 0;
+
+                //1> ConstBuffers
+
+                //2> Pipelines
+                F_DELETE(this->poShaderProgram)
+                F_DELETE(this->poShaderVertex)
+                F_DELETE(this->poShaderFragment)
 
             }
             void OpenGLWindow::cleanupSwapChain_Editor()

@@ -16,12 +16,41 @@ namespace LostPeterOpenGL
 {
     GLShader::GLShader(const String& nameShader)
         : Base(nameShader)
+        , typeShader(F_Shader_Vertex)
+        , pathFile("")
+        , nShaderID(0)
     {
 
     }
     GLShader::~GLShader()
     {
-       
+        Destroy();
+    }
+
+    void GLShader::Destroy()
+    {
+        if (this->nShaderID > 0)
+        {
+            Base::GetWindowPtr()->destroyGLShader(this->nShaderID);
+        }
+        this->nShaderID = 0;
+    }
+
+    bool GLShader::Init(FShaderType type, const String& path)
+    {   
+        this->typeShader = type;
+        this->pathFile = path;
+
+        if (!Base::GetWindowPtr()->createGLShader(GetName(),
+                                                  type,
+                                                  path,
+                                                  this->nShaderID))
+        {
+            F_LogError("*********************** GLShader::Init: createGLShader failed, name: [%s], type: [%d], path: [%s] !", GetName().c_str(), type, path.c_str());
+            return false;
+        }
+        
+        return true;
     }
 
 }; //LostPeterOpenGL

@@ -30,7 +30,9 @@ namespace LostPeterOpenGL
 
 
     public:
+        static const String c_strShaderProgram;
 
+    public:
 
         FSizeI poOffset;
         FSizeI poExtent;
@@ -51,8 +53,10 @@ namespace LostPeterOpenGL
         GLBufferVertexIndex* pBufferVertexIndex;
         FMatrix4 poMatWorld;
 
-        FMeshVertexType typeVertex;
-
+        FMeshVertexType poTypeVertex;
+        GLShader* poShaderVertex;
+        GLShader* poShaderFragment;
+        GLShaderProgram* poShaderProgram;
 
         bool isFrameBufferResized;
 
@@ -317,20 +321,48 @@ namespace LostPeterOpenGL
                         virtual void buildInstanceCB();
                     virtual void createCustomCB();
 
-                virtual GLShader* createShader();
+                virtual GLShader* createShader(const String& nameShader, FShaderType typeShader, const String& pathFile);
+                virtual String getShaderPathRelative(const String& nameShader, ShaderSortType type);
+                virtual String getShaderPath(const String& nameShader, ShaderSortType type);
 
                 virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID);
                 virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID);
                 virtual void destroyGLShader(uint32 nShaderID);
-
                 
+
+                virtual GLShaderProgram* createShaderProgram(const String& nameShaderProgram,
+                                                             GLShader* pShaderVertex,
+                                                             GLShader* pShaderTessellationControl,
+                                                             GLShader* pShaderTessellationEvaluation,
+                                                             GLShader* pShaderGeometry,
+                                                             GLShader* pShaderFragment);
+                virtual GLShaderProgram* createShaderProgram(const String& nameShaderProgram,
+                                                             GLShader* pShaderCompute);
+
+                virtual uint32 createGLShaderProgram();
                 virtual bool createGLShaderProgram(uint32 nShaderVertexID,
                                                    uint32 nShaderTessellationControlID,
                                                    uint32 nShaderTessellationEvaluationID,
                                                    uint32 nShaderGeometryID,
-                                                   uint32 nShaderFragmentID);
-                virtual bool createGLShaderProgram(uint32 nShaderComputeID);
+                                                   uint32 nShaderFragmentID,
+                                                   uint32& nShaderProgramID);
+                virtual bool createGLShaderProgram(uint32 nShaderComputeID,
+                                                   uint32& nShaderProgramID);
+                virtual void bindGLShaderProgram(uint32 nShaderProgramID);
                 virtual void destroyGLShaderProgram(uint32 nShaderProgramID);
+                virtual bool checkGLShaderCompileErrors(uint32 nShader, const String& type);    
+
+
+                virtual void createCustomBeforePipeline();
+                virtual void createGraphicsPipeline();
+                    virtual void createGraphicsPipeline_Default();
+                    virtual void createGraphicsPipeline_Custom();    
+
+
+                virtual void createComputePipeline();
+                    virtual void createComputePipeline_Default();
+                    virtual void createComputePipeline_Custom();
+
 
         //Resize
         virtual void resizeWindow(int w, int h, bool force);

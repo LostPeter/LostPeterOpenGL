@@ -9,14 +9,14 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 450
+#version 330 core
 
-layout(binding = 4) uniform sampler2D texSampler;
+layout (location = 0) in vec4 fragColor;
+layout (location = 1) in vec2 fragTexCoord;
 
-layout(location = 0) in vec4 fragColor;
-layout(location = 1) in vec2 fragTexCoord;
+layout (binding = 4) uniform sampler2D texSampler;
 
-layout(location = 0) out vec4 outColor;
+out vec4 outColor;
 
 void main() 
 {

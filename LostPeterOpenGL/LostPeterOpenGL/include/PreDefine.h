@@ -250,6 +250,17 @@ namespace LostPeterOpenGL
     };
     
 
+    enum ShaderSortType
+    {
+        ShaderSort_Common = 0,      //0: Common
+        ShaderSort_Platform,        //1: Platform
+
+    };
+    openglExport const String& Util_GetShaderSortTypeName(ShaderSortType type);
+    openglExport const String& Util_GetShaderSortTypeName(int type);
+    openglExport ShaderSortType Util_ParseShaderSortType(const String& strName);
+
+
 ////////////////////////////// OpenGL //////////////////////////////
 
     openglExport void Util_CreateAttributeDescriptions(FMeshVertexType type);
@@ -322,6 +333,7 @@ namespace LostPeterOpenGL
     class GLFrameBuffer;
     class GLRenderPass;
     class GLShader;
+    class GLShaderProgram;
 
     typedef std::vector<GLBuffer*> GLBufferPtrVector;
     typedef std::map<String, GLBuffer*> GLBufferPtrMap;
@@ -339,7 +351,9 @@ namespace LostPeterOpenGL
     typedef std::vector<GLShader*> GLShaderPtrVector;
     typedef std::map<String, GLShader*> GLShaderPtrMap;
     typedef std::map<int32, GLShader*> GLShaderPtrIDMap;
-
+    typedef std::vector<GLShaderProgram*> GLShaderProgramPtrVector;
+    typedef std::map<String, GLShaderProgram*> GLShaderProgramPtrMap;
+    typedef std::map<int32, GLShaderProgram*> GLShaderProgramPtrIDMap;
 
 
     class Base;

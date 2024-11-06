@@ -9,14 +9,14 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 450
+#version 330 core
 
-layout(location = 0) in vec2 inPosition;
-layout(location = 1) in vec4 inColor;
-layout(location = 2) in vec2 inTexCoord;
+layout (location = 0) in vec2 inPosition;
+layout (location = 1) in vec4 inColor;
+layout (location = 2) in vec2 inTexCoord;
 
-layout(location = 0) out vec4 fragColor;
-layout(location = 1) out vec2 fragTexCoord;
+out vec4 fragColor;
+out vec2 fragTexCoord;
 
 void main() 
 {

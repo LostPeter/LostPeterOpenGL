@@ -27,7 +27,7 @@
 #include "GLFrameBuffer.h"
 #include "GLRenderPass.h"
 #include "GLShader.h"
-
+#include "GLShaderProgram.h"
 
 #include "Base.h"
 #include "EditorBase.h"

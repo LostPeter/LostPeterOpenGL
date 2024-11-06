@@ -9,13 +9,13 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 450
+#version 330 core
 
-layout(location = 0) in vec4 fragColor;
+in vec4 inColor;
 
-layout(location = 0) out vec4 outColor;
+out vec4 outColor;
 
 void main()
 {
-    outColor = vec4(fragColor.xyz, 1.0);
+    outColor = vec4(inColor.xyz, 1.0);
 }
