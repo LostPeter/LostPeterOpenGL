@@ -56,6 +56,10 @@ namespace LostPeterOpenGL
         , cfg_isImgui(false)
         , cfg_isWireFrame(false)
 
+
+        , cfg_glPrimitiveTopology(GL_TRIANGLES)
+
+
         , cfg_cameraPos(0.0f, 0.0f, -5.0f)
         , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
         , cfg_cameraUp(0.0f, 1.0f, 0.0f)
@@ -996,6 +1000,13 @@ namespace LostPeterOpenGL
                     glBindBuffer(GL_ARRAY_BUFFER, 0); 
                     glBindVertexArray(0); 
                 }       
+                void OpenGLWindow::bindGLVertexArray(uint32 nVAO)
+                {
+                    if (nVAO > 0)
+                    {
+                        glBindVertexArray(nVAO);
+                    }
+                }
                 void OpenGLWindow::destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO)
                 {
                     if (nVAO > 0)
@@ -1162,6 +1173,8 @@ namespace LostPeterOpenGL
                     F_LogError("*********************** OpenGLWindow::createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
                     return nullptr;
                 }
+                F_LogInfo("OpenGLWindow::createShaderProgram graphic success, id: [%u], name: [%s] !", pShaderProgram->nShaderProgramID, nameShaderProgram.c_str());
+
                 return pShaderProgram;
             }
             GLShaderProgram* OpenGLWindow::createShaderProgram(const String& nameShaderProgram,
@@ -1173,6 +1186,8 @@ namespace LostPeterOpenGL
                     F_LogError("*********************** OpenGLWindow::createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
                     return nullptr;
                 }
+                F_LogInfo("OpenGLWindow::createShaderProgram compute success, id: [%u], name: [%s] !", pShaderProgram->nShaderProgramID, nameShaderProgram.c_str());
+
                 return pShaderProgram;
             }
 
@@ -1345,7 +1360,22 @@ namespace LostPeterOpenGL
                         F_LogError(msg.c_str());
                         throw std::runtime_error(msg);
                     }
-                    
+
+                    //2> Shader Program
+                    String nameShaderProgram = "ShaderProgram-Default";
+                    this->poShaderProgram = createShaderProgram(nameShaderProgram,
+                                                                this->poShaderVertex,
+                                                                nullptr,
+                                                                nullptr,
+                                                                nullptr,
+                                                                this->poShaderFragment);
+                    if (this->poShaderProgram == nullptr)
+                    {
+                        String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader program: " + nameShaderProgram;
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+
                 }
                 void OpenGLWindow::createGraphicsPipeline_Custom()
                 {
@@ -1594,7 +1624,21 @@ namespace LostPeterOpenGL
                     }
                         void OpenGLWindow::drawMeshDefault()
                         {
+                            if (this->poShaderProgram == nullptr)
+                                return;
 
+                            this->poShaderProgram->BindProgram();
+                            Util_EnableAttributeDescriptions(this->poTypeVertex, true);
+                            if (this->pBufferVertex != nullptr)
+                            {
+                                this->pBufferVertex->BindVertexArray();
+                                draw(this->cfg_glPrimitiveTopology, 0, this->poVertexCount);
+                            }
+                            else if (this->pBufferVertexIndex != nullptr)
+                            {   
+                                this->pBufferVertexIndex->BindVertexArray();
+                                drawIndexed(this->cfg_glPrimitiveTopology, this->poVertexCount, GL_UNSIGNED_INT, 0);
+                            }
                         }
                         void OpenGLWindow::drawMeshTerrain()
                         {
@@ -1639,7 +1683,14 @@ namespace LostPeterOpenGL
                     glClear(GL_COLOR_BUFFER_BIT);
                 }
 
-
+                    void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
+                    {
+                        glDrawArrays(mode, first, count);
+                    }
+                    void OpenGLWindow::drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices)
+                    {
+                        glDrawElements(mode, count, type, indices);
+                    }
 
                 void OpenGLWindow::endRenderPass()
                 {

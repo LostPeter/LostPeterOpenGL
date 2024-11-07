@@ -264,6 +264,7 @@ namespace LostPeterOpenGL
 ////////////////////////////// OpenGL //////////////////////////////
 
     openglExport void Util_CreateAttributeDescriptions(FMeshVertexType type);
+    openglExport void Util_EnableAttributeDescriptions(FMeshVertexType type, bool enable);
 
     openglExport GLenum Util_Transform2GLShaderType(FShaderType type);
     

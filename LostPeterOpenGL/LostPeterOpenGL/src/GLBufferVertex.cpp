@@ -91,4 +91,9 @@ namespace LostPeterOpenGL
                                                    this->nVBO);
     }
 
+    void GLBufferVertex::BindVertexArray()
+    {
+        Base::GetWindowPtr()->bindGLVertexArray(this->nVAO);
+    }
+
 }; //LostPeterOpenGL

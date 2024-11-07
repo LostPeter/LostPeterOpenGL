@@ -54,6 +54,9 @@ namespace LostPeterOpenGL
                             uint8* pBuf_Index,
                             bool isDelete_Index);
 
+    public:
+        void BindVertexArray();
+
     protected:
         virtual void destroyBuffer();
     };

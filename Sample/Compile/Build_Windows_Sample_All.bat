@@ -14,3 +14,5 @@ set rebuild=%2
 
 call ./Build_Windows_Sample.bat opengl_000_window %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_001_triangle %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_002_imgui %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_003_texture %debug% %rebuild%

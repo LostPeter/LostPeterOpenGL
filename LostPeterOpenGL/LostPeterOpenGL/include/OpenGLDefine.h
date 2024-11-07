@@ -27,11 +27,25 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos2
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(FVertex_Pos2Color4), (void*)offsetof(FVertex_Pos2Color4, pos));
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4), (void*)offsetof(Vertex_Pos2Color4, pos));
             //Color4
+            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(FVertex_Pos2Color4), (void*)offsetof(FVertex_Pos2Color4, color));
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4), (void*)offsetof(Vertex_Pos2Color4, color));
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+            }
         }
     };
 
@@ -44,11 +58,25 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4), (void*)offsetof(Vertex_Pos3Color4, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4), (void*)offsetof(Vertex_Pos3Color4, color));
+            glEnableVertexAttribArray(1);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+            }
         }
     };
 
@@ -61,11 +89,25 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3), (void*)offsetof(Vertex_Pos3Normal3, pos));
+            glEnableVertexAttribArray(0);
             //Normal3
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3), (void*)offsetof(Vertex_Pos3Normal3, normal));
+            glEnableVertexAttribArray(1);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+            }
         }
     };
 
@@ -78,14 +120,30 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Normal3
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, normal));
+            glEnableVertexAttribArray(1);
             //Tex2
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tex2), (void*)offsetof(Vertex_Pos3Normal3Tex2, texCoord));
+            glEnableVertexAttribArray(2);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+            }
         }
     };
 
@@ -98,14 +156,30 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos2
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, color));
+            glEnableVertexAttribArray(1);
             //Tex2
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos2Color4Tex2), (void*)offsetof(Vertex_Pos2Color4Tex2, texCoord));
+            glEnableVertexAttribArray(2);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+            }
         }
     };
 
@@ -118,14 +192,30 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, color));
+            glEnableVertexAttribArray(1);
             //Tex2
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Tex2), (void*)offsetof(Vertex_Pos3Color4Tex2, texCoord));
+            glEnableVertexAttribArray(2);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+            }
         }
     };
 
@@ -138,17 +228,35 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, color));
+            glEnableVertexAttribArray(1);
             //Normal3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, normal));
+            glEnableVertexAttribArray(2);
             //Tex2
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tex2, texCoord));
+            glEnableVertexAttribArray(3);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+            }
         }
     };
 
@@ -161,17 +269,35 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, color));
+            glEnableVertexAttribArray(1);
             //Normal3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, normal));
+            glEnableVertexAttribArray(2);
             //Tex4
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tex4, texCoord));
+            glEnableVertexAttribArray(3);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+            }
         }
     };
 
@@ -184,20 +310,40 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, color));
+            glEnableVertexAttribArray(1);
             //Normal3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, normal));
+            glEnableVertexAttribArray(2);
             //Tangent3
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, tangent));
+            glEnableVertexAttribArray(3);
             //Tex2
-            glEnableVertexAttribArray(4);
             glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex2, texCoord));
+            glEnableVertexAttribArray(4);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+                glDisableVertexAttribArray(4);
+            }
         }
     };
 
@@ -210,20 +356,40 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, color));
+            glEnableVertexAttribArray(1);
             //Normal3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, normal));
+            glEnableVertexAttribArray(2);
             //Tangent3
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, tangent));
+            glEnableVertexAttribArray(3);
             //Tex4
-            glEnableVertexAttribArray(4);
             glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3Tex4), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3Tex4, texCoord));
+            glEnableVertexAttribArray(4);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+                glDisableVertexAttribArray(4);
+            }
         }
     };
 
@@ -236,23 +402,45 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Normal3
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, normal));
+            glEnableVertexAttribArray(1);
             //Tangent3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, tangent));
+            glEnableVertexAttribArray(2);
             //BlendW
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, blendweight));
+            glEnableVertexAttribArray(3);
             //BlendI
-            glEnableVertexAttribArray(4);
             glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, blendindex));
+            glEnableVertexAttribArray(4);
             //Tex2
-            glEnableVertexAttribArray(5);
             glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Normal3Tangent3BlendWI8Tex2, texCoord));
+            glEnableVertexAttribArray(5);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+                glDisableVertexAttribArray(4);
+                glDisableVertexAttribArray(5);
+            }
         }
     };
 
@@ -265,26 +453,50 @@ namespace LostPeterOpenGL
         static void createAttributeDescriptions()
         {
             //Pos3
-            glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, pos));
+            glEnableVertexAttribArray(0);
             //Color4
-            glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, color));
+            glEnableVertexAttribArray(1);
             //Normal3
-            glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, normal));
+            glEnableVertexAttribArray(2);
             //Tangent3
-            glEnableVertexAttribArray(3);
             glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, tangent));
+            glEnableVertexAttribArray(3);
             //BlendW
-            glEnableVertexAttribArray(4);
             glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, blendweight));
+            glEnableVertexAttribArray(4);
             //BlendI
-            glEnableVertexAttribArray(5);
             glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, blendindex));
+            glEnableVertexAttribArray(5);
             //Tex2
-            glEnableVertexAttribArray(6);
             glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2), (void*)offsetof(Vertex_Pos3Color4Normal3Tangent3BlendWI8Tex2, texCoord));
+            glEnableVertexAttribArray(6);
+        }
+
+        static void enableAttributeDescriptions(bool enable)
+        {
+            if (enable)
+            {
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+                glEnableVertexAttribArray(6);
+            }
+            else
+            {
+                glDisableVertexAttribArray(0);
+                glDisableVertexAttribArray(1);
+                glDisableVertexAttribArray(2);
+                glDisableVertexAttribArray(3);
+                glDisableVertexAttribArray(4);
+                glDisableVertexAttribArray(5);
+                glDisableVertexAttribArray(6);
+            }
         }
     };
 

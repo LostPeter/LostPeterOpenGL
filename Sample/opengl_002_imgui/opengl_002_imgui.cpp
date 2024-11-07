@@ -2,7 +2,7 @@
 * LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 * 
 * Author:   LostPeter
-* Time:     2024-10-17
+* Time:     2024-11-07
 * Github:   https://github.com/LostPeter/LostPeterOpenGL
 * Document: https://www.zhihu.com/people/lostpeter/posts
 *
@@ -10,10 +10,10 @@
 ****************************************************************************/
 
 #include "PreInclude.h"
-#include "opengl_001_triangle.h"
+#include "opengl_002_imgui.h"
 
 
-OpenGL_001_Triangle::OpenGL_001_Triangle(int width, int height, String name)
+OpenGL_002_Imgui::OpenGL_002_Imgui(int width, int height, String name)
     : OpenGLWindow(width, height, name)
 {
     
@@ -22,7 +22,7 @@ OpenGL_001_Triangle::OpenGL_001_Triangle(int width, int height, String name)
     this->cfg_shaderFragment_Path = getShaderPathRelative("notrans_pos2_color4.frag.spv", ShaderSort_Common);
 }
 
-void OpenGL_001_Triangle::loadModel_Custom()
+void OpenGL_002_Imgui::loadModel_Custom()
 {
     //1> vertices
     this->vertices.push_back(FVertex_Pos2Color4(FVector2( 0.0f,  0.5f), FVector4(1.0f, 0.0f, 0.0f, 1.0f)));

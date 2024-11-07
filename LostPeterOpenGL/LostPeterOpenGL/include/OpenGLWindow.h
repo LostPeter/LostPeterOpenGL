@@ -68,6 +68,9 @@ namespace LostPeterOpenGL
         bool cfg_isMSAA;
         bool cfg_isImgui;
         bool cfg_isWireFrame;
+        
+        GLenum cfg_glPrimitiveTopology;
+        
 
 
         FVector3 cfg_cameraPos;
@@ -304,6 +307,7 @@ namespace LostPeterOpenGL
                                                            uint32 nVAO,
                                                            uint32 nVBO,
                                                            uint32 nVEO);
+                    virtual void bindGLVertexArray(uint32 nVAO);
                     virtual void destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO);
 
 
@@ -444,8 +448,8 @@ namespace LostPeterOpenGL
                                                  float depth,
                                                  uint32_t stencil);
                     
-
-
+                        virtual void draw(GLenum mode, GLint first, GLsizei count);
+                        virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
 
                     virtual void endRenderPass();
 

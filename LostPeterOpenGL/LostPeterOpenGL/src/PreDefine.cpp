@@ -156,6 +156,63 @@ namespace LostPeterOpenGL
         }
         F_Assert(false && "Util_CreateAttributeDescriptions: Wrong type !")
     }
+    void Util_EnableAttributeDescriptions(FMeshVertexType type, bool enable)
+    {
+        switch ((int)type)
+        {
+            case F_MeshVertex_Pos2Color4: 
+                {
+                    Vertex_Pos2Color4::enableAttributeDescriptions(enable); 
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4:
+                {
+                    Vertex_Pos3Color4::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Normal3:
+                {
+                    Vertex_Pos3Normal3::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Normal3Tex2:
+                {
+                    Vertex_Pos3Normal3Tex2::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos2Color4Tex2:
+                {
+                    Vertex_Pos2Color4Tex2::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4Tex2:
+                {
+                    Vertex_Pos3Color4Tex2::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4Normal3Tex2:
+                {
+                    Vertex_Pos3Color4Normal3Tex2::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4Normal3Tex4:
+                {
+                    Vertex_Pos3Color4Normal3Tex4::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4Normal3Tangent3Tex2:
+                {
+                    Vertex_Pos3Color4Normal3Tangent3Tex2::enableAttributeDescriptions(enable);
+                    return;
+                }
+            case F_MeshVertex_Pos3Color4Normal3Tangent3Tex4:
+                {
+                    Vertex_Pos3Color4Normal3Tangent3Tex4::enableAttributeDescriptions(enable);
+                    return;
+                }
+        }
+        F_Assert(false && "Util_EnableAttributeDescriptions: Wrong type !")
+    }
 
     GLenum Util_Transform2GLShaderType(FShaderType type)
     {

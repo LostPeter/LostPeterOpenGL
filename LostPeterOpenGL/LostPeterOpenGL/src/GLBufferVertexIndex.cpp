@@ -120,4 +120,9 @@ namespace LostPeterOpenGL
                                                         this->nVEO);
     }
 
+    void GLBufferVertexIndex::BindVertexArray()
+    {
+        Base::GetWindowPtr()->bindGLVertexArray(this->nVAO);
+    }
+
 }; //LostPeterOpenGL
