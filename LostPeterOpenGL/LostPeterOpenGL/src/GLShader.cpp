@@ -36,14 +36,15 @@ namespace LostPeterOpenGL
         this->nShaderID = 0;
     }
 
-    bool GLShader::Init(FShaderType type, const String& path)
+    bool GLShader::Init(const String& path,
+                        FShaderType type)
     {   
         this->typeShader = type;
         this->pathFile = path;
 
         if (!Base::GetWindowPtr()->createGLShader(GetName(),
-                                                  type,
                                                   path,
+                                                  type,
                                                   this->nShaderID))
         {
             F_LogError("*********************** GLShader::Init: createGLShader failed, name: [%s], type: [%d], path: [%s] !", GetName().c_str(), type, path.c_str());

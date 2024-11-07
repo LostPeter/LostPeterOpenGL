@@ -335,6 +335,7 @@ namespace LostPeterOpenGL
     class GLRenderPass;
     class GLShader;
     class GLShaderProgram;
+    class GLTexture;
 
     typedef std::vector<GLBuffer*> GLBufferPtrVector;
     typedef std::map<String, GLBuffer*> GLBufferPtrMap;
@@ -355,6 +356,9 @@ namespace LostPeterOpenGL
     typedef std::vector<GLShaderProgram*> GLShaderProgramPtrVector;
     typedef std::map<String, GLShaderProgram*> GLShaderProgramPtrMap;
     typedef std::map<int32, GLShaderProgram*> GLShaderProgramPtrIDMap;
+
+    typedef std::vector<GLTexture*> GLTexturePtrVector;
+    typedef std::map<String, GLTexture*> GLTexturePtrMap;
 
 
     class Base;

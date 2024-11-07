@@ -316,6 +316,21 @@ namespace LostPeterOpenGL
                     virtual void loadTexture_Custom();
 
 
+                    virtual bool createGLTexture(const String& nameTex,
+                                                 uint32_t width, 
+                                                 uint32_t height, 
+                                                 uint32_t depth, 
+                                                 uint32_t numArray,
+                                                 uint32_t mipMapCount, 
+                                                 FTextureType type, 
+                                                 bool isCubeMap,
+                                                 FMSAASampleCountType numSamples, 
+                                                 FPixelFormatType format, 
+                                                 bool isGraphicsComputeShared,
+                                                 uint32& nTextureID);
+                    virtual void destroyGLTexture(uint32 nTextureID);
+
+
                 virtual void createConstBuffers();
                     virtual void createObjectCB();
                         virtual void buildObjectCB();
@@ -325,12 +340,12 @@ namespace LostPeterOpenGL
                         virtual void buildInstanceCB();
                     virtual void createCustomCB();
 
-                virtual GLShader* createShader(const String& nameShader, FShaderType typeShader, const String& pathFile);
+                virtual GLShader* createShader(const String& nameShader, const String& pathFile, FShaderType typeShader);
                 virtual String getShaderPathRelative(const String& nameShader, ShaderSortType type);
                 virtual String getShaderPath(const String& nameShader, ShaderSortType type);
 
-                virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID);
-                virtual bool createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID);
+                virtual bool createGLShader(const String& nameShader, const String& pathFile, FShaderType typeShader, uint32& nShaderID);
+                virtual bool createGLShader(const String& nameShader, const String& strTypeShader, const String& pathFile, FShaderType typeShader, uint32& nShaderID);
                 virtual void destroyGLShader(uint32 nShaderID);
                 
 

@@ -2,36 +2,42 @@
 * LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 * 
 * Author:   LostPeter
-* Time:     2024-11-03
+* Time:     2024-11-07
 * Github:   https://github.com/LostPeter/LostPeterOpenGL
 * Document: https://www.zhihu.com/people/lostpeter/posts
 *
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#ifndef _GL_SHADER_H_
-#define _GL_SHADER_H_
+#ifndef _GL_TEXTURE_H_
+#define _GL_TEXTURE_H_
 
 #include "Base.h"
 
 namespace LostPeterOpenGL
 {
-    class openglExport GLShader : public Base
+    class openglExport GLTexture : public Base
     {
     public:
-        GLShader(const String& nameShader);
-        virtual ~GLShader();
+        GLTexture(const String& nameTexture);
+        virtual ~GLTexture();
 
     public:
-        FShaderType typeShader;
+        FTextureType typeTexture;
+        FTextureAddressingType typeTextureAddressing_S;
+        FTextureAddressingType typeTextureAddressing_T;
+        FTextureFilterType typeTextureFilter_Min;
+        FTextureFilterType typeTextureFilter_Mag;
+        FMSAASampleCountType typeMSAASampleCount;
+
         String pathFile;
 
-        uint32 nShaderID;
+        uint32 nTextureID;
 
     public:
         void Destroy();
         bool Init(const String& path,
-                  FShaderType type);
+                  FTextureType type);
 
     public:
         

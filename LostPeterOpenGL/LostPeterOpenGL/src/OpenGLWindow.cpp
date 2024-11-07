@@ -1044,6 +1044,33 @@ namespace LostPeterOpenGL
 
                 }
 
+                bool OpenGLWindow::createGLTexture(const String& nameTex,
+                                                   uint32_t width, 
+                                                   uint32_t height, 
+                                                   uint32_t depth, 
+                                                   uint32_t numArray,
+                                                   uint32_t mipMapCount, 
+                                                   FTextureType type, 
+                                                   bool isCubeMap,
+                                                   FMSAASampleCountType numSamples, 
+                                                   FPixelFormatType format, 
+                                                   bool isGraphicsComputeShared,
+                                                   uint32& nTextureID)
+                {
+                    glGenTextures(1, &nTextureID);
+
+
+                    return true;
+                }
+                void OpenGLWindow::destroyGLTexture(uint32 nTextureID)
+                {
+                    if (nTextureID > 0)
+                    {
+                        glDeleteTextures(1, &nTextureID);
+                    }
+                }
+
+
 
             void OpenGLWindow::createConstBuffers()
             {
@@ -1078,10 +1105,11 @@ namespace LostPeterOpenGL
 
                 }
 
-            GLShader* OpenGLWindow::createShader(const String& nameShader, FShaderType typeShader, const String& pathFile)
+            GLShader* OpenGLWindow::createShader(const String& nameShader, const String& pathFile, FShaderType typeShader)
             {
                 GLShader* pShader = new GLShader(nameShader);
-                if (!pShader->Init(typeShader, pathFile))
+                if (!pShader->Init(pathFile, 
+                                   typeShader))
                 {
                     F_LogError("*********************** OpenGLWindow::createShader failed, name: [%s], path: [%s] !", nameShader.c_str(), pathFile.c_str());
                     return nullptr;
@@ -1112,12 +1140,12 @@ namespace LostPeterOpenGL
                 return GetAssetFullPath(pathRelative);
             }
 
-            bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& pathFile, uint32& nShaderID)
+            bool OpenGLWindow::createGLShader(const String& nameShader, const String& pathFile, FShaderType typeShader, uint32& nShaderID)
             {
                 const String& strTypeShader = F_GetShaderTypeName(typeShader);
-                return createGLShader(nameShader, typeShader, strTypeShader, pathFile, nShaderID);
+                return createGLShader(nameShader, strTypeShader, pathFile, typeShader, nShaderID);
             }
-            bool OpenGLWindow::createGLShader(const String& nameShader, FShaderType typeShader, const String& strTypeShader, const String& pathFile, uint32& nShaderID)
+            bool OpenGLWindow::createGLShader(const String& nameShader, const String& strTypeShader, const String& pathFile, FShaderType typeShader, uint32& nShaderID)
             {
                 if (pathFile.empty())
                     return false;
@@ -1343,7 +1371,7 @@ namespace LostPeterOpenGL
                     String nameVertexShader;
                     String namePathBase;
                     FUtilString::SplitFileName(this->cfg_shaderVertex_Path, nameVertexShader, namePathBase);
-                    this->poShaderVertex = createShader(nameVertexShader, F_Shader_Vertex, this->cfg_shaderVertex_Path);
+                    this->poShaderVertex = createShader(nameVertexShader, this->cfg_shaderVertex_Path, F_Shader_Vertex);
                     if (this->poShaderVertex == nullptr)
                     {
                         String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader vertex: " + this->cfg_shaderVertex_Path;
@@ -1353,7 +1381,7 @@ namespace LostPeterOpenGL
                     
                     String nameFragmentShader;
                     FUtilString::SplitFileName(this->cfg_shaderFragment_Path, nameFragmentShader, namePathBase);
-                    this->poShaderFragment = createShader(nameFragmentShader, F_Shader_Fragment, this->cfg_shaderFragment_Path);
+                    this->poShaderFragment = createShader(nameFragmentShader, this->cfg_shaderFragment_Path, F_Shader_Fragment);
                     if (this->poShaderFragment == nullptr)
                     {
                         String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader fragment: " + this->cfg_shaderFragment_Path;
