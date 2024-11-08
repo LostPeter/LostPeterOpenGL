@@ -34,6 +34,9 @@ namespace LostPeterOpenGL
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, pBase->versionGL_Major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, pBase->versionGL_Minor);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        #if F_DEBUG == 1
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+        #endif
 
     #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

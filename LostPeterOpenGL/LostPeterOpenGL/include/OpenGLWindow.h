@@ -34,6 +34,8 @@ namespace LostPeterOpenGL
 
     public:
 
+        GLDebug* poDebug;
+
         FSizeI poOffset;
         FSizeI poExtent;
         FRectI poScissor;
@@ -190,6 +192,7 @@ namespace LostPeterOpenGL
         virtual void createPipeline();
             virtual void createWindowCallback();
             virtual void createDevice();
+                virtual void setUpDebugMessenger();
 
 
             virtual void createFeatureSupport();

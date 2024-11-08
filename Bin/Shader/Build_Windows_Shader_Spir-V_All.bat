@@ -11,44 +11,38 @@
 
 @echo off
 
+set debug=%1
+
 set name_folder=glsl
-set folderSrc=.\%name_folder%\sample
-set folderDst=..\Assets\Shader
+set folderSrc=.\%name_folder%
+set folderShader=..\Assets\Shader
+set folderInclude=.\%name_folder%
 
-if not exist %folderDst% (
-    mkdir %folderDst%
+if exist %folderShader% (
+    rmdir /S/Q %folderShader%
 )
-if exist %folderDst%\Common (
-    rmdir /S/Q %folderDst%\Common
-)
-mkdir %folderDst%\Common
-
-if exist %folderDst%\Windows (
-    rmdir /S/Q %folderDst%\Windows
-)
-mkdir %folderDst%\Windows
-
-
-
+mkdir %folderShader%
 
 echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
-call :buildShader %folderSrc%\Common Common
-call :buildShader %folderSrc%\Windows Windows
+call :buildShader %folderSrc% %debug%
 echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
 
-echo "************** Shader Copy ****************************************************"
-for %%i in (%folderDst%\Common\*.*) do echo %%i
-for %%i in (%folderDst%\Windows\*.*) do echo %%i
-echo "************** Shader Copy ****************************************************"
+echo "************** Shader Compile .spv ********************************************"
+for %%i in (%folderShader%\*.*) do echo %%i
+echo "************** Shader Compile .spv ********************************************"
 
 exit /b %errorlevel%
 :buildShader
     echo folder is: %~1
 
 	for /F %%i in ('Dir %~1\*.* /B') do (
-		echo %~1\%%i
+		echo %%i
 
-        call ./Build_Windows_Shader_GLSL.bat %%i %~2
+		if exist %~1\%%i\nul (
+            call :buildShader %~1\%%i %~2
+        ) else (
+            call ./Build_Windows_Shader_GLSL.bat %%i %~1 %folderInclude% %~2
+        )
 	) 
 
 exit /b 0 

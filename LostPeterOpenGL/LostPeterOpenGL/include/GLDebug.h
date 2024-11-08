@@ -1,0 +1,69 @@
+/****************************************************************************
+* LostPeterOpenGL - Copyright (C) 2022 by LostPeter
+* 
+* Author:   LostPeter
+* Time:     2024-11-03
+* Github:   https://github.com/LostPeter/LostPeterOpenGL
+* Document: https://www.zhihu.com/people/lostpeter/posts
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+****************************************************************************/
+
+#ifndef _GL_DEBUG_H_
+#define _GL_DEBUG_H_
+
+#include "Base.h"
+
+namespace LostPeterOpenGL
+{
+    class openglExport GLDebug : public FSingleton<GLDebug>
+                               , public Base
+    {
+    public:
+        GLDebug();
+        ~GLDebug();
+
+    public:
+        PFNGLDEBUGMESSAGECONTROLPROC func_glDebugMessageControl;
+        PFNGLDEBUGMESSAGECALLBACKPROC func_glDebugMessageCallback;
+        PFNGLDEBUGMESSAGEINSERTPROC func_glDebugMessageInsert;
+        PFNGLOBJECTLABELPROC func_glObjectLabel;
+        PFNGLGETOBJECTLABELPROC func_glGetObjectLabel;
+        PFNGLPUSHDEBUGGROUPPROC func_glPushDebugGroup;
+        PFNGLPOPDEBUGGROUPPROC func_glPopDebugGroup;
+
+        PFNGLDEBUGMESSAGECONTROLKHRPROC func_glDebugMessageControlKHR;
+        PFNGLDEBUGMESSAGECALLBACKKHRPROC func_glDebugMessageCallbackKHR;
+        PFNGLDEBUGMESSAGEINSERTKHRPROC func_glDebugMessageInsertKHR;
+        PFNGLOBJECTLABELKHRPROC func_glObjectLabelKHR;
+        PFNGLGETOBJECTLABELKHRPROC func_glGetObjectLabelKHR;
+        PFNGLPUSHDEBUGGROUPKHRPROC func_glPushDebugGroupKHR;
+        PFNGLPOPDEBUGGROUPKHRPROC func_glPopDebugGroupKHR;
+
+    public:
+        static GLDebug& GetSingleton();
+		static GLDebug* GetSingletonPtr();
+
+    public:
+        void Destroy();
+        bool Init();
+
+    public:
+        void BeginRegion(const char* pMarkerName, FVector4 color);
+		void Insert(std::string markerName, FVector4 color);
+		void EndRegion();
+
+        
+    public:
+        void DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled);
+        void DebugMessageCallback(GLDEBUGPROCKHR callback, const void *userParam);
+        void DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf);
+        void ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
+        void GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
+        void PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message);
+        void PopDebugGroup();
+    };
+
+}; //LostPeterOpenGL
+
+#endif

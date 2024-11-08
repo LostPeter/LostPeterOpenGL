@@ -239,7 +239,11 @@ namespace LostPeterOpenGL
         F_Assert(false && "Util_Transform2GLShaderType: Wrong type !")
         return GL_VERTEX_SHADER;
     }
-  
+    
+    bool Util_IsSupportExtensionsGL(int type)
+    {
+        return type > 0;
+    }
 
 ////////////////////////////// Class ///////////////////////////////
     MeshInfo::MeshInfo()

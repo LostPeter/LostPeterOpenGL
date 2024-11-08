@@ -267,7 +267,7 @@ namespace LostPeterOpenGL
     openglExport void Util_EnableAttributeDescriptions(FMeshVertexType type, bool enable);
 
     openglExport GLenum Util_Transform2GLShaderType(FShaderType type);
-    
+    openglExport bool Util_IsSupportExtensionsGL(int type);
 
 
 ////////////////////////////// Class ///////////////////////////////
@@ -328,6 +328,7 @@ namespace LostPeterOpenGL
     class OpenGLBase;
     class OpenGLWindow;
 
+    class GLDebug;
     class GLBuffer;
     class GLBufferVertex;
     class GLBufferVertexIndex;

@@ -50,6 +50,7 @@ echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp *********
 
 echo "************** Shader Copy ****************************************************"
 {
-    read_dir $dirDst
+    read_dir $dirDst/Common
+    read_dir $dirDst/MacOS
 }
 echo "************** Shader Copy ****************************************************"

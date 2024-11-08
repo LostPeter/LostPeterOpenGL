@@ -21,6 +21,7 @@
 #include "OpenGLBase.h"
 #include "OpenGLWindow.h"
 
+#include "GLDebug.h"
 #include "GLBuffer.h"
 #include "GLBufferVertex.h"
 #include "GLBufferVertexIndex.h"

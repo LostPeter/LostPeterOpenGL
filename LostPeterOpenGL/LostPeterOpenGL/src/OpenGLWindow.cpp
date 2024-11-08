@@ -485,13 +485,85 @@ namespace LostPeterOpenGL
 
             //2> glad load all OpenGL function pointers 
             if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-                std::cout << "OpenGLWindow::createDevice: gladLoadGLLoader failed !" << std::endl;
+                F_LogError("*********************** OpenGLWindow::createDevice: gladLoadGLLoader failed !");
                 glfwTerminate();
                 return;
             }
+
+            //3> setUpDebugMessenger
+            setUpDebugMessenger();
+
+            //4> GLDebug
+            this->poDebug = new GLDebug();
+            this->poDebug->Init();
+
+
         }
         F_LogInfo("*****<1-2> OpenGLWindow::createDevice finish *****");
     }
+        void APIENTRY glDebugOutput(GLenum source, 
+                                    GLenum type, 
+                                    unsigned int id, 
+                                    GLenum severity, 
+                                    GLsizei length, 
+                                    const char *message, 
+                                    const void *userParam)
+        {
+            if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return; // ignore these non-significant error codes
+
+            String prefix("");
+            String msg = "Debug message (" + FUtilString::SaveUInt(id) + "): " + message;
+
+            switch (source)
+            {
+                case GL_DEBUG_SOURCE_API:             prefix = "Source: API"; break;
+                case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   prefix = "Source: Window System"; break;
+                case GL_DEBUG_SOURCE_SHADER_COMPILER: prefix = "Source: Shader Compiler"; break;
+                case GL_DEBUG_SOURCE_THIRD_PARTY:     prefix = "Source: Third Party"; break;
+                case GL_DEBUG_SOURCE_APPLICATION:     prefix = "Source: Application"; break;
+                case GL_DEBUG_SOURCE_OTHER:           prefix = "Source: Other"; break;
+            }
+
+            switch (type)
+            {
+                case GL_DEBUG_TYPE_ERROR:               prefix = "Type: Error"; break;
+                case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: prefix = "Type: Deprecated Behaviour"; break;
+                case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  prefix = "Type: Undefined Behaviour"; break; 
+                case GL_DEBUG_TYPE_PORTABILITY:         prefix = "Type: Portability"; break;
+                case GL_DEBUG_TYPE_PERFORMANCE:         prefix = "Type: Performance"; break;
+                case GL_DEBUG_TYPE_MARKER:              prefix = "Type: Marker"; break;
+                case GL_DEBUG_TYPE_PUSH_GROUP:          prefix = "Type: Push Group"; break;
+                case GL_DEBUG_TYPE_POP_GROUP:           prefix = "Type: Pop Group"; break;
+                case GL_DEBUG_TYPE_OTHER:               prefix = "Type: Other"; break;
+            }
+            
+            switch (severity)
+            {
+                case GL_DEBUG_SEVERITY_HIGH:         prefix = "Severity: high"; break;
+                case GL_DEBUG_SEVERITY_MEDIUM:       prefix = "Severity: medium"; break;
+                case GL_DEBUG_SEVERITY_LOW:          prefix = "Severity: low"; break;
+                case GL_DEBUG_SEVERITY_NOTIFICATION: prefix = "Severity: notification"; break;
+            } 
+
+            F_LogInfo("[%s]: [%s]", prefix.c_str(), msg.c_str());
+        }
+        void OpenGLWindow::setUpDebugMessenger()
+        {
+            if (s_isEnableValidationLayers)
+            {
+                int flags; 
+                glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+                if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+                {
+                    glEnable(GL_DEBUG_OUTPUT);
+                    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // makes sure errors are displayed synchronously
+                    glDebugMessageCallback(glDebugOutput, nullptr);
+                    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+                }
+            }
+            
+            F_LogInfo("<1-1-2> OpenGLWindow::setUpDebugMessenger finish !");
+        }
 
 
     void OpenGLWindow::createFeatureSupport()
