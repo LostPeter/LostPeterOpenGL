@@ -245,6 +245,154 @@ namespace LostPeterOpenGL
         return type > 0;
     }
 
+    GLenum Util_Transform2GLTextureType(FTextureType type)
+    {
+        switch ((int)type)
+        {
+        case F_Texture_1D:          return GL_TEXTURE_1D;
+        case F_Texture_2D:          return GL_TEXTURE_2D;
+        case F_Texture_2DArray:     return GL_TEXTURE_2D_ARRAY;
+        case F_Texture_3D:          return GL_TEXTURE_3D;
+        case F_Texture_CubeMap:     return GL_TEXTURE_CUBE_MAP;
+        }
+        F_Assert(false && "Util_Transform2GLTextureType: Wrong type !")
+        return GL_TEXTURE_2D;
+    }
+    GLenum Util_Transform2GLFormat(FTexturePixelFormatType type)
+    {
+        switch ((int32)type)
+        {
+            case F_TexturePixelFormat_R8_UNORM:          return GL_R8;
+            case F_TexturePixelFormat_R16_UNORM:         return GL_R16;
+            case F_TexturePixelFormat_R8G8B8A8_SRGB:     return GL_RGBA;
+            case F_TexturePixelFormat_R8G8B8A8_UNORM:    return GL_RGBA;
+        }
+        F_Assert(false && "Util_Transform2GLFormat: Wrong type !")
+        return GL_RGBA;
+    }
+    GLenum Util_Transform2GLFilterSize(FTextureFilterSizeType type)
+    {
+        switch ((int)type)
+        {
+        case F_TextureFilterSize_Min:              return GL_TEXTURE_MIN_FILTER;
+        case F_TextureFilterSize_Mag:              return GL_TEXTURE_MAG_FILTER;
+        }
+        F_Assert(false && "Util_Transform2GLFilterSize: Wrong type !")
+        return GL_TEXTURE_MIN_FILTER;
+    }
+    GLenum Util_Transform2GLFilter(FTextureFilterPixelType type)
+    {
+        switch ((int)type)
+        {
+        case F_TextureFilterPixel_None:            return GL_NEAREST;
+        case F_TextureFilterPixel_Point:           return GL_NEAREST;
+        case F_TextureFilterPixel_Linear:          return GL_LINEAR;
+        case F_TextureFilterPixel_Anisotropic:     return GL_LINEAR;
+        }
+        F_Assert(false && "Util_Transform2GLFilter: Wrong type !")
+        return GL_NEAREST;
+    }
+    GLenum Util_Transform2GLSamplerMipmapMode(FTextureFilterPixelType type)
+    {
+        switch ((int)type)
+        {
+        case F_TextureFilterPixel_None:            return GL_NEAREST_MIPMAP_NEAREST;
+        case F_TextureFilterPixel_Point:           return GL_NEAREST_MIPMAP_LINEAR;
+        case F_TextureFilterPixel_Linear:          return GL_LINEAR_MIPMAP_NEAREST;
+        case F_TextureFilterPixel_Anisotropic:     return GL_LINEAR_MIPMAP_LINEAR;
+        }
+        F_Assert(false && "Util_Transform2GLSamplerMipmapMode: Wrong type !")
+        return GL_NEAREST_MIPMAP_NEAREST;
+    }
+    GLenum Util_Transform2GLFilter(FTextureFilterType typeFilter, FTextureFilterSizeType typeFilterSize)
+    {
+        switch ((int)typeFilter)
+        {
+        case F_TextureFilter_None:
+            {
+                switch ((int)typeFilterSize)
+                {
+                    case F_TextureFilterSize_Min:        return GL_NEAREST;
+                    case F_TextureFilterSize_Mag:        return GL_NEAREST;
+                    F_Assert(false && "Util_Transform2GLFilter: Wrong FTextureFilterSizeType type !")
+                }   
+            }   
+            break;
+        case F_TextureFilter_Bilinear:
+            {
+                switch ((int)typeFilterSize)
+                {
+                    case F_TextureFilterSize_Min:        return GL_LINEAR;
+                    case F_TextureFilterSize_Mag:        return GL_LINEAR;
+                    F_Assert(false && "Util_Transform2GLFilter: Wrong FTextureFilterSizeType type !")
+                }
+            }
+            break;
+        case F_TextureFilter_Trilinear:
+            {
+                switch ((int)typeFilterSize)
+                {
+                    case F_TextureFilterSize_Min:        return GL_LINEAR;
+                    case F_TextureFilterSize_Mag:        return GL_LINEAR;
+                    F_Assert(false && "Util_Transform2GLFilter: Wrong FTextureFilterSizeType type !")
+                }
+            }
+            break;
+        case F_TextureFilter_Anisotropic:
+            {
+                switch ((int)typeFilterSize)
+                {
+                    case F_TextureFilterSize_Min:        return GL_LINEAR;
+                    case F_TextureFilterSize_Mag:        return GL_LINEAR;
+                    F_Assert(false && "Util_Transform2GLFilter: Wrong FTextureFilterSizeType type !")
+                }
+            }
+            break;
+        } 
+        F_Assert(false && "Util_Transform2GLFilter: Wrong FTextureFilterType type !")
+        return GL_NEAREST;
+    }
+    GLenum Util_Transform2GLSamplerMipmapMode(FTextureFilterType type)
+    {
+        switch ((int)type)
+        {
+        case F_TextureFilterPixel_None:            return GL_NEAREST_MIPMAP_NEAREST;
+        case F_TextureFilterPixel_Point:           return GL_NEAREST_MIPMAP_NEAREST;
+        case F_TextureFilterPixel_Linear:          return GL_LINEAR_MIPMAP_NEAREST;
+        case F_TextureFilterPixel_Anisotropic:     return GL_LINEAR_MIPMAP_NEAREST;
+        }
+        F_Assert(false && "Util_Transform2GLSamplerMipmapMode: Wrong type !")
+        return GL_NEAREST_MIPMAP_NEAREST;
+    }
+    GLenum Util_Transform2GLSamplerAddressMode(FTextureAddressingType type)
+    {
+        switch((int)type)
+        {
+        case F_TextureAddressing_Wrap:      return GL_REPEAT;
+        case F_TextureAddressing_Mirror:    return GL_MIRRORED_REPEAT;
+        case F_TextureAddressing_Clamp:     return GL_CLAMP_TO_EDGE;
+        case F_TextureAddressing_Border:    return GL_CLAMP_TO_BORDER;
+        }
+        F_Assert(false && "Util_Transform2GLSamplerAddressMode: Wrong type !")
+        return GL_REPEAT;
+    }
+    int Util_Transform2GLSampleCountFlagBits(FMSAASampleCountType type)
+    {
+        switch((int)type)
+        {
+        case F_MSAASampleCount_1_Bit:      return 1;
+        case F_MSAASampleCount_2_Bit:      return 2;
+        case F_MSAASampleCount_4_Bit:      return 4;
+        case F_MSAASampleCount_8_Bit:      return 8;
+        case F_MSAASampleCount_16_Bit:     return 16;
+        case F_MSAASampleCount_32_Bit:     return 32;
+        case F_MSAASampleCount_64_Bit:     return 64;
+        }
+        F_Assert(false && "Util_Transform2GLSampleCountFlagBits: Wrong type !")
+        return 1;
+    }
+
+
 ////////////////////////////// Class ///////////////////////////////
     MeshInfo::MeshInfo()
         : group(0)

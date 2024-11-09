@@ -46,6 +46,8 @@ namespace LostPeterOpenGL
         , poShaderFragment(nullptr)
         , poShaderProgram(nullptr)
 
+        , poTexture(nullptr)
+        
         , isFrameBufferResized(false)
 
 
@@ -509,7 +511,10 @@ namespace LostPeterOpenGL
                                     const char *message, 
                                     const void *userParam)
         {
-            if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return; // ignore these non-significant error codes
+            if (id <= 0)
+                return;
+            if(id == 131169 || id == 131185 || id == 131218 || id == 131204) 
+                return; // ignore these non-significant error codes
 
             String prefix("");
             String msg = "Debug message (" + FUtilString::SaveUInt(id) + "): " + message;
@@ -1118,30 +1123,187 @@ namespace LostPeterOpenGL
             }
                 void OpenGLWindow::loadTexture_Default()
                 {
-
+                    if (!this->cfg_texture_Path.empty())
+                    {
+                        String nameTexture;
+                        String pathBase;
+                        FUtilString::SplitFileName(this->cfg_texture_Path, nameTexture, pathBase);
+                        StringVector aPathTexture;
+                        aPathTexture.push_back(this->cfg_texture_Path);
+                        this->poTexture = new GLTexture(nameTexture,
+                                                        aPathTexture,
+                                                        F_Texture_2D,
+                                                        F_TexturePixelFormat_R8G8B8A8_SRGB,
+                                                        F_TextureAddressing_Wrap,
+                                                        F_TextureFilter_Bilinear,
+                                                        F_TextureFilter_Bilinear,
+                                                        F_MSAASampleCount_1_Bit,
+                                                        FColor(0, 0, 0, 1),
+                                                        true,
+                                                        true,
+                                                        false,
+                                                        false,
+                                                        false);
+                        if (!this->poTexture->Init())
+                        {
+                            F_LogError("*********************** VulkanWindow::loadTexture_Default: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), this->cfg_texture_Path.c_str());
+                            F_DELETE(this->poTexture)
+                            return;
+                        }
+                        F_LogInfo("<2-1-2-1> VulkanWindow::loadTexture_Default finish !");
+                    }
                 }
                 void OpenGLWindow::loadTexture_Custom()
                 {
 
                 }
 
-                bool OpenGLWindow::createGLTexture(const String& nameTex,
+                bool OpenGLWindow::createTexture2D(const String& nameTexture,
+                                                   const String& pathAsset_Tex,
+                                                   uint32_t& mipMapCount, 
+                                                   bool isAutoMipmap,
+                                                   FTextureType typeTexture, 
+                                                   bool isCubeMap,
+                                                   FTexturePixelFormatType typePixelFormat,
+                                                   FTextureAddressingType typeAddressing,
+                                                   FTextureFilterType typeFilterSizeMin,
+                                                   FTextureFilterType typeFilterSizeMag,
+                                                   FMSAASampleCountType numSamples, 
+                                                   const FColor& borderColor,
+                                                   bool isUseBorderColor,
+                                                   bool isGraphicsComputeShared,
+                                                   uint32& nTextureID)
+                {
+                    //1> Load Texture From File
+                    String pathTexture = GetAssetFullPath(pathAsset_Tex);
+                    int width, height, texChannels;
+                    stbi_uc* pixels = stbi_load(pathTexture.c_str(), &width, &height, &texChannels, 0);
+                    int imageSize = width * height * texChannels;
+                    mipMapCount = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+                    if (!pixels) 
+                    {
+                        String msg = "*********************** OpenGLWindow::createTexture2D: Failed to load texture image: " + pathAsset_Tex;
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+
+                    if (!createGLTexture(nameTexture,
+                                         pixels,
+                                         texChannels,
+                                         width,
+                                         height,
+                                         0,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         isCubeMap,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTexture2D: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
+                        stbi_image_free(pixels);
+                        return false;
+                    }
+                    stbi_image_free(pixels);
+
+                    F_LogInfo("OpenGLWindow::createTexture2D: Success to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
+                    return true;
+                }
+                bool OpenGLWindow::createGLTexture(const String& nameTexture,
+                                                   uint8* pData,
+                                                   int channel,
                                                    uint32_t width, 
                                                    uint32_t height, 
                                                    uint32_t depth, 
                                                    uint32_t numArray,
                                                    uint32_t mipMapCount, 
-                                                   FTextureType type, 
+                                                   bool isAutoMipmap,
+                                                   FTextureType typeTexture, 
                                                    bool isCubeMap,
+                                                   FTexturePixelFormatType typePixelFormat,
+                                                   FTextureAddressingType typeAddressing,
+                                                   FTextureFilterType typeFilterSizeMin,
+                                                   FTextureFilterType typeFilterSizeMag,
                                                    FMSAASampleCountType numSamples, 
-                                                   FPixelFormatType format, 
+                                                   const FColor& borderColor,
+                                                   bool isUseBorderColor,
                                                    bool isGraphicsComputeShared,
                                                    uint32& nTextureID)
                 {
                     glGenTextures(1, &nTextureID);
+                    
+                    //1> Texture Type
+                    GLenum type = Util_Transform2GLTextureType(typeTexture);
+                    glBindTexture(type, nTextureID);
+
+                    //2> Texture Data
+                    GLenum typeFormat = Util_Transform2GLFormat(typePixelFormat);
+                    if (typeTexture == F_Texture_1D)
+                    {
+
+                    }
+                    else if (typeTexture == F_Texture_2D)
+                    {
+                        GLenum format;
+                        if (channel == 1)
+                            format = GL_RED;
+                        else if (channel == 3)
+                            format = GL_RGB;
+                        else if (channel == 4)
+                            format = GL_RGBA;
+                        glTexImage2D(type, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pData);
+                    }
+                    else if (typeTexture == F_Texture_2DArray)
+                    {
+
+                    }
+                    else if (typeTexture == F_Texture_3D)
+                    {
+
+                    }
+                    else if (typeTexture == F_Texture_CubeMap)
+                    {
+
+                    }
+                    else
+                    {
+                        String msg = "*********************** OpenGLWindow::createGLTexture: Wrong texture type, Create texture failed, name: [" + nameTexture + "] !";
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+                    
+                    //3> AutoMipMap
+                    if (isAutoMipmap)
+                    {
+                        glGenerateMipmap(type);
+                    }
+
+                    //4> Wrapping parameters
+                    GLenum typeAddress = Util_Transform2GLSamplerAddressMode(typeAddressing);
+                    glTexParameteri(type, GL_TEXTURE_WRAP_S, typeAddress);
+                    glTexParameteri(type, GL_TEXTURE_WRAP_T, typeAddress);
+                    
+                    //5> Filtering parameters
+                    GLenum typeFilterMin = Util_Transform2GLFilter(typeFilterSizeMin, F_TextureFilterSize_Min);
+                    GLenum typeFilterMag = Util_Transform2GLFilter(typeFilterSizeMin, F_TextureFilterSize_Mag);
+                    glTexParameteri(type, GL_TEXTURE_MIN_FILTER, typeFilterMin);
+                    glTexParameteri(type, GL_TEXTURE_MAG_FILTER, typeFilterMag);
 
 
                     return true;
+                }
+                void OpenGLWindow::bindGLTexture(FTextureType typeTexture, uint32 nTextureID)
+                {
+                    GLenum type = Util_Transform2GLTextureType(typeTexture);
+                    glBindTexture(type, nTextureID);
                 }
                 void OpenGLWindow::destroyGLTexture(uint32 nTextureID)
                 {
@@ -1741,6 +1903,8 @@ namespace LostPeterOpenGL
                             if (this->poShaderProgram == nullptr)
                                 return;
 
+                            if (this->poTexture != nullptr)
+                                this->poTexture->BindTexture();
                             this->poShaderProgram->BindProgram();
                             Util_EnableAttributeDescriptions(this->poTypeVertex, true);
                             if (this->pBufferVertex != nullptr)
@@ -1849,13 +2013,13 @@ namespace LostPeterOpenGL
     }
         void OpenGLWindow::cleanupDefault()
         {
-
+            
             cleanupTexture();
             cleanupVertexIndexBuffer();
         }
             void OpenGLWindow::cleanupTexture()
             {
-
+                F_DELETE(this->poTexture)
             }
             void OpenGLWindow::cleanupVertexIndexBuffer()
             {

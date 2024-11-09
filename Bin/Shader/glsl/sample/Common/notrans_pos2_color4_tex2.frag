@@ -13,10 +13,10 @@
 
 out vec4 outColor;
 
-layout (location = 0) in vec4 fragColor;
-layout (location = 1) in vec2 fragTexCoord;
+in vec4 fragColor;
+in vec2 fragTexCoord;
 
-layout (binding = 4) uniform sampler2D texSampler;
+uniform sampler2D texSampler;
 
 void main() 
 {

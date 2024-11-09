@@ -269,6 +269,15 @@ namespace LostPeterOpenGL
     openglExport GLenum Util_Transform2GLShaderType(FShaderType type);
     openglExport bool Util_IsSupportExtensionsGL(int type);
 
+    openglExport GLenum Util_Transform2GLTextureType(FTextureType type);
+    openglExport GLenum Util_Transform2GLFormat(FTexturePixelFormatType type);
+    openglExport GLenum Util_Transform2GLFilterSize(FTextureFilterSizeType type);
+    openglExport GLenum Util_Transform2GLFilter(FTextureFilterPixelType type);
+    openglExport GLenum Util_Transform2GLSamplerMipmapMode(FTextureFilterPixelType type);
+    openglExport GLenum Util_Transform2GLFilter(FTextureFilterType typeFilter, FTextureFilterSizeType typeFilterSize);
+    openglExport GLenum Util_Transform2GLSamplerMipmapMode(FTextureFilterType type);
+    openglExport GLenum Util_Transform2GLSamplerAddressMode(FTextureAddressingType type);
+    openglExport int Util_Transform2GLSampleCountFlagBits(FMSAASampleCountType type);
 
 ////////////////////////////// Class ///////////////////////////////
     struct LightConstants;

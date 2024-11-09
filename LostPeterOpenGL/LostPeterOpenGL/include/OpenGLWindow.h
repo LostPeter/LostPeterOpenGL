@@ -60,6 +60,8 @@ namespace LostPeterOpenGL
         GLShader* poShaderFragment;
         GLShaderProgram* poShaderProgram;
 
+        GLTexture* poTexture;
+
         bool isFrameBufferResized;
 
         //Config
@@ -321,18 +323,43 @@ namespace LostPeterOpenGL
                     virtual void loadTexture_Custom();
 
 
-                    virtual bool createGLTexture(const String& nameTex,
+                    virtual bool createTexture2D(const String& nameTexture,
+                                                 const String& pathAsset_Tex,
+                                                 uint32_t& mipMapCount, 
+                                                 bool isAutoMipmap,
+                                                 FTextureType typeTexture, 
+                                                 bool isCubeMap,
+                                                 FTexturePixelFormatType typePixelFormat,
+                                                 FTextureAddressingType typeAddressing,
+                                                 FTextureFilterType typeFilterSizeMin,
+                                                 FTextureFilterType typeFilterSizeMag,
+                                                 FMSAASampleCountType numSamples, 
+                                                 const FColor& borderColor,
+                                                 bool isUseBorderColor,
+                                                 bool isGraphicsComputeShared,
+                                                 uint32& nTextureID);
+
+                    virtual bool createGLTexture(const String& nameTexture,
+                                                 uint8* pData,
+                                                 int channel,
                                                  uint32_t width, 
                                                  uint32_t height, 
                                                  uint32_t depth, 
                                                  uint32_t numArray,
                                                  uint32_t mipMapCount, 
-                                                 FTextureType type, 
+                                                 bool isAutoMipmap,
+                                                 FTextureType typeTexture, 
                                                  bool isCubeMap,
+                                                 FTexturePixelFormatType typePixelFormat,
+                                                 FTextureAddressingType typeAddressing,
+                                                 FTextureFilterType typeFilterSizeMin,
+                                                 FTextureFilterType typeFilterSizeMag,
                                                  FMSAASampleCountType numSamples, 
-                                                 FPixelFormatType format, 
+                                                 const FColor& borderColor,
+                                                 bool isUseBorderColor,
                                                  bool isGraphicsComputeShared,
                                                  uint32& nTextureID);
+                    virtual void bindGLTexture(FTextureType typeTexture, uint32 nTextureID);
                     virtual void destroyGLTexture(uint32 nTextureID);
 
 

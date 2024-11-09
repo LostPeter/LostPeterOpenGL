@@ -21,7 +21,7 @@ public:
     OpenGL_003_Texture(int width, int height, String name);
 
 public:
-    std::vector<FVertex_Pos2Color4> vertices;
+    std::vector<FVertex_Pos2Color4Tex2> vertices;
 
 protected:
     //Create Pipeline

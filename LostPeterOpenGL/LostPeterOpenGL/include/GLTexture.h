@@ -19,28 +19,54 @@ namespace LostPeterOpenGL
     class openglExport GLTexture : public Base
     {
     public:
-        GLTexture(const String& nameTexture);
+        GLTexture(const String& _nameTexture,
+                  const StringVector& _aPathTexture,
+                  FTextureType _typeTexture,
+                  FTexturePixelFormatType _typePixelFormat,
+                  FTextureAddressingType _typeAddressing,
+                  FTextureFilterType _typeFilterSizeMin,
+                  FTextureFilterType _typeFilterSizeMag,
+                  FMSAASampleCountType _numSamples,
+                  const FColor& _borderColor,
+                  bool _isUseBorderColor,
+                  bool _isAutoMipmap,
+                  bool _isCubeMap,
+                  bool _isRenderTarget,
+                  bool _isGraphicsComputeShared);
         virtual ~GLTexture();
 
     public:
+        StringVector aPathTexture;
         FTextureType typeTexture;
-        FTextureAddressingType typeTextureAddressing_S;
-        FTextureAddressingType typeTextureAddressing_T;
-        FTextureFilterType typeTextureFilter_Min;
-        FTextureFilterType typeTextureFilter_Mag;
-        FMSAASampleCountType typeMSAASampleCount;
+        FTexturePixelFormatType typePixelFormat;
+        FTextureAddressingType typeAddressing;
+        FTextureFilterType typeFilterSizeMin;
+        FTextureFilterType typeFilterSizeMag;
+        FMSAASampleCountType numSamples;
+        FColor borderColor;
+        bool isUseBorderColor;
+        bool isCubeMap;
+        bool isRenderTarget;
+        bool isGraphicsComputeShared;
+        int width;
+        int height;
+        int depth;
 
-        String pathFile;
+        uint32_t mipMapCount;
+        bool isAutoMipmap;
 
         uint32 nTextureID;
 
     public:
         void Destroy();
-        bool Init(const String& path,
-                  FTextureType type);
+        virtual bool Init();
+        virtual bool LoadTexture(int width,
+                                 int height,
+                                 int depth);
+        virtual void UpdateTexture();
 
     public:
-        
+        void BindTexture();
     };
 
 }; //LostPeterOpenGL
