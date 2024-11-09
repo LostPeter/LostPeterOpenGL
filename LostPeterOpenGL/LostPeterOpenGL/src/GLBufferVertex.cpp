@@ -60,7 +60,8 @@ namespace LostPeterOpenGL
         this->pBuffer = pBuf;
         this->bIsDelete = isDelete;
 
-        if (!Base::GetWindowPtr()->createGLBufferVertex(type,
+        if (!Base::GetWindowPtr()->createGLBufferVertex(GetName(),
+                                                        type,
                                                         bufSize, 
                                                         pBuf, 
                                                         this->nVAO, 

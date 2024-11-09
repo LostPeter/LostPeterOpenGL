@@ -282,7 +282,8 @@ namespace LostPeterOpenGL
                                                          uint8* pBuf_Index,
                                                          bool isDelete_Index);
 
-                    virtual bool createGLBufferVertex(FMeshVertexType type,
+                    virtual bool createGLBufferVertex(const String& nameBuffer,
+                                                      FMeshVertexType type,
                                                       size_t bufSize,
                                                       uint8* pBuf,
                                                       uint32& nVAO,
@@ -294,7 +295,8 @@ namespace LostPeterOpenGL
                                                       uint32 nVBO);
                     virtual void destroyGLBufferVertex(uint32 nVAO, uint32 nVBO);
 
-                    virtual bool createGLBufferVertexIndex(FMeshVertexType type,
+                    virtual bool createGLBufferVertexIndex(const String& nameBuffer,
+                                                           FMeshVertexType type,
                                                            size_t bufSize_Vertex,
                                                            uint8* pBuf_Vertex,
                                                            size_t bufSize_Index,
@@ -362,13 +364,15 @@ namespace LostPeterOpenGL
                                                              GLShader* pShaderCompute);
 
                 virtual uint32 createGLShaderProgram();
-                virtual bool createGLShaderProgram(uint32 nShaderVertexID,
+                virtual bool createGLShaderProgram(const String& nameShaderProgram,
+                                                   uint32 nShaderVertexID,
                                                    uint32 nShaderTessellationControlID,
                                                    uint32 nShaderTessellationEvaluationID,
                                                    uint32 nShaderGeometryID,
                                                    uint32 nShaderFragmentID,
                                                    uint32& nShaderProgramID);
-                virtual bool createGLShaderProgram(uint32 nShaderComputeID,
+                virtual bool createGLShaderProgram(const String& nameShaderProgram,
+                                                   uint32 nShaderComputeID,
                                                    uint32& nShaderProgramID);
                 virtual void bindGLShaderProgram(uint32 nShaderProgramID);
                 virtual void destroyGLShaderProgram(uint32 nShaderProgramID);

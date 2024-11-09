@@ -983,7 +983,8 @@ namespace LostPeterOpenGL
                                                isDelete_Index);
                 }   
 
-                bool OpenGLWindow::createGLBufferVertex(FMeshVertexType type,
+                bool OpenGLWindow::createGLBufferVertex(const String& nameBuffer,
+                                                        FMeshVertexType type,
                                                         size_t bufSize,
                                                         uint8* pBuf,
                                                         uint32& nVAO,
@@ -997,6 +998,9 @@ namespace LostPeterOpenGL
                                          pBuf,
                                          nVAO,
                                          nVBO);
+
+                    this->poDebug->SetGLBufferName(nVBO, "BufferVertex-" + nameBuffer);
+                    this->poDebug->SetGLVertexArrayName(nVAO, "VertexArray-" + nameBuffer);
                     return true;
                 }
                 void OpenGLWindow::updateGLBufferVertex(FMeshVertexType type,
@@ -1027,7 +1031,8 @@ namespace LostPeterOpenGL
                     }
                 }
 
-                bool OpenGLWindow::createGLBufferVertexIndex(FMeshVertexType type,
+                bool OpenGLWindow::createGLBufferVertexIndex(const String& nameBuffer,
+                                                             FMeshVertexType type,
                                                              size_t bufSize_Vertex,
                                                              uint8* pBuf_Vertex,
                                                              size_t bufSize_Index,
@@ -1048,6 +1053,10 @@ namespace LostPeterOpenGL
                                               nVAO,
                                               nVBO,
                                               nVEO);
+
+                    this->poDebug->SetGLBufferName(nVBO, "BufferVertex-" + nameBuffer);
+                    this->poDebug->SetGLBufferName(nVEO, "BufferIndex-" + nameBuffer);
+                    this->poDebug->SetGLVertexArrayName(nVAO, "VertexArray-" + nameBuffer);
                     return true;
                 }
                 void OpenGLWindow::updateGLBufferVertexIndex(FMeshVertexType type,
@@ -1246,6 +1255,7 @@ namespace LostPeterOpenGL
                 }
                 F_LogInfo("OpenGLWindow::createGLShader success, id: [%u], type: [%s], name: [%s], path: [%s] !", nShaderID, strTypeShader.c_str(), nameShader.c_str(), pathFile.c_str());
 
+                this->poDebug->SetGLShaderName(nShaderID, "Shader-" + nameShader);
                 return true;
             }
             void OpenGLWindow::destroyGLShader(uint32 nShaderID)
@@ -1301,7 +1311,8 @@ namespace LostPeterOpenGL
                 }
                 return nShaderComputeID;
             }
-            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderVertexID,
+            bool OpenGLWindow::createGLShaderProgram(const String& nameShaderProgram,
+                                                     uint32 nShaderVertexID,
                                                      uint32 nShaderTessellationControlID,
                                                      uint32 nShaderTessellationEvaluationID,
                                                      uint32 nShaderGeometryID,
@@ -1346,9 +1357,11 @@ namespace LostPeterOpenGL
                     return false;
                 }
 
+                this->poDebug->SetGLShaderProgramName(nShaderProgramID, "ShaderProgram-" + nameShaderProgram);
                 return true;
             }
-            bool OpenGLWindow::createGLShaderProgram(uint32 nShaderComputeID,
+            bool OpenGLWindow::createGLShaderProgram(const String& nameShaderProgram,
+                                                     uint32 nShaderComputeID,
                                                      uint32& nShaderProgramID)
             {
                 if (nShaderComputeID <= 0)
@@ -1369,6 +1382,7 @@ namespace LostPeterOpenGL
                     return false;
                 }
 
+                this->poDebug->SetGLShaderProgramName(nShaderProgramID, "ShaderProgram-" + nameShaderProgram);
                 return true;
             }
             void OpenGLWindow::bindGLShaderProgram(uint32 nShaderProgramID)
@@ -1778,7 +1792,8 @@ namespace LostPeterOpenGL
                                                    float depth,
                                                    uint32_t stencil)
                 {
-                    
+                    this->poDebug->BeginRegion(nameRenderPass.c_str(), GL_DEBUG_SOURCE_APPLICATION);
+
                     glClearColor(clBg.x, clBg.y, clBg.z, clBg.w);
                     glClear(GL_COLOR_BUFFER_BIT);
                 }
@@ -1795,6 +1810,7 @@ namespace LostPeterOpenGL
                 void OpenGLWindow::endRenderPass()
                 {
 
+                    this->poDebug->EndRegion();
                 }
 
 

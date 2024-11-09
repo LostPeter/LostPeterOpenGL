@@ -85,7 +85,7 @@ namespace LostPeterOpenGL
     }
 
     
-    void GLDebug::DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled)
+    void GLDebug::DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint* ids, GLboolean enabled)
     {
         if (this->func_glDebugMessageControlKHR != nullptr)
         {
@@ -96,7 +96,7 @@ namespace LostPeterOpenGL
             this->func_glDebugMessageControl(source, type, severity, count, ids, enabled);
         }
     }
-    void GLDebug::DebugMessageCallback(GLDEBUGPROCKHR callback, const void *userParam)
+    void GLDebug::DebugMessageCallback(GLDEBUGPROCKHR callback, const void* userParam)
     {
         if (this->func_glDebugMessageCallbackKHR != nullptr)
         {
@@ -107,7 +107,7 @@ namespace LostPeterOpenGL
             this->func_glDebugMessageCallback(callback, userParam);
         }
     }
-    void GLDebug::DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
+    void GLDebug::DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* buf)
     {
         if (this->func_glDebugMessageInsertKHR != nullptr)
         {
@@ -118,7 +118,7 @@ namespace LostPeterOpenGL
             this->func_glDebugMessageInsert(source, type, id, severity, length, buf);
         }
     }
-    void GLDebug::ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label)
+    void GLDebug::ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar* label)
     {
         if (this->func_glObjectLabelKHR != nullptr)
         {
@@ -129,7 +129,7 @@ namespace LostPeterOpenGL
             this->func_glObjectLabel(identifier, name, length, label);
         }
     }
-    void GLDebug::GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label)
+    void GLDebug::GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei* length, GLchar* label)
     {
         if (this->func_glGetObjectLabelKHR != nullptr)
         {
@@ -140,7 +140,7 @@ namespace LostPeterOpenGL
             this->func_glGetObjectLabel(identifier, name, bufSize, length, label);
         }
     }
-    void GLDebug::PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message)
+    void GLDebug::PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar* message)
     {
         if (this->func_glPushDebugGroupKHR != nullptr)
         {
@@ -163,5 +163,35 @@ namespace LostPeterOpenGL
         }
     }
 
+
+    void GLDebug::BeginRegion(const String& nameMarker, GLuint id)
+    {
+        PushDebugGroup(id, 0, -1, nameMarker.c_str());
+    }
+    void GLDebug::EndRegion()
+    {
+        PopDebugGroup();
+    }
+
+    void GLDebug::SetGLBufferName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_BUFFER, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLVertexArrayName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_VERTEX_ARRAY, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLShaderName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_SHADER, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLShaderProgramName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_PROGRAM, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLTextureName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_TEXTURE, id, -1, name.c_str());
+    }
 
 }; //LostPeterOpenGL

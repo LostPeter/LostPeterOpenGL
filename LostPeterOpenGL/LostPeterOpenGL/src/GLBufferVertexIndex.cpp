@@ -77,7 +77,8 @@ namespace LostPeterOpenGL
         this->pBuffer_Index = pBuf_Index;
         this->bIsDelete_Index = isDelete_Index;
 
-        if (!Base::GetWindowPtr()->createGLBufferVertexIndex(type,
+        if (!Base::GetWindowPtr()->createGLBufferVertexIndex(GetName(),
+                                                             type,
                                                              bufSize_Vertex, 
                                                              pBuf_Vertex, 
                                                              bufSize_Index,

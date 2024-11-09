@@ -49,19 +49,24 @@ namespace LostPeterOpenGL
         bool Init();
 
     public:
-        void BeginRegion(const char* pMarkerName, FVector4 color);
-		void Insert(std::string markerName, FVector4 color);
-		void EndRegion();
-
-        
-    public:
-        void DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled);
-        void DebugMessageCallback(GLDEBUGPROCKHR callback, const void *userParam);
-        void DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf);
-        void ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
-        void GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
-        void PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message);
+        void DebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint* ids, GLboolean enabled);
+        void DebugMessageCallback(GLDEBUGPROCKHR callback, const void* userParam);
+        void DebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* buf);
+        void ObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar* label);
+        void GetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei* length, GLchar* label);
+        void PushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar* message);
         void PopDebugGroup();
+
+    public:
+        void BeginRegion(const String& nameMarker, GLuint id);
+        void EndRegion();
+        
+        void SetGLBufferName(uint32 id, const String& name);
+        void SetGLVertexArrayName(uint32 id, const String& name);
+        void SetGLShaderName(uint32 id, const String& name);
+        void SetGLShaderProgramName(uint32 id, const String& name);
+        void SetGLTextureName(uint32 id, const String& name);
+
     };
 
 }; //LostPeterOpenGL

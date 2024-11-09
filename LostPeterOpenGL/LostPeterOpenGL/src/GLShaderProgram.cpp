@@ -61,7 +61,8 @@ namespace LostPeterOpenGL
         this->pShaderGeometry = pShaderGeometry;
         this->pShaderFragment = pShaderFragment;
 
-        if (!Base::GetWindowPtr()->createGLShaderProgram(pShaderVertex != nullptr ? pShaderVertex->nShaderID : 0,
+        if (!Base::GetWindowPtr()->createGLShaderProgram(GetName(),
+                                                         pShaderVertex != nullptr ? pShaderVertex->nShaderID : 0,
                                                          pShaderTessellationControl != nullptr ? pShaderTessellationControl->nShaderID : 0,
                                                          pShaderTessellationEvaluation != nullptr ? pShaderTessellationEvaluation->nShaderID : 0,
                                                          pShaderGeometry != nullptr ? pShaderGeometry->nShaderID : 0,
@@ -81,7 +82,8 @@ namespace LostPeterOpenGL
             return false;
         this->pShaderCompute = pShaderCompute;
 
-        if (!Base::GetWindowPtr()->createGLShaderProgram(pShaderCompute->nShaderID,
+        if (!Base::GetWindowPtr()->createGLShaderProgram(GetName(),
+                                                         pShaderCompute->nShaderID,
                                                          this->nShaderProgramID))
         {
             F_LogError("*********************** GLShaderProgram::Init: Failed to create shader program [%s] !", GetName().c_str());
