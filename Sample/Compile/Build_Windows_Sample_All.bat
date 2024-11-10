@@ -16,3 +16,8 @@ call ./Build_Windows_Sample.bat opengl_000_window %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_001_triangle %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_002_imgui %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_003_texture %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_004_model %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_005_camera %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_006_depth %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_007_stencil %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_008_blend %debug% %rebuild%

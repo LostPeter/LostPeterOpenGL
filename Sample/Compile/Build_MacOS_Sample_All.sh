@@ -16,3 +16,8 @@ rebuild=${2}
 ./Build_MacOS_Sample.sh opengl_001_triangle $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_002_imgui $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_003_texture $debug $rebuild
+./Build_MacOS_Sample.sh opengl_004_model $debug $rebuild
+./Build_MacOS_Sample.sh opengl_005_camera $debug $rebuild
+./Build_MacOS_Sample.sh opengl_006_depth $debug $rebuild
+./Build_MacOS_Sample.sh opengl_007_stencil $debug $rebuild
+./Build_MacOS_Sample.sh opengl_008_blend $debug $rebuild
