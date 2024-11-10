@@ -27,7 +27,8 @@ namespace LostPeterOpenGL
 
     public:
         int versionGL_Major;
-        int versionGL_Minor;    
+        int versionGL_Minor;
+        const char* versionGLSL;    
 
     public:
         int width;

@@ -57,7 +57,7 @@ namespace LostPeterOpenGL
         , cfg_isMSAA(false)
         , cfg_isImgui(false)
         , cfg_isWireFrame(false)
-
+        , cfg_isRotate(false)
 
         , cfg_glPrimitiveTopology(GL_TRIANGLES)
 
@@ -94,12 +94,23 @@ namespace LostPeterOpenGL
         , pCameraRight(nullptr)
         , pCameraMainLight(new FCamera)
 
-
         , mouseButtonDownLeft(false)
         , mouseButtonDownRight(false)
         , mouseButtonDownMiddle(false)
 
-
+        , cfg_isEditorCreate(false)
+        , cfg_isEditorGridShow(false)
+        , cfg_isEditorCameraAxisShow(false)
+        , cfg_isEditorCoordinateAxisShow(false)
+        , cfg_editorGrid_Color(0.5f, 0.5f, 0.5f, 0.5f)
+        , cfg_editorCoordinateAxis_MoveSpeed(0.01f)
+        , cfg_editorCoordinateAxis_RotateSpeed(0.01f)
+        , cfg_editorCoordinateAxis_ScaleSpeed(0.01f)
+        , pEditorGrid(nullptr)
+        , pEditorCameraAxis(nullptr)
+        , pEditorCoordinateAxis(nullptr)
+        , pEditorLineFlat2DCollector(nullptr)
+        , pEditorLineFlat3DCollector(nullptr)
     {
 
         Base::ms_pWindow = this;
@@ -130,7 +141,12 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnResize(int w, int h, bool force)
     {
+        resizeWindow(w, h, force);
 
+        if (this->pCamera != nullptr)
+        {
+            this->pCamera->PerspectiveLH(glm::radians(this->cfg_cameraFov), this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
+        }
     }
 
     bool OpenGLWindow::OnBeginCompute_BeforeRender()
@@ -361,15 +377,15 @@ namespace LostPeterOpenGL
         }
         if (key == GLFW_KEY_R)
         {
-
+            cameraReset();
         }
         if (key == GLFW_KEY_T)
         {
-
+            this->cfg_isRotate = !this->cfg_isRotate;
         }
         if (key == GLFW_KEY_F)
         {
-
+            this->cfg_isWireFrame = !this->cfg_isWireFrame;
         }
     }
     void OpenGLWindow::OnKeyUp(int key)
@@ -483,6 +499,7 @@ namespace LostPeterOpenGL
         {
             //1> make window
             glfwMakeContextCurrent(this->pWindow);
+            glfwSwapInterval(1); // Enable vsync
             glfwSetFramebufferSizeCallback(this->pWindow, framebuffer_size_callback);
 
             //2> glad load all OpenGL function pointers 
@@ -635,11 +652,43 @@ namespace LostPeterOpenGL
     }
         void OpenGLWindow::createSwapChain()
         {
+            //1> Default Framebuffer Color/Depth format
+            glGetIntegerv(GL_COLOR_ATTACHMENT0, &this->poSwapChainImageFormat);
+            glGetIntegerv(GL_DEPTH_STENCIL_ATTACHMENT, &this->poDepthImageFormat);
 
+            //2> Framebuffer
+            int w, h;
+            glfwGetFramebufferSize(this->pWindow, &w, &h);
+            this->poFramebufferSize.x = (float)w;
+            this->poFramebufferSize.y = (float)h;
+            float scaleX, scaleY;
+            glfwGetWindowContentScale(this->pWindow, &scaleX, &scaleY);
+            this->poWindowContentScale.x = scaleX;
+            this->poWindowContentScale.y = scaleY;
+            F_LogInfo("<1-5-1> OpenGLWindow::createSwapChain finish, Swapchain size: [%d,%d], window size: [%d,%d], scale: [%f, %f], format color: [%d], format depth: [%d] !", 
+                      w, h, this->width, this->height, scaleX, scaleY, this->poSwapChainImageFormat, this->poDepthImageFormat);
+            
+            createViewport();
         }
             void OpenGLWindow::createViewport()
             {
+                int w = (int)this->poFramebufferSize.x;
+                int h = (int)this->poFramebufferSize.y;
 
+                this->poOffset.x = 0;
+                this->poOffset.y = 0;
+                this->poExtent.x = w;
+                this->poExtent.y = h;
+
+                this->poViewport.left = 0;
+                this->poViewport.top = 0;
+                this->poViewport.right = w;
+                this->poViewport.bottom = h;
+
+                this->poScissor.left = 0;
+                this->poScissor.top = 0;
+                this->poScissor.right = w;
+                this->poScissor.bottom = h;
             }
         void OpenGLWindow::createSwapChainImageViews()
         {
@@ -818,7 +867,16 @@ namespace LostPeterOpenGL
             loadGeometry();
 
             //2> Imgui
-            
+            if (HasConfig_Imgui())
+            {
+                createImgui();
+            }
+
+            //3> Editor
+            if (this->cfg_isEditorCreate)
+            {
+                createEditor();
+            }
 
             this->isLoadAsset = true;
         }
@@ -1146,11 +1204,11 @@ namespace LostPeterOpenGL
                                                         false);
                         if (!this->poTexture->Init())
                         {
-                            F_LogError("*********************** VulkanWindow::loadTexture_Default: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), this->cfg_texture_Path.c_str());
+                            F_LogError("*********************** OpenGLWindow::loadTexture_Default: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), this->cfg_texture_Path.c_str());
                             F_DELETE(this->poTexture)
                             return;
                         }
-                        F_LogInfo("<2-1-2-1> VulkanWindow::loadTexture_Default finish !");
+                        F_LogInfo("<2-1-2-1> OpenGLWindow::loadTexture_Default finish !");
                     }
                 }
                 void OpenGLWindow::loadTexture_Custom()
@@ -1680,9 +1738,83 @@ namespace LostPeterOpenGL
                 }
 
 
+        void OpenGLWindow::createImgui()
+        {
+            F_LogInfo("**********<2-2> OpenGLWindow::createImgui start **********");
+            {
+                //1> createImgui_DescriptorPool
+                //createImgui_DescriptorPool();
+                
+                //2> createImgui_Init
+                createImgui_Init();
+            }
+            F_LogInfo("**********<2-2> OpenGLWindow::createImgui finish **********");
+        }
+            void OpenGLWindow::createImgui_Init()
+            {
+                //1> Config
+                IMGUI_CHECKVERSION();
+                ImGui::CreateContext();
+                ImGuiIO& io = ImGui::GetIO();
+                this->imgui_PathIni = this->pathBin + "Log/" + this->nameTitle + ".ini";
+                this->imgui_PathLog = this->pathBin + "Log/" + this->nameTitle + ".log";
+                io.IniFilename = this->imgui_PathIni.c_str();
+                io.LogFilename = this->imgui_PathLog.c_str();
+
+                //2> Setup Dear ImGui style
+                ImGui::StyleColorsDark();
+                //ImGui::StyleColorsClassic();
+
+                //3> Init OpenGL
+                ImGui_ImplGlfw_InitForOpenGL(this->pWindow, true);
+                ImGui_ImplOpenGL3_Init(this->versionGLSL);
+
+
+                F_LogInfo("<2-2-1> OpenGLWindow::createImgui_Init finish !");
+            }
+
+
+        void OpenGLWindow::createEditor()
+        {
+
+        }
+            void OpenGLWindow::createEditor_Grid()
+            {
+
+            }
+            void OpenGLWindow::createEditor_CameraAxis()
+            {
+
+            }
+            void OpenGLWindow::createEditor_CoordinateAxis()    
+            {
+
+            }
+            void OpenGLWindow::createEditor_LineFlat2DCollector()
+            {
+
+            }
+            void OpenGLWindow::createEditor_LineFlat3DCollector()
+            {
+
+            }
+        void OpenGLWindow::destroyEditor()
+        {
+
+        }
+
+
     void OpenGLWindow::resizeWindow(int w, int h, bool force)
     {
-
+        if (this->width == w &&
+            this->height == h &&
+            !force)
+        {
+            return;
+        }
+        this->width = w;
+        this->height = h;
+        RefreshAspectRatio();
     }
 
     bool OpenGLWindow::beginRender()
@@ -1755,23 +1887,94 @@ namespace LostPeterOpenGL
                 }
                 void OpenGLWindow::updateCBs_ImGUI()
                 {
-
+                    if (IsEnable_Imgui())
+                    {
+                        if (beginRenderImgui())
+                        {
+                            endRenderImgui();
+                        }
+                    }
                 }
                     bool OpenGLWindow::beginRenderImgui()
                     {   
-                        return true;
+
+                        return false;
                     }
                         void OpenGLWindow::commonConfig()
                         {
+                            ImGui::Text("Frametime: %f", this->fFPS);
 
+                            ImGui::Separator();
+                            commonShowConfig();
+
+                            ImGui::Separator();
+                            commonEditorConfig();
                         }
                             void OpenGLWindow::commonShowConfig()
                             {
+                                if (ImGui::CollapsingHeader("Common Show"))
+                                {
+                                    ImGui::Text("Op ResetCamera -- Key R");
+                                    ImGui::Text("Op WireFrame -- Key F");
+                                    ImGui::Text("Op Rotate -- Key T");
 
+                                    ImGui::Separator();
+                                    ImGui::Text("Viewport Offset: [%d, %d]",
+                                                this->poViewport.left,
+                                                this->poViewport.top);
+                                    ImGui::Text("Viewport Size: [%d, %d]",
+                                                this->poViewport.right,
+                                                this->poViewport.bottom);
+                                    ImGui::Text("Framebuffer Size: [%f, %f]",
+                                                this->poFramebufferSize.x,
+                                                this->poFramebufferSize.y);
+                                    ImGui::Text("Glfw WindowContent Scale: [%f, %f]",
+                                                this->poWindowContentScale.x,
+                                                this->poWindowContentScale.y);
+
+                                    ImGui::Separator();
+                                    ImGui::Text("Mouse Screen XY: [%f, %f]", 
+                                                this->mousePosLast.x,
+                                                this->mousePosLast.y);
+                                    if (this->poViewport.right > 0 && this->poViewport.bottom > 0)
+                                    ImGui::Text("Mouse Viewport XY: [%f, %f]", 
+                                                this->mousePosLast.x / this->poViewport.right,
+                                                this->mousePosLast.y / this->poViewport.bottom);
+                                    ImGui::Text("Mouse NDC XY: [%f, %f]", 
+                                                (float)((this->mousePosLast.x - this->poViewport.left) * 2.0f / this->poViewport.right - 1.0f),
+                                                (float)(1.0f - (this->mousePosLast.y - this->poViewport.top) * 2.0f / this->poViewport.bottom));
+                                    ImGui::Text("Mouse LeftDown: [%s]", 
+                                                this->mouseButtonDownLeft ? "true" : "false");
+                                    ImGui::Text("Mouse RightDown: [%s]", 
+                                                this->mouseButtonDownRight ? "true" : "false");
+                                    ImGui::Text("Mouse MiddleDown: [%s]", 
+                                                this->mouseButtonDownMiddle ? "true" : "false");
+
+                                    ImGui::Separator();
+
+                                }
                             }
                             void OpenGLWindow::commonEditorConfig()
                             {
+                                ImGui::Checkbox("Is WireFrame", &cfg_isWireFrame);
+                                ImGui::Checkbox("Is Rotate", &cfg_isRotate);
+                                ImGui::Separator();
+                                if (ImGui::CollapsingHeader("EditorGrid Settings"))
+                                {
+                                    ImGui::Checkbox("Is EditorGridShow", &cfg_isEditorGridShow);
+                                    if (this->pEditorGrid != nullptr)
+                                    {
+                                        if (ImGui::ColorEdit4("EditorGrid Color", (float*)&this->cfg_editorGrid_Color))
+                                        {
+                                            //this->pEditorGrid->SetColor(this->cfg_editorGrid_Color);
+                                        }
+                                    }
+                                }
+                                if (ImGui::CollapsingHeader("EditorCameraAxis Settings"))
+                                {
+                                    ImGui::Checkbox("Is EditorCameraAxisShow", &cfg_isEditorCameraAxisShow);
 
+                                }
                             }
                         void OpenGLWindow::cameraConfig()
                         {
@@ -1835,7 +2038,7 @@ namespace LostPeterOpenGL
                         }
                 void OpenGLWindow::endRenderImgui()
                 {
-
+                    ImGui::Render();
                 }
             void OpenGLWindow::updateCBs_Editor()
             {
@@ -1936,7 +2139,10 @@ namespace LostPeterOpenGL
                         }
                         void OpenGLWindow::drawMeshDefault_Imgui()
                         {
-
+                            if (HasConfig_Imgui())
+                            {
+                                ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                            }
                         }
                     void OpenGLWindow::updateMeshDefault_After()
                     {
@@ -2037,11 +2243,16 @@ namespace LostPeterOpenGL
             }
         void OpenGLWindow::cleanupImGUI()
         {
-
+            if (HasConfig_Imgui())
+            {
+                ImGui_ImplOpenGL3_Shutdown();
+                ImGui_ImplGlfw_Shutdown();
+                ImGui::DestroyContext();
+            }
         }
         void OpenGLWindow::cleanupEditor()
         {
-
+            destroyEditor();
         }
         void OpenGLWindow::cleanupCustom()
         {

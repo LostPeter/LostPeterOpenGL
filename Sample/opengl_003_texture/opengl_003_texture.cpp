@@ -16,7 +16,9 @@
 OpenGL_003_Texture::OpenGL_003_Texture(int width, int height, String name)
     : OpenGLWindow(width, height, name)
 {
-    
+    this->cfg_isImgui = true;
+    this->imgui_IsEnable = true;
+
     this->poTypeVertex = F_MeshVertex_Pos2Color4Tex2;
     this->cfg_shaderVertex_Path = getShaderPathRelative("notrans_pos2_color4_tex2.vert.spv", ShaderSort_Common);
     this->cfg_shaderFragment_Path = getShaderPathRelative("notrans_pos2_color4_tex2.frag.spv", ShaderSort_Common);
@@ -38,4 +40,28 @@ void OpenGL_003_Texture::loadModel_Custom()
     this->poIndexCount = 0;
     this->poIndexBuffer_Size = 0;
     this->poIndexBuffer_Data = nullptr;
+}
+
+
+bool OpenGL_003_Texture::beginRenderImgui()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    static bool windowOpened = true;
+    ImGui::Begin("OpenGL_003_Texture", &windowOpened, 0);
+    {
+        //0> Common
+        commonConfig();
+        
+    }
+    ImGui::End();
+
+    return true;
+}
+
+void OpenGL_003_Texture::endRenderImgui()
+{
+    OpenGLWindow::endRenderImgui();
+
 }

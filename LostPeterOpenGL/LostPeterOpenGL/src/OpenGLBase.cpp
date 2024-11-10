@@ -19,8 +19,10 @@ namespace LostPeterOpenGL
         : versionGL_Major(4)
     #if F_PLATFORM == F_PLATFORM_MAC
         , versionGL_Minor(1)
+        , versionGLSL("#version 410")
     #else
         , versionGL_Minor(6)
+        , versionGLSL("#version 460")
     #endif
         , width(width)
         , height(height)

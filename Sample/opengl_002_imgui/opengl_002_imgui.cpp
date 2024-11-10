@@ -16,6 +16,8 @@
 OpenGL_002_Imgui::OpenGL_002_Imgui(int width, int height, String name)
     : OpenGLWindow(width, height, name)
 {
+    this->cfg_isImgui = true;
+    this->imgui_IsEnable = true;
     
     this->poTypeVertex = F_MeshVertex_Pos2Color4;
     this->cfg_shaderVertex_Path = getShaderPathRelative("notrans_pos2_color4.vert.spv", ShaderSort_Common);
@@ -34,4 +36,30 @@ void OpenGL_002_Imgui::loadModel_Custom()
     this->poIndexCount = 0;
     this->poIndexBuffer_Size = 0;
     this->poIndexBuffer_Data = nullptr;
+}
+
+
+bool OpenGL_002_Imgui::beginRenderImgui()
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    static bool windowOpened = true;
+    static bool showDemoWindow = false;
+    ImGui::Begin("OpenGL_002_Imgui", &windowOpened, 0);
+    ImGui::Text("Frametime: %f", this->fFPS);
+    ImGui::Checkbox("Show ImGui demo window", &showDemoWindow);
+    ImGui::End();
+    if (showDemoWindow) 
+    {
+        ImGui::ShowDemoWindow();
+    }
+
+    return true;
+}
+
+void OpenGL_002_Imgui::endRenderImgui()
+{
+    OpenGLWindow::endRenderImgui();
+
 }

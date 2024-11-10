@@ -30,6 +30,10 @@ protected:
         //Geometry
             virtual void loadModel_Custom();
 
+    //Render/Update
+        virtual bool beginRenderImgui();
+        virtual void endRenderImgui();
+        
 public:
 
 };

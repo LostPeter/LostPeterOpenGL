@@ -36,10 +36,13 @@ namespace LostPeterOpenGL
 
         GLDebug* poDebug;
 
+        int poSwapChainImageFormat;
+        int poDepthImageFormat;
+
+        FRectI poViewport;
         FSizeI poOffset;
         FSizeI poExtent;
         FRectI poScissor;
-
 
         FVector2 poFramebufferSize;
         FVector2 poWindowContentScale;
@@ -72,6 +75,7 @@ namespace LostPeterOpenGL
         bool cfg_isMSAA;
         bool cfg_isImgui;
         bool cfg_isWireFrame;
+        bool cfg_isRotate;
         
         GLenum cfg_glPrimitiveTopology;
         
@@ -121,6 +125,21 @@ namespace LostPeterOpenGL
         bool mouseButtonDownLeft;
         bool mouseButtonDownRight;
         bool mouseButtonDownMiddle;
+
+         //Editor
+        bool cfg_isEditorCreate;
+        bool cfg_isEditorGridShow;
+        bool cfg_isEditorCameraAxisShow;
+        bool cfg_isEditorCoordinateAxisShow;
+        FColor cfg_editorGrid_Color;
+        float cfg_editorCoordinateAxis_MoveSpeed;
+        float cfg_editorCoordinateAxis_RotateSpeed;
+        float cfg_editorCoordinateAxis_ScaleSpeed;
+        EditorGrid* pEditorGrid;
+        EditorCameraAxis* pEditorCameraAxis;
+        EditorCoordinateAxis* pEditorCoordinateAxis;
+        EditorLineFlat2DCollector* pEditorLineFlat2DCollector;
+        EditorLineFlat3DCollector* pEditorLineFlat3DCollector;
 
     public: 
         static bool s_isEnableValidationLayers;
@@ -415,6 +434,20 @@ namespace LostPeterOpenGL
                 virtual void createComputePipeline();
                     virtual void createComputePipeline_Default();
                     virtual void createComputePipeline_Custom();
+
+
+            //Imgui
+            virtual void createImgui();
+                virtual void createImgui_Init();
+
+            //Editor
+            virtual void createEditor();
+                virtual void createEditor_Grid();
+                virtual void createEditor_CameraAxis();
+                virtual void createEditor_CoordinateAxis();      
+                virtual void createEditor_LineFlat2DCollector();
+                virtual void createEditor_LineFlat3DCollector();  
+            virtual void destroyEditor();
 
 
         //Resize
