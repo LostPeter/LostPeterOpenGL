@@ -2166,6 +2166,7 @@ namespace LostPeterOpenGL
 
                     glClearColor(clBg.x, clBg.y, clBg.z, clBg.w);
                     glClear(GL_COLOR_BUFFER_BIT);
+                    glEnable(GL_FRAMEBUFFER_SRGB);
                 }
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
