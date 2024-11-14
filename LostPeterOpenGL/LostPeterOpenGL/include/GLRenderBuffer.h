@@ -2,35 +2,45 @@
 * LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 * 
 * Author:   LostPeter
-* Time:     2024-11-03
+* Time:     2024-11-13
 * Github:   https://github.com/LostPeter/LostPeterOpenGL
 * Document: https://www.zhihu.com/people/lostpeter/posts
 *
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#ifndef _GL_RENDER_PASS_H_
-#define _GL_RENDER_PASS_H_
+#ifndef _GL_RENDER_BUFFER_H_
+#define _GL_RENDER_BUFFER_H_
 
 #include "Base.h"
 
 namespace LostPeterOpenGL
 {
-    class openglExport GLRenderPass : public Base
+    class openglExport GLRenderBuffer : public Base
     {
     public:
-        GLRenderPass(const String& nameRenderPass);
-        virtual ~GLRenderPass();
+        GLRenderBuffer(const String& nameRenderBuffer);
+        virtual ~GLRenderBuffer();
 
     public:
-        GLFrameBuffer* pFrameBuffer; 
+        int nWidth;
+        int nHeight;
+        GLenum nFormat;
+        GLenum nAttachment; 
+        GLenum nRenderbuffertarget;
+
+        uint32 nRenderBufferID;
 
     public:
         void Destroy();
-        bool Init();
+        bool Init(int width,
+                  int height,
+                  GLenum format,
+                  GLenum attachment, 
+                  GLenum renderbuffertarget);
 
     public:
-        void SetFrameBuffer(GLFrameBuffer* p) { this->pFrameBuffer = p; }
+        void BindRenderBuffer();
     };
 
 }; //LostPeterOpenGL

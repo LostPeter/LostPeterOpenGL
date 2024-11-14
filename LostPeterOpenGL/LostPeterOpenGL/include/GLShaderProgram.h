@@ -44,11 +44,20 @@ namespace LostPeterOpenGL
 
     public:
         void BindProgram();
-        
-
+    
     public:
-
-
+        void SetBool(const String& name, bool value) const;
+        void SetInt(const std::string& name, int value) const;
+        void SetFloat(const std::string& name, float value) const;
+        void SetVec2(const std::string& name, const FVector2& v2) const;
+        void SetVec2(const std::string& name, float x, float y) const;
+        void SetVec3(const std::string& name, const FVector3& v3) const;
+        void SetVec3(const std::string& name, float x, float y, float z) const;
+        void SetVec4(const std::string& name, const FVector4& v4) const;
+        void SetVec4(const std::string& name, float x, float y, float z, float w) const;
+        void SetMat2(const std::string& name, const glm::mat2& m2) const;
+        void SetMat3(const std::string& name, const FMatrix3& m3) const;
+        void SetMat4(const std::string& name, const FMatrix4& m4) const;
     };
 
 }; //LostPeterOpenGL

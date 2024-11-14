@@ -67,6 +67,8 @@ namespace LostPeterOpenGL
         void SetGLShaderProgramName(uint32 id, const String& name);
         void SetGLTextureName(uint32 id, const String& name);
 
+        void SetGLRenderBuffer(uint32 id, const String& name);
+        void SetGLFrameBuffer(uint32 id, const String& name);
     };
 
 }; //LostPeterOpenGL

@@ -33,8 +33,8 @@ namespace LostPeterOpenGL
         static const String c_strShaderProgram;
 
     public:
-
         GLDebug* poDebug;
+        int poMSAASamples;
 
         int poSwapChainImageFormat;
         int poDepthImageFormat;
@@ -47,6 +47,14 @@ namespace LostPeterOpenGL
         FVector2 poFramebufferSize;
         FVector2 poWindowContentScale;
 
+        GLTexturePtrVector poSwapChains;
+        GLTexture* poColor;
+        GLRenderBuffer* poDepthStencil;
+        GLTexturePtrVector poColorLists;
+        GLRenderPass* poRenderPass;
+        GLFrameBufferPtrVector poFrameBuffers;
+        size_t poCurrentFrame;
+        uint32_t poSwapChainImageIndex;
 
         uint32_t poVertexCount;
         size_t poVertexBuffer_Size;
@@ -71,6 +79,7 @@ namespace LostPeterOpenGL
         FVector4 cfg_colorBackground;
         FVector4Vector cfg_colorValues;
 
+        bool cfg_isRenderPassDefaultCustom;
 
         bool cfg_isMSAA;
         bool cfg_isImgui;
@@ -199,6 +208,7 @@ namespace LostPeterOpenGL
         virtual void OnEditorCoordinateMouseHover(double x, double y);
 
     public:
+        virtual bool HasConfig_RenderPassDefaultCustom();
         virtual bool HasConfig_MASS();
         virtual bool HasConfig_Imgui();
 
@@ -243,9 +253,7 @@ namespace LostPeterOpenGL
                     virtual void createRenderPass_Custom();
                         virtual GLRenderPass* createRenderPass_DefaultCustom();
                         virtual GLRenderPass* createRenderPass_KhrDepth(int formatSwapChain, int formatDepth);
-                        virtual GLRenderPass* createRenderPass_KhrDepthImgui(int formatColor, int formatDepth, int formatSwapChain);
                         virtual GLRenderPass* createRenderPass_ColorDepthMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples);
-                        virtual GLRenderPass* createRenderPass_ColorDepthImguiMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples);
 
 
 
@@ -255,15 +263,36 @@ namespace LostPeterOpenGL
                         virtual void createFramebuffer_DefaultCustom();
 
 
-                    virtual GLFrameBuffer* createGLFrameBuffer(const String& nameFrameBuffer,
-                                                               uint32_t width,
-                                                               uint32_t height,
-                                                               uint32_t layers);
-                    virtual uint32 createGLFrameBuffer();
-                    virtual void bindGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer);
-                    virtual void bindGLFrameBuffer(uint32 nGLFrameBuffer);
-                    virtual void destroyGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer);
-                    virtual void destroyGLFrameBuffer(uint32 nGLFrameBuffer);
+                    virtual GLRenderBuffer* createRenderBuffer(const String& nameRenderBuffer,
+                                                               int width,
+                                                               int height,
+                                                               GLenum format,
+                                                               GLenum attachment, 
+                                                               GLenum renderbuffertarget);
+
+                    virtual bool createGLRenderBuffer(const String& nameRenderBuffer,
+                                                      int width,
+                                                      int height,
+                                                      GLenum format,
+                                                      uint32& nRenderBufferID);
+                    virtual void bindGLRenderBuffer(uint32 nRenderBufferID);
+                    virtual void destroyGLRenderBuffer(uint32 nRenderBufferID);
+
+
+                    virtual GLFrameBuffer* createFrameBuffer(const String& nameFrameBuffer,
+                                                             int width,
+                                                             int height,
+                                                             const GLTexturePtrVector& aColorTexture,
+                                                             GLRenderBuffer* pDepthStencil,
+                                                             bool isDeleteColors = false,
+                                                             bool isDeleteDepthStencil = false);
+                    
+                    virtual bool createGLFrameBuffer(const String& nameFrameBuffer,
+                                                     const UintType2UintIDMap& mapType2IDs,
+                                                     uint32 nDepthStencilID,
+                                                     uint32& nFrameBufferID);
+                    virtual void bindGLFrameBuffer(uint32 nFrameBufferID);
+                    virtual void destroyGLFrameBuffer(uint32 nFrameBufferID);
 
 
         //Load Assets
@@ -341,10 +370,29 @@ namespace LostPeterOpenGL
                     virtual void loadTexture_Default();
                     virtual void loadTexture_Custom();
 
+                    virtual GLTexture* createTexture(const String& nameTexture,
+                                                     const StringVector& aPathTexture,
+                                                     uint8* pData,
+                                                     int channel,
+                                                     int width, 
+                                                     int height,
+                                                     int depth,
+                                                     FTextureType typeTexture,
+                                                     FTexturePixelFormatType typePixelFormat,
+                                                     FTextureAddressingType typeAddressing,
+                                                     FTextureFilterType typeFilterSizeMin,
+                                                     FTextureFilterType typeFilterSizeMag,
+                                                     FMSAASampleCountType numSamples,
+                                                     const FColor& borderColor,
+                                                     bool isUseBorderColor,
+                                                     bool isAutoMipmap,
+                                                     bool isCubeMap,
+                                                     bool isRenderTarget,
+                                                     bool isGraphicsComputeShared);
 
                     virtual bool createTexture2D(const String& nameTexture,
                                                  const String& pathAsset_Tex,
-                                                 uint32_t& mipMapCount, 
+                                                 int& mipMapCount, 
                                                  bool isAutoMipmap,
                                                  FTextureType typeTexture, 
                                                  bool isCubeMap,
@@ -358,14 +406,54 @@ namespace LostPeterOpenGL
                                                  bool isGraphicsComputeShared,
                                                  uint32& nTextureID);
 
+                    
+                    virtual bool createTextureRenderTarget2D(const String& nameTexture,
+                                                             const FVector4& clDefault,
+                                                             bool isSetColor,
+                                                             int channel,
+                                                             int width, 
+                                                             int height,
+                                                             int& mipMapCount, 
+                                                             bool isAutoMipmap,
+                                                             FTextureType typeTexture, 
+                                                             bool isCubeMap,
+                                                             FTexturePixelFormatType typePixelFormat,
+                                                             FTextureAddressingType typeAddressing,
+                                                             FTextureFilterType typeFilterSizeMin,
+                                                             FTextureFilterType typeFilterSizeMag,
+                                                             FMSAASampleCountType numSamples, 
+                                                             const FColor& borderColor,
+                                                             bool isUseBorderColor,
+                                                             bool isGraphicsComputeShared,
+                                                             uint32& nTextureID);
+                    virtual bool createTextureRenderTarget2D(const String& nameTexture,
+                                                             uint8* pData,
+                                                             int channel,
+                                                             int width, 
+                                                             int height,
+                                                             int& mipMapCount, 
+                                                             bool isAutoMipmap,
+                                                             FTextureType typeTexture, 
+                                                             bool isCubeMap,
+                                                             FTexturePixelFormatType typePixelFormat,
+                                                             FTextureAddressingType typeAddressing,
+                                                             FTextureFilterType typeFilterSizeMin,
+                                                             FTextureFilterType typeFilterSizeMag,
+                                                             FMSAASampleCountType numSamples, 
+                                                             const FColor& borderColor,
+                                                             bool isUseBorderColor,
+                                                             bool isGraphicsComputeShared,
+                                                             uint32& nTextureID);
+
+
                     virtual bool createGLTexture(const String& nameTexture,
                                                  uint8* pData,
                                                  int channel,
-                                                 uint32_t width, 
-                                                 uint32_t height, 
-                                                 uint32_t depth, 
-                                                 uint32_t numArray,
-                                                 uint32_t mipMapCount, 
+                                                 int width, 
+                                                 int height, 
+                                                 int depth, 
+                                                 int numArray,
+                                                 int mipMapCount, 
                                                  bool isAutoMipmap,
                                                  FTextureType typeTexture, 
                                                  bool isCubeMap,
@@ -420,7 +508,35 @@ namespace LostPeterOpenGL
                 virtual bool createGLShaderProgram(const String& nameShaderProgram,
                                                    uint32 nShaderComputeID,
                                                    uint32& nShaderProgramID);
-                virtual void bindGLShaderProgram(uint32 nShaderProgramID);
+                    virtual void bindGLShaderProgram(uint32 nShaderProgramID);
+
+                    virtual void setUniform1i(uint32 nShaderProgramID, const String& name, int value);
+                    virtual void setUniform1f(uint32 nShaderProgramID, const String& name, float value);
+                    virtual void setUniform2f(uint32 nShaderProgramID, const String& name, float x, float y);
+                    virtual void setUniform3f(uint32 nShaderProgramID, const String& name, float x, float y, float z);
+                    virtual void setUniform4f(uint32 nShaderProgramID, const String& name, float x, float y, float z, float w);
+                    virtual void setUniform2fv(uint32 nShaderProgramID, const String& name, const FVector2& v2);
+                    virtual void setUniform3fv(uint32 nShaderProgramID, const String& name, const FVector3& v3);
+                    virtual void setUniform4fv(uint32 nShaderProgramID, const String& name, const FVector4& v4);
+                    virtual void setUniformMatrix2fv(uint32 nShaderProgramID, const String& name, const glm::mat2& m2);
+                    virtual void setUniformMatrix3fv(uint32 nShaderProgramID, const String& name, const FMatrix3& m3);
+                    virtual void setUniformMatrix4fv(uint32 nShaderProgramID, const String& name, const FMatrix4& m4);
+
+                    virtual int getUniformLocation(uint32 nShaderProgramID, const String& name);
+                    virtual int getUniformLocation(uint32 nShaderProgramID, const char* name);
+
+                    virtual void setUniform1i(int location, int value);
+                    virtual void setUniform1f(int location, float value);
+                    virtual void setUniform2f(int location, float x, float y);
+                    virtual void setUniform3f(int location, float x, float y, float z);
+                    virtual void setUniform4f(int location, float x, float y, float z, float w);
+                    virtual void setUniform2fv(int location, const FVector2& v2);
+                    virtual void setUniform3fv(int location, const FVector3& v3);
+                    virtual void setUniform4fv(int location, const FVector4& v4);
+                    virtual void setUniformMatrix2fv(int location, const glm::mat2& m2);
+                    virtual void setUniformMatrix3fv(int location, const FMatrix3& m3);
+                    virtual void setUniformMatrix4fv(int location, const FMatrix4& m4);
+                
                 virtual void destroyGLShaderProgram(uint32 nShaderProgramID);
                 virtual bool checkGLShaderCompileErrors(uint32 nShader, const String& type);    
 
@@ -524,11 +640,12 @@ namespace LostPeterOpenGL
 
 
                     virtual void beginRenderPass(const String& nameRenderPass,
+                                                 GLRenderPass* pRenderPass,
                                                  const FSizeI& offset,
                                                  const FSizeI& extent,
                                                  const FVector4& clBg,
                                                  float depth,
-                                                 uint32_t stencil);
+                                                 int stencil);
                     
                         virtual void draw(GLenum mode, GLint first, GLsizei count);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);

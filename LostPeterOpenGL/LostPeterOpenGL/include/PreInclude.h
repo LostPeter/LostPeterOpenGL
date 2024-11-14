@@ -26,6 +26,7 @@
 #include "GLBufferVertex.h"
 #include "GLBufferVertexIndex.h"
 #include "GLFrameBuffer.h"
+#include "GLRenderBuffer.h"
 #include "GLRenderPass.h"
 #include "GLShader.h"
 #include "GLShaderProgram.h"

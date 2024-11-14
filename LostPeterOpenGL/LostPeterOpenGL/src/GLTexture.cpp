@@ -45,6 +45,7 @@ namespace LostPeterOpenGL
         , width(0)
         , height(0)
         , depth(0)
+        , channel(4)
 
         , mipMapCount(1)
         , isAutoMipmap(_isAutoMipmap)
@@ -69,16 +70,23 @@ namespace LostPeterOpenGL
 
     bool GLTexture::Init()
     {
-        return LoadTexture(0, 0, 0);
+        return LoadTexture(0, 
+                           0, 
+                           0, 
+                           4, 
+                           nullptr);
     }
 
     bool GLTexture::LoadTexture(int width,
                                 int height,
-                                int depth)
+                                int depth,
+                                int channel,
+                                uint8* pData)
     {   
         this->width = width;
         this->height = height;
         this->depth = depth;
+        this->channel = channel;
 
         if (!this->isRenderTarget)
         {
@@ -135,7 +143,28 @@ namespace LostPeterOpenGL
             }
             else if (this->typeTexture == F_Texture_2D)
             {
-
+                if (!Base::GetWindowPtr()->createTextureRenderTarget2D(this->name,
+                                                                       pData, 
+                                                                       channel,
+                                                                       width,
+                                                                       height,
+                                                                       this->mipMapCount,
+                                                                       this->isAutoMipmap,
+                                                                       this->typeTexture,
+                                                                       this->isCubeMap,
+                                                                       this->typePixelFormat,
+                                                                       this->typeAddressing,
+                                                                       this->typeFilterSizeMin,
+                                                                       this->typeFilterSizeMag,
+                                                                       this->numSamples,
+                                                                       this->borderColor,
+                                                                       this->isUseBorderColor,
+                                                                       this->isGraphicsComputeShared,
+                                                                       this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTarget2D, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_2DArray)
             {

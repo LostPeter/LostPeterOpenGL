@@ -14,14 +14,26 @@
 
 namespace LostPeterOpenGL
 {
-    GLRenderPass::GLRenderPass(const String& nameBuffer)
-        : Base(nameBuffer)
+    GLRenderPass::GLRenderPass(const String& nameRenderPass)
+        : Base(nameRenderPass)
+        , pFrameBuffer(nullptr)
     {
-
+        
     }
     GLRenderPass::~GLRenderPass()
     {
-       
+        Destroy();
+    }
+
+    void GLRenderPass::Destroy()
+    {
+
+    }
+
+    bool GLRenderPass::Init()
+    {
+
+        return true;
     }
 
 }; //LostPeterOpenGL

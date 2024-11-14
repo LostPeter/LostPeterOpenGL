@@ -194,4 +194,13 @@ namespace LostPeterOpenGL
         ObjectLabel(GL_TEXTURE, id, -1, name.c_str());
     }
 
+    void GLDebug::SetGLRenderBuffer(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_RENDERBUFFER, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLFrameBuffer(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_FRAMEBUFFER, id, -1, name.c_str());
+    }
+
 }; //LostPeterOpenGL

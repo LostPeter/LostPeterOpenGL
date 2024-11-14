@@ -98,6 +98,53 @@ namespace LostPeterOpenGL
         Base::GetWindowPtr()->bindGLShaderProgram(this->nShaderProgramID);
     }
 
-    
+    void GLShaderProgram::SetBool(const String& name, bool value) const
+    {
+        Base::GetWindowPtr()->setUniform1i(this->nShaderProgramID, name, (int)value);
+    }
+    void GLShaderProgram::SetInt(const std::string& name, int value) const
+    {
+        Base::GetWindowPtr()->setUniform1i(this->nShaderProgramID, name, value);
+    }
+    void GLShaderProgram::SetFloat(const std::string& name, float value) const
+    {
+        Base::GetWindowPtr()->setUniform1f(this->nShaderProgramID, name, value);
+    }
+    void GLShaderProgram::SetVec2(const std::string& name, const FVector2& v2) const
+    {
+        Base::GetWindowPtr()->setUniform2fv(this->nShaderProgramID, name, v2);
+    }
+    void GLShaderProgram::SetVec2(const std::string& name, float x, float y) const
+    {
+        Base::GetWindowPtr()->setUniform2f(this->nShaderProgramID, name, x, y);
+    }
+    void GLShaderProgram::SetVec3(const std::string& name, const FVector3& v3) const
+    {
+        Base::GetWindowPtr()->setUniform3fv(this->nShaderProgramID, name, v3);
+    }
+    void GLShaderProgram::SetVec3(const std::string& name, float x, float y, float z) const
+    {
+        Base::GetWindowPtr()->setUniform3f(this->nShaderProgramID, name, x, y, z);
+    }
+    void GLShaderProgram::SetVec4(const std::string& name, const FVector4& v4) const
+    {
+        Base::GetWindowPtr()->setUniform4fv(this->nShaderProgramID, name, v4);
+    }
+    void GLShaderProgram::SetVec4(const std::string& name, float x, float y, float z, float w) const
+    {
+        Base::GetWindowPtr()->setUniform4f(this->nShaderProgramID, name, x, y, z, w);
+    }
+    void GLShaderProgram::SetMat2(const std::string& name, const glm::mat2& m2) const
+    {
+        Base::GetWindowPtr()->setUniformMatrix2fv(this->nShaderProgramID, name, m2);
+    }
+    void GLShaderProgram::SetMat3(const std::string& name, const FMatrix3& m3) const
+    {
+        Base::GetWindowPtr()->setUniformMatrix3fv(this->nShaderProgramID, name, m3);
+    }
+    void GLShaderProgram::SetMat4(const std::string& name, const FMatrix4& m4) const
+    {
+        Base::GetWindowPtr()->setUniformMatrix4fv(this->nShaderProgramID, name, m4);
+    }
 
 }; //LostPeterOpenGL

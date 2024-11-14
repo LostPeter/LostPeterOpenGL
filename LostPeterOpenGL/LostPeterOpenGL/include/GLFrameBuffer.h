@@ -23,18 +23,30 @@ namespace LostPeterOpenGL
         virtual ~GLFrameBuffer();
 
     public:
-        uint32_t nWidth;
-        uint32_t nHeight;
-        uint32_t nLayers;
+        static UintID2UintTypeMap s_mapID2Types;
+
+    public:
+        int nWidth;
+        int nHeight;
+        GLTexturePtrVector aColorTexture;
+        UintType2UintIDMap mapType2IDs;
+        GLRenderBuffer* pDepthStencil;
+        bool bIsDeleteColors;
+        bool bIsDeleteDepthStencil;
 
         uint32 nFrameBufferID;
 
     public:
         void Destroy();
-        bool Init(uint32_t width,
-                  uint32_t height,
-                  uint32_t layers);
+        bool Init(int width,
+                  int height,
+                  const GLTexturePtrVector& aColors,
+                  GLRenderBuffer* pDS,
+                  bool isDeleteColors = false,
+                  bool isDeleteDepthStencil = false);
 
+    public:
+        void BindFrameBuffer();
     };
 
 }; //LostPeterOpenGL

@@ -31,6 +31,17 @@ namespace LostPeterOpenGL
     OpenGLWindow::OpenGLWindow(int width, int height, String name)
         : OpenGLBase(width, height, name)
 
+        , poDebug(nullptr)
+        , poMSAASamples(1)
+
+        , poSwapChainImageFormat(GL_RGBA)
+        , poDepthImageFormat(GL_DEPTH24_STENCIL8)
+
+        , poColor(nullptr)
+        , poDepthStencil(nullptr)
+        , poRenderPass(nullptr)
+        , poCurrentFrame(0)
+        , poSwapChainImageIndex(0)
 
         , poVertexCount(0)
         , poVertexBuffer_Size(0)
@@ -53,6 +64,7 @@ namespace LostPeterOpenGL
 
         , cfg_colorBackground(0.0f, 0.2f, 0.4f, 1.0f)
 
+        , cfg_isRenderPassDefaultCustom(false)
 
         , cfg_isMSAA(false)
         , cfg_isImgui(false)
@@ -206,6 +218,7 @@ namespace LostPeterOpenGL
     void OpenGLWindow::OnPresent()
     {
 
+        this->poCurrentFrame = (this->poCurrentFrame + 1) % s_maxFramesInFight;
     }
     void OpenGLWindow::OnDestroy()
     {
@@ -423,6 +436,10 @@ namespace LostPeterOpenGL
 
     }   
 
+    bool OpenGLWindow::HasConfig_RenderPassDefaultCustom()
+    {
+        return this->cfg_isRenderPassDefaultCustom;
+    }
     bool OpenGLWindow::HasConfig_MASS()
     {
         return this->cfg_isMSAA;
@@ -692,15 +709,93 @@ namespace LostPeterOpenGL
             }
         void OpenGLWindow::createSwapChainImageViews()
         {
+            int count_swapchain = s_maxFramesInFight;
 
+            StringVector aPathTexture;
+            int w = (int)this->poFramebufferSize.x;
+            int h = (int)this->poFramebufferSize.y;
+            this->poSwapChains.resize(count_swapchain);
+            for (int i = 0; i < count_swapchain; i++)
+            {
+                String nameSwapChain = "Texture-SwapChain-" + FUtilString::SaveInt(i);
+                GLTexture* pTexture = createTexture(nameSwapChain,
+                                                    aPathTexture,
+                                                    nullptr,
+                                                    4,
+                                                    w,
+                                                    h,
+                                                    0,
+                                                    F_Texture_2D,
+                                                    F_TexturePixelFormat_R8G8B8A8_SRGB,
+                                                    F_TextureAddressing_Wrap,
+                                                    F_TextureFilter_Bilinear,
+                                                    F_TextureFilter_Bilinear,
+                                                    F_MSAASampleCount_1_Bit,
+                                                    FColor(0, 0, 0, 1),
+                                                    true,
+                                                    true,
+                                                    false,
+                                                    true,
+                                                    false);
+                if (pTexture == nullptr)
+                {
+                    F_LogError("*********************** OpenGLWindow::createSwapChainImageViews: Failed to create texture, name: [%s] !", nameSwapChain.c_str());
+                    F_DELETE(pTexture)
+                    return;
+                }
+                this->poSwapChains[i] = pTexture;
+            }
         }
             void OpenGLWindow::createColorResources()
             {
-
+                StringVector aPathTexture;
+                int w = (int)this->poFramebufferSize.x;
+                int h = (int)this->poFramebufferSize.y;
+                String nameColor = "Texture-Color";
+                this->poColor = createTexture(nameColor,
+                                              aPathTexture,
+                                              nullptr,
+                                              4,
+                                              w,
+                                              h,
+                                              0,
+                                              F_Texture_2D,
+                                              F_TexturePixelFormat_R8G8B8A8_SRGB,
+                                              F_TextureAddressing_Wrap,
+                                              F_TextureFilter_Bilinear,
+                                              F_TextureFilter_Bilinear,
+                                              F_MSAASampleCount_1_Bit,
+                                              FColor(0, 0, 0, 1),
+                                              true,
+                                              true,
+                                              false,
+                                              true,
+                                              false);
+                if (this->poColor == nullptr)
+                {
+                    F_LogError("*********************** OpenGLWindow::createColorResources: Failed to create texture, name: [%s] !", nameColor.c_str());
+                    F_DELETE(this->poColor)
+                    return;
+                }
             }
             void OpenGLWindow::createDepthResources()
             {
-
+                StringVector aPathTexture;
+                int w = (int)this->poFramebufferSize.x;
+                int h = (int)this->poFramebufferSize.y;
+                String nameDepthStencil = "Texture-DepthStencil";
+                this->poDepthStencil = createRenderBuffer(nameDepthStencil,
+                                                          w,
+                                                          h,
+                                                          GL_DEPTH24_STENCIL8,
+                                                          GL_DEPTH_STENCIL_ATTACHMENT,
+                                                          0);
+                if (this->poDepthStencil == nullptr)
+                {
+                    F_LogError("*********************** OpenGLWindow::createDepthResources: Failed to create texture, name: [%s] !", nameDepthStencil.c_str());
+                    F_DELETE(this->poDepthStencil)
+                    return;
+                }
             }
         void OpenGLWindow::createColorResourceLists()
         {
@@ -736,7 +831,21 @@ namespace LostPeterOpenGL
             }
             void OpenGLWindow::createRenderPass_Default()
             {
-
+                if (HasConfig_RenderPassDefaultCustom())
+                {
+                    this->poRenderPass = createRenderPass_DefaultCustom();
+                }
+                else
+                {
+                    if (HasConfig_MASS())
+                    {
+                        this->poRenderPass = createRenderPass_ColorDepthMSAA(this->poSwapChainImageFormat, this->poDepthImageFormat, this->poSwapChainImageFormat, this->poMSAASamples);
+                    }
+                    else
+                    {
+                        this->poRenderPass = createRenderPass_KhrDepth(this->poSwapChainImageFormat, this->poDepthImageFormat);
+                    }
+                }
             }
             void OpenGLWindow::createRenderPass_Cull()
             {
@@ -757,22 +866,28 @@ namespace LostPeterOpenGL
                 }
                 GLRenderPass* OpenGLWindow::createRenderPass_KhrDepth(int formatSwapChain, int formatDepth)
                 {
-                    return nullptr;
-                }
-                GLRenderPass* OpenGLWindow::createRenderPass_KhrDepthImgui(int formatColor, int formatDepth, int formatSwapChain)
-                {
-                    return nullptr;
+                    String nameRenderPass = "RenderPass-Default-KhrDepth";
+                    GLRenderPass* pRenderPass = new GLRenderPass(nameRenderPass);
+                    if (!pRenderPass->Init())
+                    {
+                        F_LogError("*********************** OpenGLWindow::createRenderPass_KhrDepth: Failed to create RenderPass, name: [%s] !", nameRenderPass.c_str());
+                        return nullptr;
+                    }
+
+                    return pRenderPass;
                 }
                 GLRenderPass* OpenGLWindow::createRenderPass_ColorDepthMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples)
                 {
-                    return nullptr;
-                }
-                GLRenderPass* OpenGLWindow::createRenderPass_ColorDepthImguiMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples)
-                {
-                    return nullptr;
-                }
+                    String nameRenderPass = "RenderPass-Default-ColorDepthMSAA";
+                    GLRenderPass* pRenderPass = new GLRenderPass(nameRenderPass);
+                    if (!pRenderPass->Init())
+                    {
+                        F_LogError("*********************** OpenGLWindow::createRenderPass_ColorDepthMSAA: Failed to create RenderPass, name: [%s] !", nameRenderPass.c_str());
+                        return nullptr;
+                    }
 
-            
+                    return pRenderPass;
+                }
 
 
         void OpenGLWindow::createFramebuffers()
@@ -785,7 +900,41 @@ namespace LostPeterOpenGL
         }
             void OpenGLWindow::createFramebuffer_Default()
             {
+                if (HasConfig_RenderPassDefaultCustom())
+                {
+                    createFramebuffer_DefaultCustom();
+                }
+                else
+                {
+                    int w = (int)this->poFramebufferSize.x;
+                    int h = (int)this->poFramebufferSize.y;
+                    size_t count = this->poSwapChains.size();
+                    this->poFrameBuffers.resize(count);
+                    for (size_t i = 0; i < count; i++)
+                    {
+                        GLTexturePtrVector aColorTexture;
+                        aColorTexture.push_back(this->poSwapChains[i]);
+                        if (poColor != nullptr)
+                            aColorTexture.push_back(poColor); 
+                        String nameFrameBuffer = "FrameBuffer-" + FUtilString::SaveSizeT(i);
+                        GLFrameBuffer* pFrameBuffer = createFrameBuffer(nameFrameBuffer,
+                                                                        w,
+                                                                        h,
+                                                                        aColorTexture,
+                                                                        this->poDepthStencil,
+                                                                        false,
+                                                                        false);
+                        if (pFrameBuffer == nullptr)
+                        {
+                            String msg = "*********************** OpenGLWindow::createFramebuffer_Default: Failed to create framebuffer: " + nameFrameBuffer;
+                            F_LogError(msg.c_str());
+                            throw std::runtime_error(msg);
+                        }
+                        this->poFrameBuffers[i] = pFrameBuffer;
+                    }
+                }
 
+                F_LogInfo("OpenGLWindow::createFramebuffer_Default: Success to create Framebuffer_Default !");
             }
             void OpenGLWindow::createFramebuffer_Custom()
             {
@@ -796,60 +945,134 @@ namespace LostPeterOpenGL
 
                 }
 
-            GLFrameBuffer* OpenGLWindow::createGLFrameBuffer(const String& nameFrameBuffer,
-                                                             uint32_t width,
-                                                             uint32_t height,
-                                                             uint32_t layers)
+            GLRenderBuffer* OpenGLWindow::createRenderBuffer(const String& nameRenderBuffer,
+                                                             int width,
+                                                             int height,
+                                                             GLenum format,
+                                                             GLenum attachment, 
+                                                             GLenum renderbuffertarget)
+            {
+                GLRenderBuffer* pGLRenderBuffer = new GLRenderBuffer(nameRenderBuffer);
+                if (!pGLRenderBuffer->Init(width, 
+                                           height,
+                                           format,
+                                           attachment,
+                                           renderbuffertarget))
+                {
+                    F_LogError("*********************** OpenGLWindow::createRenderBuffer: Create RenderBuffer failed, Name: [%s] !", nameRenderBuffer.c_str());
+                    F_DELETE(pGLRenderBuffer)
+                    return nullptr;
+                }   
+
+                return pGLRenderBuffer;
+            }
+
+            bool OpenGLWindow::createGLRenderBuffer(const String& nameRenderBuffer,
+                                                    int width,
+                                                    int height,
+                                                    GLenum format,
+                                                    uint32& nRenderBufferID)
+            {
+                nRenderBufferID = 0;
+                glGenRenderbuffers(1, &nRenderBufferID);
+                if (nRenderBufferID <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::createGLRenderBuffer: Create RenderBuffer failed, id: [%d], name: [%s] !", nRenderBufferID, nameRenderBuffer.c_str());
+                    return false;
+                }
+                glBindRenderbuffer(GL_RENDERBUFFER, nRenderBufferID);
+                glRenderbufferStorage(GL_RENDERBUFFER, format, width, height); 
+                
+                this->poDebug->SetGLRenderBuffer(nRenderBufferID, nameRenderBuffer);
+                return true;
+            }
+            void OpenGLWindow::bindGLRenderBuffer(uint32 nRenderBufferID)
+            {
+                if (nRenderBufferID <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::bindGLRenderBuffer: RenderBuffer id: [%d] is not valid !", nRenderBufferID);
+                    return;
+                }
+                glBindRenderbuffer(GL_RENDERBUFFER, nRenderBufferID);
+            }
+            void OpenGLWindow::destroyGLRenderBuffer(uint32 nRenderBufferID)
+            {
+                if (nRenderBufferID <= 0)
+                    return;
+                glDeleteRenderbuffers(1, &nRenderBufferID);
+            }
+
+
+            GLFrameBuffer* OpenGLWindow::createFrameBuffer(const String& nameFrameBuffer,
+                                                           int width,
+                                                           int height,
+                                                           const GLTexturePtrVector& aColorTexture,
+                                                           GLRenderBuffer* pDepthStencil,
+                                                           bool isDeleteColors /*= false*/,
+                                                           bool isDeleteDepthStencil /*= false*/)
             {
                 GLFrameBuffer* pGLFrameBuffer = new GLFrameBuffer(nameFrameBuffer);
                 if (!pGLFrameBuffer->Init(width, 
                                           height,
-                                          layers))
+                                          aColorTexture,
+                                          pDepthStencil,
+                                          isDeleteColors,
+                                          isDeleteDepthStencil))
                 {
-                    F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, Name: [%s] !", nameFrameBuffer.c_str());
+                    F_LogError("*********************** OpenGLWindow::createFrameBuffer: Create FrameBuffer failed, Name: [%s] !", nameFrameBuffer.c_str());
                     F_DELETE(pGLFrameBuffer)
                     return nullptr;
                 }   
 
                 return pGLFrameBuffer;
             }
-            uint32 OpenGLWindow::createGLFrameBuffer()
+            bool OpenGLWindow::createGLFrameBuffer(const String& nameFrameBuffer, 
+                                                   const UintType2UintIDMap& mapType2IDs,
+                                                   uint32 nDepthStencilID,
+                                                   uint32& nFrameBufferID)
             {
-                uint32 nGLFrameBuffer = 0;
-                glGenFramebuffers(1, &nGLFrameBuffer);
-                if (nGLFrameBuffer <= 0)
+                nFrameBufferID = 0;
+                glGenFramebuffers(1, &nFrameBufferID);
+                if (nFrameBufferID <= 0)
                 {
-                    F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, id: [%d] !", nGLFrameBuffer);
-                    return 0;
+                    F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, id: [%d], name: [%s] !", nFrameBufferID, nameFrameBuffer.c_str());
+                    return false;
                 }
-                return nGLFrameBuffer;
-            }
-            void OpenGLWindow::bindGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer)
-            {
-                if (!pGLFrameBuffer)
-                    return;
-                bindGLFrameBuffer(pGLFrameBuffer->nFrameBufferID);
-            }
-            void OpenGLWindow::bindGLFrameBuffer(uint32 nGLFrameBuffer)
-            {
-                if (nGLFrameBuffer <= 0)
+                glBindFramebuffer(GL_FRAMEBUFFER, nFrameBufferID);
                 {
-                    F_LogError("*********************** OpenGLWindow::bindGLFrameBuffer: FrameBuffer id [%d] is not valid !", nGLFrameBuffer);
+                    //Color Attachment
+                    for (UintType2UintIDMap::const_iterator it = mapType2IDs.begin();
+                        it != mapType2IDs.end(); ++it)
+                    {
+                        glFramebufferTexture2D(GL_FRAMEBUFFER, it->first, GL_TEXTURE_2D, it->second, 0);
+                    }
+
+                    //Depth Stencil Attachment
+                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, nDepthStencilID); 
+                    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+                    {
+                        F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: FrameBuffer is not complete, id: [%d], name: [%s] !", nFrameBufferID, nameFrameBuffer.c_str());
+                    }
+                }
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+                this->poDebug->SetGLFrameBuffer(nFrameBufferID, nameFrameBuffer);
+                return true;
+            }
+            void OpenGLWindow::bindGLFrameBuffer(uint32 nFrameBufferID)
+            {
+                if (nFrameBufferID <= 0)
+                {
+                    F_LogError("*********************** OpenGLWindow::bindGLFrameBuffer: FrameBuffer id: [%d] is not valid !", nFrameBufferID);
                     return;
                 }
-                glBindFramebuffer(GL_FRAMEBUFFER, nGLFrameBuffer);
+                glBindFramebuffer(GL_FRAMEBUFFER, nFrameBufferID);
             }
-            void OpenGLWindow::destroyGLFrameBuffer(GLFrameBuffer* pGLFrameBuffer)
+            void OpenGLWindow::destroyGLFrameBuffer(uint32 nFrameBufferID)
             {
-                if (!pGLFrameBuffer)
+                if (nFrameBufferID <= 0)
                     return;
-                destroyGLFrameBuffer(pGLFrameBuffer->nFrameBufferID);
-            }
-            void OpenGLWindow::destroyGLFrameBuffer(uint32 nGLFrameBuffer)
-            {
-                if (nGLFrameBuffer <= 0)
-                    return;
-                glDeleteFramebuffers(1, &nGLFrameBuffer);
+                glDeleteFramebuffers(1, &nFrameBufferID);
             }
 
 
@@ -1188,8 +1411,13 @@ namespace LostPeterOpenGL
                         FUtilString::SplitFileName(this->cfg_texture_Path, nameTexture, pathBase);
                         StringVector aPathTexture;
                         aPathTexture.push_back(this->cfg_texture_Path);
-                        this->poTexture = new GLTexture(nameTexture,
+                        this->poTexture = createTexture(nameTexture,
                                                         aPathTexture,
+                                                        nullptr,
+                                                        4,
+                                                        0,
+                                                        0,
+                                                        0,
                                                         F_Texture_2D,
                                                         F_TexturePixelFormat_R8G8B8A8_SRGB,
                                                         F_TextureAddressing_Wrap,
@@ -1202,7 +1430,7 @@ namespace LostPeterOpenGL
                                                         false,
                                                         false,
                                                         false);
-                        if (!this->poTexture->Init())
+                        if (this->poTexture == nullptr)
                         {
                             F_LogError("*********************** OpenGLWindow::loadTexture_Default: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), this->cfg_texture_Path.c_str());
                             F_DELETE(this->poTexture)
@@ -1216,9 +1444,57 @@ namespace LostPeterOpenGL
 
                 }
 
+                GLTexture* OpenGLWindow::createTexture(const String& nameTexture,
+                                                       const StringVector& aPathTexture,
+                                                       uint8* pData,
+                                                       int channel,
+                                                       int width, 
+                                                       int height,
+                                                       int depth,
+                                                       FTextureType typeTexture,
+                                                       FTexturePixelFormatType typePixelFormat,
+                                                       FTextureAddressingType typeAddressing,
+                                                       FTextureFilterType typeFilterSizeMin,
+                                                       FTextureFilterType typeFilterSizeMag,
+                                                       FMSAASampleCountType numSamples,
+                                                       const FColor& borderColor,
+                                                       bool isUseBorderColor,
+                                                       bool isAutoMipmap,
+                                                       bool isCubeMap,
+                                                       bool isRenderTarget,
+                                                       bool isGraphicsComputeShared)
+                {
+                    GLTexture* pTexture = new GLTexture(nameTexture,
+                                                        aPathTexture,
+                                                        typeTexture,
+                                                        typePixelFormat,
+                                                        typeAddressing,
+                                                        typeFilterSizeMin,
+                                                        typeFilterSizeMag,
+                                                        numSamples,
+                                                        borderColor,
+                                                        isUseBorderColor,
+                                                        isAutoMipmap,
+                                                        isCubeMap,
+                                                        isRenderTarget,
+                                                        isGraphicsComputeShared);
+                    if (!pTexture->LoadTexture(width, 
+                                               height,
+                                               depth,
+                                               channel,
+                                               pData))
+                    {
+                        F_DELETE(pTexture)
+                        F_LogError("*********************** OpenGLWindow::createTexture: Failed to create texture, name: [%s] !", nameTexture.c_str());
+                        return nullptr;
+                    }
+
+                    return pTexture;
+                }   
+
                 bool OpenGLWindow::createTexture2D(const String& nameTexture,
                                                    const String& pathAsset_Tex,
-                                                   uint32_t& mipMapCount, 
+                                                   int& mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
                                                    bool isCubeMap,
@@ -1237,7 +1513,7 @@ namespace LostPeterOpenGL
                     int width, height, texChannels;
                     stbi_uc* pixels = stbi_load(pathTexture.c_str(), &width, &height, &texChannels, 0);
                     int imageSize = width * height * texChannels;
-                    mipMapCount = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+                    mipMapCount = static_cast<int>(std::floor(std::log2(std::max(width, height)))) + 1;
                     if (!pixels) 
                     {
                         String msg = "*********************** OpenGLWindow::createTexture2D: Failed to load texture image: " + pathAsset_Tex;
@@ -1245,6 +1521,7 @@ namespace LostPeterOpenGL
                         throw std::runtime_error(msg);
                     }
 
+                    //2> Create
                     if (!createGLTexture(nameTexture,
                                          pixels,
                                          texChannels,
@@ -1275,14 +1552,133 @@ namespace LostPeterOpenGL
                     F_LogInfo("OpenGLWindow::createTexture2D: Success to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
                     return true;
                 }
+
+                bool OpenGLWindow::createTextureRenderTarget2D(const String& nameTexture,
+                                                               const FVector4& clDefault,
+                                                               bool isSetColor,
+                                                               int channel,
+                                                               int width, 
+                                                               int height,
+                                                               int& mipMapCount, 
+                                                               bool isAutoMipmap,
+                                                               FTextureType typeTexture, 
+                                                               bool isCubeMap,
+                                                               FTexturePixelFormatType typePixelFormat,
+                                                               FTextureAddressingType typeAddressing,
+                                                               FTextureFilterType typeFilterSizeMin,
+                                                               FTextureFilterType typeFilterSizeMag,
+                                                               FMSAASampleCountType numSamples, 
+                                                               const FColor& borderColor,
+                                                               bool isUseBorderColor,
+                                                               bool isGraphicsComputeShared,
+                                                               uint32& nTextureID)
+                {
+                    int imageSize = width * height * channel;
+                    uint8* pData = nullptr;
+                    if (isSetColor)
+                    {
+                        pData = new uint8[imageSize];
+                        uint8 r = (uint8)(clDefault.x * 255);
+                        uint8 g = (uint8)(clDefault.y * 255);
+                        uint8 b = (uint8)(clDefault.z * 255);
+                        uint8 a = (uint8)(clDefault.w * 255);
+
+                        uint8* pColor = (uint8*)pData;
+                        for (int i = 0; i < width * height; i++)
+                        {
+                            pColor[channel * i + 0] = r;
+                            if (channel > 1)
+                                pColor[channel * i + 1] = g;
+                            if (channel > 2)
+                                pColor[channel * i + 2] = b;
+                            if (channel > 3)
+                                pColor[channel * i + 3] = a;
+                        }
+                    }
+
+                    if (!createTextureRenderTarget2D(nameTexture,
+                                                     pData,
+                                                     channel,
+                                                     width,
+                                                     height,
+                                                     mipMapCount,
+                                                     isAutoMipmap,
+                                                     typeTexture,
+                                                     isCubeMap,
+                                                     typePixelFormat,
+                                                     typeAddressing,
+                                                     typeFilterSizeMin,
+                                                     typeFilterSizeMag,
+                                                     numSamples,
+                                                     borderColor,
+                                                     isUseBorderColor,
+                                                     isGraphicsComputeShared,
+                                                     nTextureID))
+                    {
+                        F_DELETE_T(pData)
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTarget2D: Failed to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+
+                    F_DELETE_T(pData)
+                    return true;
+                }
+                bool OpenGLWindow::createTextureRenderTarget2D(const String& nameTexture,
+                                                               uint8* pData,
+                                                               int channel,
+                                                               int width, 
+                                                               int height,
+                                                               int& mipMapCount, 
+                                                               bool isAutoMipmap,
+                                                               FTextureType typeTexture, 
+                                                               bool isCubeMap,
+                                                               FTexturePixelFormatType typePixelFormat,
+                                                               FTextureAddressingType typeAddressing,
+                                                               FTextureFilterType typeFilterSizeMin,
+                                                               FTextureFilterType typeFilterSizeMag,
+                                                               FMSAASampleCountType numSamples, 
+                                                               const FColor& borderColor,
+                                                               bool isUseBorderColor,
+                                                               bool isGraphicsComputeShared,
+                                                               uint32& nTextureID)
+                {
+                    if (!createGLTexture(nameTexture,
+                                         pData,
+                                         channel,
+                                         width,
+                                         height,
+                                         0,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         isCubeMap,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTarget2D: Failed to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+
+                    F_LogError("OpenGLWindow::createTextureRenderTarget2D: Success to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
+                    return true;
+                }
+
                 bool OpenGLWindow::createGLTexture(const String& nameTexture,
                                                    uint8* pData,
                                                    int channel,
-                                                   uint32_t width, 
-                                                   uint32_t height, 
-                                                   uint32_t depth, 
-                                                   uint32_t numArray,
-                                                   uint32_t mipMapCount, 
+                                                   int width, 
+                                                   int height, 
+                                                   int depth, 
+                                                   int numArray,
+                                                   int mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
                                                    bool isCubeMap,
@@ -1351,7 +1747,7 @@ namespace LostPeterOpenGL
                     
                     //5> Filtering parameters
                     GLenum typeFilterMin = Util_Transform2GLFilter(typeFilterSizeMin, F_TextureFilterSize_Min);
-                    GLenum typeFilterMag = Util_Transform2GLFilter(typeFilterSizeMin, F_TextureFilterSize_Mag);
+                    GLenum typeFilterMag = Util_Transform2GLFilter(typeFilterSizeMag, F_TextureFilterSize_Mag);
                     glTexParameteri(type, GL_TEXTURE_MIN_FILTER, typeFilterMin);
                     glTexParameteri(type, GL_TEXTURE_MAG_FILTER, typeFilterMag);
 
@@ -1605,13 +2001,113 @@ namespace LostPeterOpenGL
                 this->poDebug->SetGLShaderProgramName(nShaderProgramID, "ShaderProgram-" + nameShaderProgram);
                 return true;
             }
-            void OpenGLWindow::bindGLShaderProgram(uint32 nShaderProgramID)
-            {
-                if (nShaderProgramID > 0)
+                void OpenGLWindow::bindGLShaderProgram(uint32 nShaderProgramID)
                 {
-                    glUseProgram(nShaderProgramID); 
+                    if (nShaderProgramID > 0)
+                    {
+                        glUseProgram(nShaderProgramID); 
+                    }
+                }   
+
+                void OpenGLWindow::setUniform1i(uint32 nShaderProgramID, const String& name, int value)
+                {
+                    setUniform1i(getUniformLocation(nShaderProgramID, name), value);
                 }
-            }   
+                void OpenGLWindow::setUniform1f(uint32 nShaderProgramID, const String& name, float value)
+                {
+                    setUniform1f(getUniformLocation(nShaderProgramID, name), value);
+                }
+                void OpenGLWindow::setUniform2f(uint32 nShaderProgramID, const String& name, float x, float y)
+                {
+                    setUniform2f(getUniformLocation(nShaderProgramID, name), x, y);
+                }
+                void OpenGLWindow::setUniform3f(uint32 nShaderProgramID, const String& name, float x, float y, float z)
+                {
+                    setUniform3f(getUniformLocation(nShaderProgramID, name), x, y, z);
+                }
+                void OpenGLWindow::setUniform4f(uint32 nShaderProgramID, const String& name, float x, float y, float z, float w)
+                {
+                    setUniform4f(getUniformLocation(nShaderProgramID, name), x, y, z, w);
+                }
+                void OpenGLWindow::setUniform2fv(uint32 nShaderProgramID, const String& name, const FVector2& v2)
+                {
+                    setUniform2fv(getUniformLocation(nShaderProgramID, name), v2);
+                }
+                void OpenGLWindow::setUniform3fv(uint32 nShaderProgramID, const String& name, const FVector3& v3)
+                {
+                    setUniform3fv(getUniformLocation(nShaderProgramID, name), v3);
+                }
+                void OpenGLWindow::setUniform4fv(uint32 nShaderProgramID, const String& name, const FVector4& v4)
+                {
+                    setUniform4fv(getUniformLocation(nShaderProgramID, name), v4);
+                }
+                void OpenGLWindow::setUniformMatrix2fv(uint32 nShaderProgramID, const String& name, const glm::mat2& m2)
+                {
+                    setUniformMatrix2fv(getUniformLocation(nShaderProgramID, name), m2);
+                }
+                void OpenGLWindow::setUniformMatrix3fv(uint32 nShaderProgramID, const String& name, const FMatrix3& m3)
+                {
+                    setUniformMatrix3fv(getUniformLocation(nShaderProgramID, name), m3);
+                }
+                void OpenGLWindow::setUniformMatrix4fv(uint32 nShaderProgramID, const String& name, const FMatrix4& m4)
+                {
+                    setUniformMatrix4fv(getUniformLocation(nShaderProgramID, name), m4);
+                }
+
+                int OpenGLWindow::getUniformLocation(uint32 nShaderProgramID, const String& name)
+                {
+                    return glGetUniformLocation(nShaderProgramID, name.c_str());
+                }
+                int OpenGLWindow::getUniformLocation(uint32 nShaderProgramID, const char* name)
+                {
+                    return glGetUniformLocation(nShaderProgramID, name);
+                }
+
+                void OpenGLWindow::setUniform1i(int location, int value)
+                {
+                    glUniform1i(location, value); 
+                }
+                void OpenGLWindow::setUniform1f(int location, float value)
+                {
+                    glUniform1f(location, value); 
+                }   
+                void OpenGLWindow::setUniform2f(int location, float x, float y)
+                {
+                    glUniform2f(location, x, y); 
+                }
+                void OpenGLWindow::setUniform3f(int location, float x, float y, float z)
+                {
+                    glUniform3f(location, x, y, z); 
+                }
+                void OpenGLWindow::setUniform4f(int location, float x, float y, float z, float w)
+                {
+                    glUniform4f(location, x, y, z, w); 
+                }
+                void OpenGLWindow::setUniform2fv(int location, const FVector2& v2)
+                {
+                    glUniform2fv(location, 1, &v2[0]); 
+                }   
+                void OpenGLWindow::setUniform3fv(int location, const FVector3& v3)
+                {
+                    glUniform3fv(location, 1, &v3[0]); 
+                }
+                void OpenGLWindow::setUniform4fv(int location, const FVector4& v4)
+                {
+                    glUniform4fv(location, 1, &v4[0]); 
+                }
+                void OpenGLWindow::setUniformMatrix2fv(int location, const glm::mat2& m2)
+                {
+                    glUniformMatrix2fv(location, 1, GL_FALSE, &m2[0][0]); 
+                }
+                void OpenGLWindow::setUniformMatrix3fv(int location, const FMatrix3& m3)
+                {
+                    glUniformMatrix3fv(location, 1, GL_FALSE, &m3[0][0]); 
+                }
+                void OpenGLWindow::setUniformMatrix4fv(int location, const FMatrix4& m4)
+                {
+                    glUniformMatrix4fv(location, 1, GL_FALSE, &m4[0][0]);
+                }
+
             void OpenGLWindow::destroyGLShaderProgram(uint32 nShaderProgramID)
             {
                 if (nShaderProgramID > 0)
@@ -1819,6 +2315,8 @@ namespace LostPeterOpenGL
 
     bool OpenGLWindow::beginRender()
     {
+        GLFrameBuffer* pFrameBuffer = this->poFrameBuffers[this->poCurrentFrame];
+        this->poRenderPass->SetFrameBuffer(pFrameBuffer);
         return true;
     }
         void OpenGLWindow::updateRender()
@@ -2074,6 +2572,7 @@ namespace LostPeterOpenGL
                     updateMeshDefault_Before();
                     {
                         beginRenderPass("[RenderPass-Default]",
+                                        this->poRenderPass,
                                         this->poOffset,
                                         this->poExtent,
                                         this->cfg_colorBackground,
@@ -2156,17 +2655,26 @@ namespace LostPeterOpenGL
 
 
                 void OpenGLWindow::beginRenderPass(const String& nameRenderPass,
+                                                   GLRenderPass* pRenderPass,
                                                    const FSizeI& offset,
                                                    const FSizeI& extent,
                                                    const FVector4& clBg,
                                                    float depth,
-                                                   uint32_t stencil)
+                                                   int stencil)
                 {
                     this->poDebug->BeginRegion(nameRenderPass.c_str(), GL_DEBUG_SOURCE_APPLICATION);
 
                     glClearColor(clBg.x, clBg.y, clBg.z, clBg.w);
-                    glClear(GL_COLOR_BUFFER_BIT);
+                    glClearDepth(depth);
+                    glClearStencil(stencil);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                     glEnable(GL_FRAMEBUFFER_SRGB);
+
+                    if (pRenderPass != nullptr &&
+                        pRenderPass->pFrameBuffer != nullptr)
+                    {   
+
+                    }   
                 }
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
@@ -2214,7 +2722,7 @@ namespace LostPeterOpenGL
             cleanupDefault();
             //cleanupInternal();
 
-
+            
         }
         F_LogInfo("---------- OpenGLWindow::cleanup finish ----------");
     }
@@ -2264,18 +2772,43 @@ namespace LostPeterOpenGL
         {
             F_LogInfo("----- OpenGLWindow::cleanupSwapChain start -----");
             {
+                size_t count = 0;
+
                 //0> Custom/Editor/Terrain/Default
                 cleanupSwapChain_Custom();
                 cleanupSwapChain_Editor();
                 cleanupSwapChain_Default();
 
                 //1> DepthImage/ColorImage    
+                F_DELETE(poDepthStencil)
+                F_DELETE(poColor)
+                count = this->poColorLists.size();
+                for (size_t i = 0; i < count; i++)
+                {
+                    F_DELETE(this->poColorLists[i])
+                }
+                this->poColorLists.clear();
+                count = this->poSwapChains.size();
+                for (size_t i = 0; i < count; i++)
+                {
+                    F_DELETE(this->poSwapChains[i])
+                }
+                this->poSwapChains.clear();
 
                 //2> SwapChainFrameBuffers
+                count = this->poFrameBuffers.size();
+                for (size_t i = 0; i < count; i++)
+                {
+                    F_DELETE(this->poFrameBuffers[i])
+                }
+                this->poFrameBuffers.clear();
 
                 //3> CommandBuffers
 
 
+                //4> RenderPass
+                F_DELETE(this->poRenderPass)
+                
 
             }
             F_LogInfo("----- OpenGLWindow::cleanupSwapChain finish -----");

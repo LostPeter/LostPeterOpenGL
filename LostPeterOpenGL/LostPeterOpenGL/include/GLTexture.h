@@ -51,8 +51,9 @@ namespace LostPeterOpenGL
         int width;
         int height;
         int depth;
+        int channel;
 
-        uint32_t mipMapCount;
+        int mipMapCount;
         bool isAutoMipmap;
 
         uint32 nTextureID;
@@ -62,7 +63,9 @@ namespace LostPeterOpenGL
         virtual bool Init();
         virtual bool LoadTexture(int width,
                                  int height,
-                                 int depth);
+                                 int depth,
+                                 int channel,
+                                 uint8* pData);
         virtual void UpdateTexture();
 
     public:
