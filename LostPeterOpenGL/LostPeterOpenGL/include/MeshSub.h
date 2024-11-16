@@ -37,6 +37,10 @@ namespace LostPeterOpenGL
         FSphere sphere;
         FAABB aabb;
 
+        //GLBufferVertex/GLBufferVertexIndex
+        GLBufferVertex* pBufferVertex;
+        GLBufferVertexIndex* pBufferVertexIndex;
+
         //Vertex
         FMeshVertexType poTypeVertex;
         FMeshVertexPCVector vertices_Pos3Color4;

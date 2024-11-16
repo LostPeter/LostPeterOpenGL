@@ -12,6 +12,8 @@
 #include "../include/MeshSub.h"
 #include "../include/OpenGLWindow.h"
 #include "../include/Mesh.h"
+#include "../include/GLBufferVertex.h"
+#include "../include/GLBufferVertexIndex.h"
 
 namespace LostPeterOpenGL
 {
@@ -28,6 +30,10 @@ namespace LostPeterOpenGL
         , indexMeshSub(_indexMeshSub)
         , isNeedUpdate_VertexBuffer(isUpdateVertexBuffer)
         , isNeedUpdate_IndexBuffer(isUpdateIndexBuffer)
+
+        //GLBufferVertex/GLBufferVertexIndex
+        , pBufferVertex(nullptr)
+        , pBufferVertexIndex(nullptr)
 
         //Vertex
         , poTypeVertex(_poTypeVertex)
@@ -51,7 +57,8 @@ namespace LostPeterOpenGL
     }
     void MeshSub::Destroy()
     {
-        
+        F_DELETE(pBufferVertex)
+        F_DELETE(pBufferVertexIndex)
     }
     uint32_t MeshSub::GetVertexSize() 
     {
@@ -128,27 +135,35 @@ namespace LostPeterOpenGL
                   (int)this->vertices_Pos3Color4.size(),
                   (int)this->indices.size());
 
-        //2> createVertexBuffer
-        if (!this->isNeedUpdate_VertexBuffer)
-        {
-
-        }
-        else
-        {
-           
-        }
-
-        //3> createIndexBuffer
+        //2> createBufferVertexIndex or createBufferVertex
         if (this->poIndexBuffer_Size > 0 &&
             this->poIndexBuffer_Data != nullptr)
         {
-            if (!this->isNeedUpdate_VertexBuffer)
+            this->pBufferVertexIndex = Base::GetWindowPtr()->createBufferVertexIndex("VertexIndex-" + this->nameMeshSub,
+                                                                                     this->poTypeVertex,
+                                                                                     this->poVertexBuffer_Size, 
+                                                                                     (uint8*)this->poVertexBuffer_Data, 
+                                                                                     false,
+                                                                                     this->poIndexBuffer_Size, 
+                                                                                     (uint8*)this->poIndexBuffer_Data, 
+                                                                                     false);
+            if (this->pBufferVertexIndex == nullptr)
             {
-                
-            }   
-            else
+                F_LogError("*********************** MeshSub::CreateMeshSub: create mesh sub failed: [%s] !", nameMeshSub.c_str());
+                return false;
+            }
+        }
+        else
+        {
+            this->pBufferVertex = Base::GetWindowPtr()->createBufferVertex("Vertex-" + this->nameMeshSub,
+                                                                           this->poTypeVertex,
+                                                                           this->poVertexBuffer_Size, 
+                                                                           (uint8*)this->poVertexBuffer_Data, 
+                                                                           false);
+            if (this->pBufferVertex == nullptr)
             {
-                
+                F_LogError("*********************** MeshSub::CreateMeshSub: create mesh sub failed: [%s] !", nameMeshSub.c_str());
+                return false;
             }
         }
 
@@ -368,27 +383,35 @@ namespace LostPeterOpenGL
             return false; 
         }
 
-        //2> createVertexBuffer
-        if (!this->isNeedUpdate_VertexBuffer)
-        {
-
-        }
-        else
-        {
-
-        }
-
-        //3> createIndexBuffer
+        //2> createBufferVertexIndex or createBufferVertex
         if (this->poIndexBuffer_Size > 0 &&
             this->poIndexBuffer_Data != nullptr)
         {
-            if (!this->isNeedUpdate_VertexBuffer)
+            this->pBufferVertexIndex = Base::GetWindowPtr()->createBufferVertexIndex("VertexIndex-" + this->nameMeshSub,
+                                                                                     this->poTypeVertex,
+                                                                                     this->poVertexBuffer_Size, 
+                                                                                     (uint8*)this->poVertexBuffer_Data, 
+                                                                                     false,
+                                                                                     this->poIndexBuffer_Size, 
+                                                                                     (uint8*)this->poIndexBuffer_Data, 
+                                                                                     false);
+            if (this->pBufferVertexIndex == nullptr)
             {
-                
-            }   
-            else
+                F_LogError("*********************** MeshSub::CreateMeshSub: create mesh sub failed: [%s] !", nameMeshSub.c_str());
+                return false;
+            }
+        }
+        else
+        {
+            this->pBufferVertex = Base::GetWindowPtr()->createBufferVertex("Vertex-" + this->nameMeshSub,
+                                                                           this->poTypeVertex,
+                                                                           this->poVertexBuffer_Size, 
+                                                                           (uint8*)this->poVertexBuffer_Data, 
+                                                                           false);
+            if (this->pBufferVertex == nullptr)
             {
-               
+                F_LogError("*********************** MeshSub::CreateMeshSub: create mesh sub failed: [%s] !", nameMeshSub.c_str());
+                return false;
             }
         }
 
@@ -449,11 +472,36 @@ namespace LostPeterOpenGL
 
     void MeshSub::UpdateVertexBuffer()
     {
-
+        if (this->pBufferVertexIndex != nullptr)
+        {
+            this->pBufferVertexIndex->Update(this->poTypeVertex,
+                                             this->poVertexBuffer_Size, 
+                                             (uint8*)this->poVertexBuffer_Data, 
+                                             false,
+                                             this->poIndexBuffer_Size, 
+                                             (uint8*)this->poIndexBuffer_Data, 
+                                             false);
+        }
+        else if (this->pBufferVertex != nullptr)
+        {
+            this->pBufferVertex->Update(this->poTypeVertex,
+                                        this->poVertexBuffer_Size, 
+                                        (uint8*)this->poVertexBuffer_Data, 
+                                        false);
+        }
     }
     void MeshSub::UpdateIndexBuffer()
     {
-        
+        if (this->pBufferVertexIndex != nullptr)
+        {
+            this->pBufferVertexIndex->Update(this->poTypeVertex,
+                                             this->poVertexBuffer_Size, 
+                                             (uint8*)this->poVertexBuffer_Data, 
+                                             false,
+                                             this->poIndexBuffer_Size, 
+                                             (uint8*)this->poIndexBuffer_Data, 
+                                             false);
+        }
     }
 
 }; //LostPeterOpenGL

@@ -50,6 +50,19 @@ namespace LostPeterOpenGL
         , mipMapCount(1)
         , isAutoMipmap(_isAutoMipmap)
 
+        //Texture 3D
+        , pDataRGBA(nullptr)
+
+        //Texture Animation
+        , texChunkMaxX(0)
+        , texChunkMaxY(0)
+        , texChunkIndex(0)
+        , frameCurrent(0)
+
+        //Texture RenderTarget
+        , rtColorDefault(0, 0, 0, 1)
+        , rtIsSetColor(false)
+
         , nTextureID(0)
     {
 
@@ -63,7 +76,7 @@ namespace LostPeterOpenGL
     {
         if (this->nTextureID > 0)
         {
-            Base::GetWindowPtr()->destroyGLShader(this->nTextureID);
+            Base::GetWindowPtr()->destroyGLTexture(this->nTextureID);
         }
         this->nTextureID = 0;
     }

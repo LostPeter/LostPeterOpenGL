@@ -56,6 +56,20 @@ namespace LostPeterOpenGL
         int mipMapCount;
         bool isAutoMipmap;
 
+        //Texture 3D
+        uint8* pDataRGBA;
+
+        //Texture Animation
+        int texChunkMaxX;
+        int texChunkMaxY;
+        int texChunkIndex;
+        int frameCurrent;
+
+        //Texture RenderTarget
+        FVector4 rtColorDefault;
+        bool rtIsSetColor; 
+        
+
         uint32 nTextureID;
 
     public:

@@ -23,9 +23,11 @@
 
 #include "GLDebug.h"
 #include "GLBuffer.h"
+#include "GLBufferUniform.h"
 #include "GLBufferVertex.h"
 #include "GLBufferVertexIndex.h"
 #include "GLFrameBuffer.h"
+#include "GLPipelineGraphicsCopyBlitToFrame.h"
 #include "GLRenderBuffer.h"
 #include "GLRenderPass.h"
 #include "GLShader.h"
@@ -42,7 +44,6 @@
 
 #include "Mesh.h"
 #include "MeshSub.h"
-#include "Texture.h"
 
 namespace LostPeterOpenGL
 {	

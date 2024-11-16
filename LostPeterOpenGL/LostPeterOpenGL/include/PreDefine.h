@@ -261,6 +261,56 @@ namespace LostPeterOpenGL
     openglExport ShaderSortType Util_ParseShaderSortType(const String& strName);
 
 
+    enum DescriptorSetType
+    {
+        DescriptorSet_Pass = 0,                      //0:  Pass
+        DescriptorSet_Object,                        //1:  Object
+        DescriptorSet_ObjectTerrain,                 //2:  ObjectTerrain
+        DescriptorSet_ObjectGrid,                    //3:  ObjectGrid
+        DescriptorSet_ObjectCameraAxis,              //4:  ObjectCameraAxis
+        DescriptorSet_ObjectCoordinateAxis,          //5:  ObjectCoordinateAxis
+        DescriptorSet_ObjectLineFlat2D,              //6:  ObjectLineFlat2D
+        DescriptorSet_ObjectLineFlat3D,              //7:  ObjectLineFlat3D
+        DescriptorSet_ObjectCopyBlit,                //8:  ObjectCopyBlit
+        DescriptorSet_ObjectCull,                    //9:  ObjectCull
+        DescriptorSet_Material,                      //10: Material
+        DescriptorSet_Instance,                      //11: Instance
+        DescriptorSet_TextureCopy,                   //12: TextureCopy
+        DescriptorSet_Tessellation,                  //13: Tessellation
+        DescriptorSet_Geometry,                      //14: Geometry
+        DescriptorSet_TextureVS,                     //15: TextureVS
+        DescriptorSet_TextureTESC,                   //16: TextureTESC
+        DescriptorSet_TextureTESE,                   //17: TextureTESE
+        DescriptorSet_TextureFS,                     //18: TextureFS
+        DescriptorSet_TextureFrameColor,             //19: TextureFrameColor
+        DescriptorSet_TextureFrameDepth,             //20: TextureFrameDepth
+        DescriptorSet_TextureCSR,                    //21: TextureCSR
+        DescriptorSet_TextureCSRW,                   //22: TextureCSRW
+        DescriptorSet_TextureCSRWSrc,                //23: TextureCSRWSrc
+        DescriptorSet_TextureCSRWDst,                //24: TextureCSRWDst
+        DescriptorSet_TextureDepthShadow,            //25: TextureDepthShadow
+        DescriptorSet_InputAttachRed,                //26: InputAttachRed
+        DescriptorSet_InputAttachGreen,              //27: InputAttachGreen
+        DescriptorSet_InputAttachBlue,               //28: InputAttachBlue
+        DescriptorSet_Terrain,                       //29: Terrain
+        DescriptorSet_Cull,                          //30: Cull
+        DescriptorSet_HizDepth,                      //31: HizDepth
+        DescriptorSet_BufferRWArgsCB,                //32: BufferRWArgsCB
+        DescriptorSet_BufferRWLodCB,                 //33: BufferRWLodCB
+        DescriptorSet_BufferRWResultCB,              //34: BufferRWResultCB
+        DescriptorSet_BufferRWClipCB,                //35: BufferRWClipCB
+        DescriptorSet_BufferRWObjectCullInstance,    //36: BufferRWObjectCullInstance
+        DescriptorSet_CullInstance,                  //37: CullInstance
+        DescriptorSet_BufferObjectLineFlat2D,        //38: BufferObjectLineFlat2D
+        DescriptorSet_BufferObjectLineFlat3D,        //39: BufferObjectLineFlat3D
+
+        DescriptorSet_Count,
+    };
+    openglExport const String& Util_GetDescriptorSetTypeName(DescriptorSetType type);
+    openglExport const String& Util_GetDescriptorSetTypeName(int type);
+
+
+
 ////////////////////////////// OpenGL //////////////////////////////
 
     openglExport void Util_CreateAttributeDescriptions(FMeshVertexType type);
@@ -332,6 +382,15 @@ namespace LostPeterOpenGL
     typedef std::vector<ShaderModuleInfo> ShaderModuleInfoVector;
 
 
+    struct openglExport DescriptorSetLayout
+    {
+        String nameDescriptorSetLayout;
+        StringVector aLayouts;
+    };
+    typedef std::vector<DescriptorSetLayout> DescriptorSetLayoutVector;
+    typedef std::vector<DescriptorSetLayout*> DescriptorSetLayoutPtrVector;
+    typedef std::map<String, DescriptorSetLayout*> DescriptorSetLayoutPtrMap;
+
 
     class App;
     class OpenGLBase;
@@ -339,9 +398,11 @@ namespace LostPeterOpenGL
 
     class GLDebug;
     class GLBuffer;
+    class GLBufferUniform; 
     class GLBufferVertex;
     class GLBufferVertexIndex;
     class GLFrameBuffer;
+    class GLPipelineGraphicsCopyBlitToFrame;
     class GLRenderBuffer;
     class GLRenderPass;
     class GLShader;
@@ -353,6 +414,8 @@ namespace LostPeterOpenGL
 
     typedef std::vector<GLBuffer*> GLBufferPtrVector;
     typedef std::map<String, GLBuffer*> GLBufferPtrMap;
+    typedef std::vector<GLBufferUniform*> GLBufferUniformPtrVector;
+    typedef std::map<String, GLBufferUniform*> GLBufferUniformPtrMap;
     typedef std::vector<GLBufferVertex*> GLBufferVertexPtrVector;
     typedef std::map<String, GLBufferVertex*> GLBufferVertexPtrMap;
     typedef std::vector<GLBufferVertexIndex*> GLBufferVertexIndexPtrVector;
@@ -387,9 +450,6 @@ namespace LostPeterOpenGL
     class EditorLineFlat3DCollector;
     class Mesh;
     class MeshSub;
-    class Texture;
-
-  
 
     typedef std::vector<MeshSub*> MeshSubPtrVector;
     typedef std::map<String, MeshSub*> MeshSubPtrMap;
@@ -397,9 +457,6 @@ namespace LostPeterOpenGL
     typedef std::vector<Mesh*> MeshPtrVector;
     typedef std::map<String, Mesh*> MeshPtrMap;
 
-    typedef std::vector<Texture*> TexturePtrVector;
-    typedef std::map<String, Texture*> TexturePtrMap;
-    typedef std::map<String, TexturePtrVector> TexturePtrShaderSortMap;
 
 }; //LostPeterOpenGL
 

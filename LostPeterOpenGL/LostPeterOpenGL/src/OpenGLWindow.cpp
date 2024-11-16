@@ -25,6 +25,796 @@ namespace LostPeterOpenGL
 #endif
     int OpenGLWindow::s_maxFramesInFight = 2;
     
+    
+    /////////////////////////// OpenGLWindow Internal /////////////
+    void OpenGLWindow::createInternal()
+    {
+        //Mesh
+        createMeshes_Internal();
+        //Texture
+        createTextures_Internal();
+    }
+    void OpenGLWindow::cleanupInternal()
+    {
+
+
+        //Texture
+        destroyTextures_Internal();
+        //Mesh
+        destroyMeshes_Internal();
+    }
+
+    void OpenGLWindow::createResourceInternal()
+    {   
+        //DescriptorSetLayout
+        createDescriptorSetLayouts_Internal();
+        //Shader
+        createShaders_Internal();
+
+        //Uniform ConstantBuffer
+        createUniformCB_Internal();
+        //PipelineCompute
+        createPipelineCompute_Internal();
+        //PipelineGraphics
+        createPipelineGraphics_Internal();
+    }   
+    void OpenGLWindow::destroyResourceInternal()
+    {
+        //Uniform ConstantBuffer
+        destroyUniformCB_Internal();
+        //PipelineCompute
+        destroyPipelineCompute_Internal();
+        //PipelineGraphics
+        destroyPipelineGraphics_Internal();
+
+        //Shader
+        destroyShaders_Internal();
+        //DescriptorSetLayout
+        destroyDescriptorSetLayouts_Internal();
+    }
+
+    //Mesh
+    static const int g_MeshCount_Internal = 51;
+    static const char* g_MeshPaths_Internal[7 * g_MeshCount_Internal] =
+    {
+        //Mesh Name                     //Vertex Type                 //Mesh Type         //Mesh Path                           //Mesh Geometry Type        //Mesh Geometry Param                                           //Mesh Geometry Vertex Is Update
+        "geo_line_line_2d",             "Pos3Color4",                 "geometry",         "",                                   "LineLine2D",               "0.5;0.9;0.7;0.9;1;1;1;1",                                      "false", //geo_line_line_2d
+        "geo_line_triangle_2d",         "Pos3Color4",                 "geometry",         "",                                   "LineTriangle2D",           "0.6;0.8;0.5;0.6;0.7;0.6;1;1;1;1",                              "false", //geo_line_triangle_2d
+        "geo_line_quad_2d",             "Pos3Color4",                 "geometry",         "",                                   "LineQuad2D",               "0.5;0.5;0.5;0.3;0.7;0.3;0.7;0.5;1;1;1;1",                      "false", //geo_line_quad_2d
+        "geo_line_grid_2d",             "Pos3Color4",                 "geometry",         "",                                   "LineGrid2D",               "0.5;0.2;0.5;0.0;0.7;0.0;0.7;0.2;10;10;1;1;1;1",                "false", //geo_line_grid_2d
+        "geo_line_quad_convex_2d",      "Pos3Color4",                 "geometry",         "",                                   "LineQuad2D",               "0.55;-0.1;0.5;-0.3;0.65;-0.3;0.7;-0.1;1;1;1;1",                "false", //geo_line_quad_convex_2d
+        "geo_line_quad_concave_2d",     "Pos3Color4",                 "geometry",         "",                                   "LineQuad2D",               "0.5;-0.4;0.5;-0.6;0.7;-0.6;0.55;-0.5;1;1;1;1",                 "false", //geo_line_quad_concave_2d
+        "geo_line_circle_2d",           "Pos3Color4",                 "geometry",         "",                                   "LineCircle2D",             "0.6;-0.8;1.0;0.0;0.1;1280;720;50;true;1;1;1;1",                "true", //geo_line_circle_2d
+
+        "geo_flat_triangle_2d",         "Pos3Color4",                 "geometry",         "",                                   "FlatTriangle2D",           "0.85;0.8;0.75;0.6;0.95;0.6;1;1;1;1",                           "false", //geo_flat_triangle_2d
+        "geo_flat_quad_2d",             "Pos3Color4",                 "geometry",         "",                                   "FlatQuad2D",               "0.75;0.5;0.75;0.3;0.95;0.3;0.95;0.5;1;1;1;1",                  "false", //geo_flat_quad_2d
+        "geo_flat_quad_convex_2d",      "Pos3Color4",                 "geometry",         "",                                   "FlatQuad2D",               "0.8;0.2;0.75;0.0;0.9;0.0;0.95;0.2;1;1;1;1",                    "false", //geo_flat_quad_convex_2d
+        "geo_flat_quad_concave_2d",     "Pos3Color4",                 "geometry",         "",                                   "FlatQuad2D",               "0.75;-0.1;0.75;-0.3;0.95;-0.3;0.8;-0.2;1;1;1;1",               "false", //geo_flat_quad_concave_2d
+        "geo_flat_circle_2d",           "Pos3Color4",                 "geometry",         "",                                   "FlatCircle2D",             "0.85;-0.5;1.0;0.0;0.1;1280;720;50;1;1;1;1",                    "true", //geo_flat_circle_2d
+
+        "geo_line_line_3d",             "Pos3Color4",                 "geometry",         "",                                   "LineLine3D",               "0;0;0;1;0;0;1;1;1;1",                                          "false", //geo_line_line_3d
+        "geo_line_triangle_3d",         "Pos3Color4",                 "geometry",         "",                                   "LineTriangle3D",           "0;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;1;1;1;1",                       "false", //geo_line_triangle_3d
+        "geo_line_quad_3d",             "Pos3Color4",                 "geometry",         "",                                   "LineQuad3D",               "-0.5;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;0.5;0.5;0;1;1;1;1",          "false", //geo_line_quad_3d
+        "geo_line_grid_3d",             "Pos3Color4",                 "geometry",         "",                                   "LineGrid3D",               "-0.5;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;0.5;0.5;0;10;10;1;1;1;1",    "false", //geo_line_grid_3d
+        "geo_line_quad_convex_3d",      "Pos3Color4",                 "geometry",         "",                                   "LineQuad3D",               "-0.2;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;0.8;0.5;0;1;1;1;1",          "false", //geo_line_quad_convex_3d
+        "geo_line_quad_concave_3d",     "Pos3Color4",                 "geometry",         "",                                   "LineQuad3D",               "-0.5;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;-0.25;-0.25;0;1;1;1;1",      "false", //geo_line_quad_concave_3d
+        "geo_line_circle_3d",           "Pos3Color4",                 "geometry",         "",                                   "LineCircle3D",             "0;0;0;1;0;0;0;0;-1;0.5;100;true;1;1;1;1",                      "false", //geo_line_circle_3d
+        "geo_line_aabb_3d",             "Pos3Color4",                 "geometry",         "",                                   "LineAABB3D",               "0;0;0;0.5;0.5;0.5;1;1;1;1",                                    "false", //geo_line_aabb_3d
+        "geo_line_sphere_3d",           "Pos3Color4",                 "geometry",         "",                                   "LineSphere3D",             "0;0;0;0;1;0;0.5;30;30;1;1;1;1",                                "false", //geo_line_sphere_3d
+        "geo_line_cylinder_3d",         "Pos3Color4",                 "geometry",         "",                                   "LineCylinder3D",           "0;0;0;0;1;0;0.5;0.5;1;50;true;1;1;1;1",                        "false", //geo_line_cylinder_3d
+        "geo_line_capsule_3d",          "Pos3Color4",                 "geometry",         "",                                   "LineCapsule3D",            "0;0;0;0;1;0;0.5;1;10;50;1;1;1;1",                              "false", //geo_line_capsule_3d
+        "geo_line_cone_3d",             "Pos3Color4",                 "geometry",         "",                                   "LineCone3D",               "0;0;0;0;1;0;0.5;1;50;1;1;1;1",                                 "false", //geo_line_cone_3d
+        "geo_line_torus_3d",            "Pos3Color4",                 "geometry",         "",                                   "LineTorus3D",              "0;0;0;0;1;0;0.5;0.2;50;20;1;1;1;1",                            "false", //geo_line_torus_3d
+        
+        "geo_flat_triangle_3d",         "Pos3Color4",                 "geometry",         "",                                   "FlatTriangle3D",           "0;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;1;1;1;1",                       "false", //geo_flat_triangle_3d
+        "geo_flat_quad_3d",             "Pos3Color4",                 "geometry",         "",                                   "FlatQuad3D",               "-0.5;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;0.5;0.5;0;1;1;1;1",          "false", //geo_flat_quad_3d
+        "geo_flat_quad_convex_3d",      "Pos3Color4",                 "geometry",         "",                                   "FlatQuad3D",               "-0.2;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;0.8;0.5;0;1;1;1;1",          "false", //geo_flat_quad_convex_3d
+        "geo_flat_quad_concave_3d",     "Pos3Color4",                 "geometry",         "",                                   "FlatQuad3D",               "-0.5;0.5;0;-0.5;-0.5;0;0.5;-0.5;0;-0.25;-0.25;0;1;1;1;1",      "false", //geo_flat_quad_concave_3d
+        "geo_flat_circle_3d",           "Pos3Color4",                 "geometry",         "",                                   "FlatCircle3D",             "0;0;0;1;0;0;0;0;-1;0.5;100;1;1;1;1",                           "false", //geo_flat_circle_3d
+        "geo_flat_aabb_3d",             "Pos3Color4",                 "geometry",         "",                                   "FlatAABB3D",               "0;0;0;0.5;0.5;0.5;1;1;1;1",                                    "false", //geo_flat_aabb_3d
+        "geo_flat_sphere_3d",           "Pos3Color4",                 "geometry",         "",                                   "FlatSphere3D",             "0;0;0;0;1;0;0.5;30;30;1;1;1;1",                                "false", //geo_flat_sphere_3d
+        "geo_flat_cylinder_3d",         "Pos3Color4",                 "geometry",         "",                                   "FlatCylinder3D",           "0;0;0;0;1;0;0.5;0.5;1;50;30;1;1;1;1",                          "false", //geo_flat_cylinder_3d
+        "geo_flat_capsule_3d",          "Pos3Color4",                 "geometry",         "",                                   "FlatCapsule3D",            "0;0;0;0;1;0;0.5;1;10;50;30;1;1;1;1",                           "false", //geo_flat_capsule_3d
+        "geo_flat_cone_3d",             "Pos3Color4",                 "geometry",         "",                                   "FlatCone3D",               "0;0;0;0;1;0;0.5;1;50;30;1;1;1;1",                              "false", //geo_flat_cone_3d
+        "geo_flat_torus_3d",            "Pos3Color4",                 "geometry",         "",                                   "FlatTorus3D",              "0;0;0;0;1;0;0.5;0.2;50;20;1;1;1;1",                            "false", //geo_flat_torus_3d
+
+        "geo_entity_triangle",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTriangle",           "false;false",                                                  "false", //geo_entity_triangle
+        "geo_entity_quad",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityQuad",               "false;false;0;0;1;1;0",                                        "false", //geo_entity_quad
+        "geo_entity_grid",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGrid",               "false;false;1;1;10;10",                                        "false", //geo_entity_grid
+        "geo_entity_circle",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCircle",             "false;false;0.5;100",                                          "false", //geo_entity_circle
+        "geo_entity_aabb",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityAABB",               "false;false;1;1;1;0",                                          "false", //geo_entity_aabb
+        "geo_entity_sphere",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntitySphere",             "false;false;0.5;30;30",                                        "false", //geo_entity_sphere
+        "geo_entity_geosphere",         "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGeoSphere",          "false;false;0.5;5",                                            "false", //geo_entity_geosphere
+        "geo_entity_cylinder",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCylinder",           "false;false;0.5;0.5;1;0;50;30",                                "false", //geo_entity_cylinder
+        "geo_entity_capsule",           "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCapsule",            "false;false;0.5;1;0;10;50;30",                                 "false", //geo_entity_capsule
+        "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;false;0.5;1;0;50;30",                                    "false", //geo_entity_cone
+        "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;false;0.5;0.2;50;20",                                    "false", //geo_entity_torus
+
+        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "",                                                             "false", //quad
+        "plane",                        "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/plane.fbx",       "",                         "",                                                             "false", //plane
+        "cube",                         "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/cube.obj",        "",                         "",                                                             "false", //cube
+        "sphere",                       "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/sphere.fbx",      "",                         "",                                                             "false", //sphere
+
+    };
+    static bool g_MeshIsFlipYs_Internal[g_MeshCount_Internal] = 
+    {
+        false, //geo_line_line_2d
+        false, //geo_line_triangle_2d
+        false, //geo_line_quad_2d
+        false, //geo_line_grid_2d
+        false, //geo_line_quad_convex_2d
+        false, //geo_line_quad_concave_2d
+        false, //geo_line_circle_2d
+
+        false, //geo_flat_triangle_2d
+        false, //geo_flat_quad_2d
+        false, //geo_flat_quad_convex_2d
+        false, //geo_flat_quad_concave_2d
+        false, //geo_flat_circle_2d
+
+        false, //geo_line_line_3d
+        false, //geo_line_triangle_3d
+        false, //geo_line_quad_3d
+        false, //geo_line_grid_3d
+        false, //geo_line_quad_convex_3d
+        false, //geo_line_quad_concave_3d
+        false, //geo_line_circle_3d
+        false, //geo_line_aabb_3d
+        false, //geo_line_sphere_3d
+        false, //geo_line_cylinder_3d
+        false, //geo_line_capsule_3d
+        false, //geo_line_cone_3d
+        false, //geo_line_torus_3d
+
+        false, //geo_flat_triangle_3d
+        false, //geo_flat_quad_3d
+        false, //geo_flat_quad_convex_3d
+        false, //geo_flat_quad_concave_3d
+        false, //geo_flat_circle_3d
+        false, //geo_flat_aabb_3d
+        false, //geo_flat_sphere_3d
+        false, //geo_flat_cylinder_3d
+        false, //geo_flat_capsule_3d
+        false, //geo_flat_cone_3d
+        false, //geo_flat_torus_3d
+
+        false, //geo_entity_triangle
+        false, //geo_entity_quad
+        false, //geo_entity_grid
+        false, //geo_entity_circle
+        false, //geo_entity_aabb
+        false, //geo_entity_sphere
+        false, //geo_entity_geosphere
+        false, //geo_entity_cylinder
+        false, //geo_entity_capsule
+        false, //geo_entity_cone
+        false, //geo_entity_torus
+
+        true, //quad
+        true, //plane
+        false, //cube
+        false, //sphere
+
+    };
+    static bool g_MeshIsTranformLocals_Internal[g_MeshCount_Internal] = 
+    {
+        false, //geo_line_line_2d
+        false, //geo_line_triangle_2d
+        false, //geo_line_quad_2d
+        false, //geo_line_grid_2d
+        false, //geo_line_quad_convex_2d
+        false, //geo_line_quad_concave_2d
+        false, //geo_line_circle_2d
+
+        false, //geo_flat_triangle_2d
+        false, //geo_flat_quad_2d
+        false, //geo_flat_quad_convex_2d
+        false, //geo_flat_quad_concave_2d
+        false, //geo_flat_circle_2d
+
+        false, //geo_line_line_3d
+        true, //geo_line_triangle_3d
+        true, //geo_line_quad_3d
+        true, //geo_line_grid_3d
+        true, //geo_line_quad_convex_3d
+        true, //geo_line_quad_concave_3d
+        true, //geo_line_circle_3d
+        false, //geo_line_aabb_3d
+        false, //geo_line_sphere_3d
+        false, //geo_line_cylinder_3d
+        false, //geo_line_capsule_3d
+        false, //geo_line_cone_3d
+        false, //geo_line_torus_3d
+
+        true, //geo_flat_triangle_3d
+        true, //geo_flat_quad_3d
+        true, //geo_flat_quad_convex_3d
+        true, //geo_flat_quad_concave_3d
+        true, //geo_flat_circle_3d
+        false, //geo_flat_aabb_3d
+        false, //geo_flat_sphere_3d
+        false, //geo_flat_cylinder_3d
+        false, //geo_flat_capsule_3d
+        false, //geo_flat_cone_3d
+        false, //geo_flat_torus_3d
+
+        true, //geo_entity_triangle
+        true, //geo_entity_quad
+        true, //geo_entity_grid
+        true, //geo_entity_circle
+        false, //geo_entity_aabb
+        false, //geo_entity_sphere
+        false, //geo_entity_geosphere
+        false, //geo_entity_cylinder
+        false, //geo_entity_capsule
+        false, //geo_entity_cone
+        false, //geo_entity_torus
+
+        false, //quad
+        false, //plane  
+        false, //cube
+        false, //sphere
+
+    };
+    static FMatrix4 g_MeshTranformLocals_Internal[g_MeshCount_Internal] = 
+    {
+        FMath::ms_mat4Unit, //geo_line_line_2d
+        FMath::ms_mat4Unit, //geo_line_triangle_2d
+        FMath::ms_mat4Unit, //geo_line_quad_2d
+        FMath::ms_mat4Unit, //geo_line_grid_2d
+        FMath::ms_mat4Unit, //geo_line_quad_convex_2d
+        FMath::ms_mat4Unit, //geo_line_quad_concave_2d
+        FMath::ms_mat4Unit, //geo_line_circle_2d
+
+        FMath::ms_mat4Unit, //geo_flat_triangle_2d
+        FMath::ms_mat4Unit, //geo_flat_quad_2d
+        FMath::ms_mat4Unit, //geo_flat_quad_convex_2d
+        FMath::ms_mat4Unit, //geo_flat_quad_concave_2d
+        FMath::ms_mat4Unit, //geo_flat_circle_2d
+
+        FMath::ms_mat4Unit, //geo_line_line_3d
+        FMath::RotateX(90.0f), //geo_line_triangle_3d
+        FMath::RotateX(90.0f), //geo_line_quad_3d
+        FMath::RotateX(90.0f), //geo_line_grid_3d
+        FMath::RotateX(90.0f), //geo_line_quad_convex_3d
+        FMath::RotateX(90.0f), //geo_line_quad_concave_3d
+        FMath::RotateX(90.0f), //geo_line_circle_3d
+        FMath::ms_mat4Unit, //geo_line_aabb_3d
+        FMath::ms_mat4Unit, //geo_line_sphere_3d
+        FMath::ms_mat4Unit, //geo_line_cylinder_3d
+        FMath::ms_mat4Unit, //geo_line_capsule_3d
+        FMath::ms_mat4Unit, //geo_line_cone_3d
+        FMath::ms_mat4Unit, //geo_line_torus_3d
+
+        FMath::RotateX(90.0f), //geo_flat_triangle_3d
+        FMath::RotateX(90.0f), //geo_flat_quad_3d
+        FMath::RotateX(90.0f), //geo_flat_quad_convex_3d
+        FMath::RotateX(90.0f), //geo_flat_quad_concave_3d
+        FMath::RotateX(90.0f), //geo_flat_circle_3d
+        FMath::ms_mat4Unit, //geo_flat_aabb_3d
+        FMath::ms_mat4Unit, //geo_flat_sphere_3d
+        FMath::ms_mat4Unit, //geo_flat_cylinder_3d
+        FMath::ms_mat4Unit, //geo_flat_capsule_3d
+        FMath::ms_mat4Unit, //geo_flat_cone_3d
+        FMath::ms_mat4Unit, //geo_flat_torus_3d
+
+        FMath::RotateX(90.0f), //geo_entity_triangle  
+        FMath::RotateX(90.0f), //geo_entity_quad 
+        FMath::RotateX(90.0f), //geo_entity_grid
+        FMath::RotateX(90.0f), //geo_entity_circle
+        FMath::ms_mat4Unit, //geo_entity_aabb
+        FMath::ms_mat4Unit, //geo_entity_sphere
+        FMath::ms_mat4Unit, //geo_entity_geosphere
+        FMath::ms_mat4Unit, //geo_entity_cylinder
+        FMath::ms_mat4Unit, //geo_entity_capsule
+        FMath::ms_mat4Unit, //geo_entity_cone
+        FMath::ms_mat4Unit, //geo_entity_torus
+
+        FMath::ms_mat4Unit, //quad
+        FMath::ms_mat4Unit, //plane
+        FMath::ms_mat4Unit, //cube
+        FMath::ms_mat4Unit, //sphere
+
+    };
+    void OpenGLWindow::destroyMeshes_Internal()
+    {
+        size_t count = this->m_aMeshes_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            Mesh* pMesh = this->m_aMeshes_Internal[i];
+            delete pMesh;
+        }
+        this->m_aMeshes_Internal.clear();
+        this->m_mapMeshes_Internal.clear();
+    }
+    void OpenGLWindow::createMeshes_Internal()
+    {
+        for (int i = 0; i < g_MeshCount_Internal; i++)
+        {
+            String nameMesh = g_MeshPaths_Internal[7 * i + 0];
+            String nameVertexType = g_MeshPaths_Internal[7 * i + 1];
+            String nameMeshType = g_MeshPaths_Internal[7 * i + 2];
+            String pathMesh = g_MeshPaths_Internal[7 * i + 3];
+            String nameGeometryType = g_MeshPaths_Internal[7 * i + 4];
+            String nameGeometryParam = g_MeshPaths_Internal[7 * i + 5];
+            String nameGeometryIsVertexUpdate = g_MeshPaths_Internal[7 * i + 6];
+            bool isVertexUpdate = FUtilString::ParserBool(nameGeometryIsVertexUpdate);
+            
+            FMeshVertexType typeVertex = F_ParseMeshVertexType(nameVertexType); 
+            FMeshType typeMesh = F_ParseMeshType(nameMeshType);
+            FMeshGeometryType typeGeometryType = F_MeshGeometry_EntityTriangle;
+            if (!nameGeometryType.empty())
+            {
+                typeGeometryType = F_ParseMeshGeometryType(nameGeometryType);
+            }
+            FMeshCreateParam* pParam = nullptr;
+            if (!nameGeometryParam.empty())
+            {
+                pParam = FMeshGeometry::CreateParam(typeGeometryType, nameGeometryParam);
+                if (typeGeometryType == F_MeshGeometry_LineCircle2D)
+                {
+                    FMeshCreateParam_LineCircle2D* pParam_LineCircle2D = (FMeshCreateParam_LineCircle2D*)pParam;
+                    pParam_LineCircle2D->viewWidth = (int32)this->poViewport.right;
+                    pParam_LineCircle2D->viewHeight = (int32)this->poViewport.bottom;
+                }
+                else if (typeGeometryType == F_MeshGeometry_FlatCircle2D)
+                {
+                    FMeshCreateParam_FlatCircle2D* pParam_FlatCircle2D = (FMeshCreateParam_FlatCircle2D*)pParam;
+                    pParam_FlatCircle2D->viewWidth = (int32)this->poViewport.right;
+                    pParam_FlatCircle2D->viewHeight = (int32)this->poViewport.bottom;
+                }
+            }
+
+            Mesh* pMesh = new Mesh(0,
+                                   nameMesh,
+                                   pathMesh,
+                                   typeMesh,
+                                   typeVertex,
+                                   typeGeometryType,
+                                   pParam);
+            bool isFlipY = g_MeshIsFlipYs_Internal[i];
+            bool isTransformLocal = g_MeshIsTranformLocals_Internal[i];
+            if (!pMesh->LoadMesh(isFlipY, isTransformLocal, g_MeshTranformLocals_Internal[i], isVertexUpdate))
+            {
+                String msg = "*********************** OpenGLWindow::createMeshes_Internal: create mesh: [" + nameMesh + "] failed !";
+                F_LogError(msg.c_str());
+                throw std::runtime_error(msg);
+            }
+
+            this->m_aMeshes_Internal.push_back(pMesh);
+            this->m_mapMeshes_Internal[nameMesh] = pMesh;
+
+            F_LogInfo("OpenGLWindow::createMeshes_Internal: create mesh: [%s], vertex type: [%s], mesh type: [%s], geometry type: [%s], mesh sub count: [%d], path: [%s] success !", 
+                      nameMesh.c_str(), nameVertexType.c_str(), nameMeshType.c_str(), nameGeometryType.c_str(), (int)pMesh->aMeshSubs.size(), pathMesh.c_str());
+        }
+    }
+    Mesh* OpenGLWindow::FindMesh_Internal(const String& nameMesh)
+    {
+        MeshPtrMap::iterator itFind = this->m_mapMeshes_Internal.find(nameMesh);
+        if (itFind == this->m_mapMeshes_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+
+    //Texture
+    static const int g_TextureCount_Internal = 4;
+    static const char* g_TexturePaths_Internal[5 * g_TextureCount_Internal] = 
+    {
+        //Texture Name                      //Texture Type   //TextureIsRenderTarget   //TextureIsGraphicsComputeShared   //Texture Path
+        "default_black",                    "2D",            "false",                  "false",                           "Assets/Texture/Common/default_black.bmp", //default_black
+        "default_white",                    "2D",            "false",                  "false",                           "Assets/Texture/Common/default_white.bmp", //default_white
+        "default_blackwhite",               "2D",            "false",                  "false",                           "Assets/Texture/Common/default_blackwhite.png", //default_blackwhite
+        "texture2d",                        "2D",            "false",                  "false",                           "Assets/Texture/Common/texture2d.jpg", //texture2d
+        
+    };
+    static FTexturePixelFormatType g_TextureFormats_Internal[g_TextureCount_Internal] = 
+    {
+        F_TexturePixelFormat_R8G8B8A8_SRGB, //default_black
+        F_TexturePixelFormat_R8G8B8A8_SRGB, //default_white
+        F_TexturePixelFormat_R8G8B8A8_SRGB, //default_blackwhite
+        F_TexturePixelFormat_R8G8B8A8_SRGB, //texture2d
+
+    };
+    static FTextureAddressingType g_TextureAddressings_Internal[g_TextureCount_Internal] = 
+    {
+        F_TextureAddressing_Wrap, //default_black
+        F_TextureAddressing_Wrap, //default_white
+        F_TextureAddressing_Wrap, //default_blackwhite
+        F_TextureAddressing_Clamp, //texture2d
+
+    };
+    static FTextureFilterType g_TextureFilters_Internal[g_TextureCount_Internal * 2] = 
+    {
+        F_TextureFilter_Bilinear, F_TextureFilter_Bilinear, //default_black
+        F_TextureFilter_Bilinear, F_TextureFilter_Bilinear, //default_white
+        F_TextureFilter_Bilinear, F_TextureFilter_Bilinear, //default_blackwhite
+        F_TextureFilter_Bilinear, F_TextureFilter_Bilinear, //texture2d
+
+    };
+    static FColor g_TextureBorderColors_Internal[g_TextureCount_Internal] = 
+    {
+        FColor(0, 0, 0, 1), //default_black
+        FColor(0, 0, 0, 1), //default_white
+        FColor(0, 0, 0, 1), //default_blackwhite
+        FColor(0, 0, 0, 1), //texture2d
+
+    };
+    static int g_TextureSizes_Internal[3 * g_TextureCount_Internal] = 
+    {
+         64,     64,    1, //default_black
+         64,     64,    1, //default_white
+        512,    512,    1, //default_blackwhite
+        512,    512,    1, //texture2d
+
+    };
+    void OpenGLWindow::destroyTextures_Internal()
+    {
+        size_t count = this->m_aTextures_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            GLTexture* pTexture = this->m_aTextures_Internal[i];
+            delete pTexture;
+        }
+        this->m_aTextures_Internal.clear();
+        this->m_mapTextures_Internal.clear();
+    }
+    void OpenGLWindow::createTextures_Internal()
+    {
+        for (int i = 0; i < g_TextureCount_Internal; i++)
+        {
+            String nameTexture = g_TexturePaths_Internal[5 * i + 0];
+            String nameType = g_TexturePaths_Internal[5 * i + 1];
+            FTextureType typeTexture = F_ParseTextureType(nameType);
+            String nameIsRenderTarget = g_TexturePaths_Internal[5 * i + 2];
+            bool isRenderTarget = FUtilString::ParserBool(nameIsRenderTarget);
+            String nameIsGraphicsComputeShared = g_TexturePaths_Internal[5 * i + 3];
+            bool isGraphicsComputeShared = FUtilString::ParserBool(nameIsGraphicsComputeShared);
+            String pathTextures = g_TexturePaths_Internal[5 * i + 4];
+
+            StringVector aPathTexture = FUtilString::Split(pathTextures, ";");
+            GLTexture* pTexture = new GLTexture(nameTexture,
+                                                aPathTexture,
+                                                typeTexture,
+                                                g_TextureFormats_Internal[i],
+                                                g_TextureAddressings_Internal[i],
+                                                g_TextureFilters_Internal[2 * i + 0],
+                                                g_TextureFilters_Internal[2 * i + 1],
+                                                F_MSAASampleCount_1_Bit,
+                                                g_TextureBorderColors_Internal[i],
+                                                true,
+                                                true,
+                                                false,
+                                                isRenderTarget,
+                                                isGraphicsComputeShared);
+            pTexture->texChunkMaxX = 0;
+            pTexture->texChunkMaxY = 0; 
+            if (pTexture->texChunkMaxX > 0 && 
+                pTexture->texChunkMaxY > 0)
+            {
+                pTexture->texChunkIndex = FMath::Rand(0, pTexture->texChunkMaxX * pTexture->texChunkMaxY - 1);
+            }
+            pTexture->AddRef();
+
+            int width = g_TextureSizes_Internal[3 * i + 0];
+            int height = g_TextureSizes_Internal[3 * i + 1];
+            int depth = g_TextureSizes_Internal[3 * i + 1];
+            if (!pTexture->LoadTexture(width, 
+                                       height,
+                                       depth,
+                                       4,
+                                       nullptr))
+            {
+                String msg = "*********************** OpenGLWindow::createTextures_Internal: create texture: [" + nameTexture + "] failed !";
+                F_LogError(msg.c_str());
+                throw std::runtime_error(msg);
+            }
+
+            this->m_aTextures_Internal.push_back(pTexture);
+            this->m_mapTextures_Internal[nameTexture] = pTexture;
+
+            F_LogInfo("OpenGLWindow::createTextures_Internal: create texture: [%s], type: [%s], isRT: [%s], path: [%s] success !", 
+                      nameTexture.c_str(), 
+                      nameType.c_str(), 
+                      isRenderTarget ? "true" : "false",
+                      pathTextures.c_str());
+        }
+    }
+    GLTexture* OpenGLWindow::FindTexture_Internal(const String& nameTexture)
+    {
+        GLTexturePtrMap::iterator itFind = this->m_mapTextures_Internal.find(nameTexture);
+        if (itFind == this->m_mapTextures_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+
+    //DescriptorSetLayouts
+    static const int g_DescriptorSetLayoutCount_Internal = 13;
+    static const char* g_DescriptorSetLayoutNames_Internal[g_DescriptorSetLayoutCount_Internal] =
+    {
+        "Pass",
+        "Pass-Object",
+        "Pass-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
+        "ObjectCopyBlit-TextureFrameColor",
+        "ObjectCopyBlit-TextureFrameDepth",
+        "Cull-BufferRWArgsCB",
+        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
+        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
+        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-BufferRWClipCB-TextureCSR",
+        "HizDepth-TextureFS",
+        "HizDepth-TextureCSRWSrc-TextureCSRWDst",
+        "TextureCopy-TextureCSR-TextureCSRW",
+        "Pass-ObjectTerrain-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
+    };
+    void OpenGLWindow::destroyDescriptorSetLayouts_Internal()
+    {
+        size_t count = this->m_aDescriptorSetLayouts_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            DescriptorSetLayout* pDes = this->m_aDescriptorSetLayouts_Internal[i];
+            delete pDes;
+        }
+        this->m_aDescriptorSetLayouts_Internal.clear();
+        this->m_mapDescriptorSetLayouts_Internal.clear();
+        this->m_mapName2Layouts_Internal.clear();
+    }   
+    void OpenGLWindow::createDescriptorSetLayouts_Internal()
+    {
+        for (int i = 0; i < g_DescriptorSetLayoutCount_Internal; i++)
+        {
+            String nameLayout(g_DescriptorSetLayoutNames_Internal[i]);
+            StringVector aLayouts = FUtilString::Split(nameLayout, "-");
+            DescriptorSetLayout* pDes = new DescriptorSetLayout();
+            pDes->nameDescriptorSetLayout = nameLayout;
+            pDes->aLayouts = aLayouts;
+
+            this->m_aDescriptorSetLayouts_Internal.push_back(pDes);
+            this->m_mapDescriptorSetLayouts_Internal[nameLayout] = pDes;
+            this->m_mapName2Layouts_Internal[nameLayout] = aLayouts;
+
+            F_LogInfo("OpenGLWindow::createDescriptorSetLayouts_Internal: create DescriptorSetLayout: [%s] success !", nameLayout.c_str());
+        }
+    }
+    DescriptorSetLayout* OpenGLWindow::FindDescriptorSetLayout_Internal(const String& nameDescriptorSetLayout)
+    {
+        DescriptorSetLayoutPtrMap::iterator itFind = this->m_mapDescriptorSetLayouts_Internal.find(nameDescriptorSetLayout);
+        if (itFind == this->m_mapDescriptorSetLayouts_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+    StringVector* OpenGLWindow::FindDescriptorSetLayoutNames_Internal(const String& nameDescriptorSetLayout)
+    {
+        std::map<String, StringVector>::iterator itFind = this->m_mapName2Layouts_Internal.find(nameDescriptorSetLayout);
+        if (itFind == this->m_mapName2Layouts_Internal.end())
+        {
+            return nullptr;
+        }
+        return &(itFind->second);
+    }
+
+    //ShaderModule
+    static const int g_ShaderCount_Internal = 4;
+    static const char* g_ShaderModulePaths_Internal[3 * g_ShaderCount_Internal] = 
+    {
+        //name                                                     //type               //path
+        ///////////////////////////////////////// vert /////////////////////////////////////////
+        "vert_standard_copy_blit_from_frame",                     "vert",              "standard_copy_blit_from_frame.vert.spv", //standard_copy_blit_from_frame vert
+        "vert_standard_copy_blit_to_frame",                       "vert",              "standard_copy_blit_to_frame.vert.spv", //standard_copy_blit_to_frame vert
+        
+        ///////////////////////////////////////// tesc /////////////////////////////////////////
+    
+
+        ///////////////////////////////////////// tese /////////////////////////////////////////
+    
+
+        ///////////////////////////////////////// geom /////////////////////////////////////////
+
+
+        ///////////////////////////////////////// frag /////////////////////////////////////////
+        "frag_standard_copy_blit_from_frame",                     "frag",              "standard_copy_blit_from_frame.frag.spv", //standard_copy_blit_from_frame frag
+        "frag_standard_copy_blit_to_frame",                       "frag",              "standard_copy_blit_to_frame.frag.spv", //standard_copy_blit_to_frame frag
+       
+        ///////////////////////////////////////// comp /////////////////////////////////////////
+        
+    };
+    void OpenGLWindow::destroyShaders_Internal()
+    {
+        size_t count = this->m_aShaders_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            GLShader* pShader = this->m_aShaders_Internal[i];
+            F_DELETE(pShader)
+        }
+        this->m_aShaders_Internal.clear();
+        this->m_mapShaders_Internal.clear();
+    }
+    void OpenGLWindow::createShaders_Internal()
+    {
+        for (int i = 0; i < g_ShaderCount_Internal; i++)
+        {
+            String shaderName = g_ShaderModulePaths_Internal[3 * i + 0];
+            String shaderType = g_ShaderModulePaths_Internal[3 * i + 1];
+            String shaderPath = getShaderPathRelative(g_ShaderModulePaths_Internal[3 * i + 2], ShaderSort_Common);
+            FShaderType typeShader = F_ParseShaderType(shaderType);
+
+            GLShader* pShader = createShader(shaderName, shaderPath, typeShader);
+            if (pShader == nullptr)
+            {
+                String msg = "*********************** OpenGLWindow::createShaders_Internal: create shader: [" + shaderName + "] failed !";
+                F_LogError(msg.c_str());
+                throw std::runtime_error(msg);
+            }
+            this->m_aShaders_Internal.push_back(pShader);
+            this->m_mapShaders_Internal[shaderName] = pShader;
+            F_LogInfo("OpenGLWindow::createShaders_Internal: create shader, name: [%s], type: [%s], path: [%s] success !", 
+                      shaderName.c_str(), shaderType.c_str(), shaderPath.c_str());
+        }
+    }
+    GLShader* OpenGLWindow::FindShader_Internal(const String& nameShaderModule)
+    {
+        GLShaderPtrMap::iterator itFind = this->m_mapShaders_Internal.find(nameShaderModule);
+        if (itFind == this->m_mapShaders_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+
+    //UniformConstantBuffer
+    void OpenGLWindow::destroyUniformCB_Internal()
+    {
+        //1> PassCB
+        destroyUniform_PassCB();
+    }
+        void OpenGLWindow::destroyUniform_PassCB()
+        {
+            size_t count = this->poBuffers_PassCB.size();
+            for (size_t i = 0; i < count; i++) 
+            {
+                F_DELETE(this->poBuffers_PassCB[i])
+            }
+            this->poBuffers_PassCB.clear();
+        }
+        
+    void OpenGLWindow::createUniformCB_Internal()
+    {
+        //1> PassCB
+        createUniform_PassCB();
+    }
+        void OpenGLWindow::createUniform_PassCB()
+        {
+            size_t bufferSize = sizeof(PassConstants);
+            size_t count = this->poSwapChains.size();
+            this->poBuffers_PassCB.resize(count);
+            for (size_t i = 0; i < count; i++) 
+            {
+                String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
+                GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
+                                                                      bufferSize,
+                                                                      (uint8*)(&this->passCB),
+                                                                      false);
+                if (!pBufferUniform)
+                {
+                    String msg = "*********************** OpenGLWindow::createUniform_PassCB: create buffer uniform: [" + nameBuffer + "] failed !";
+                    F_LogError(msg.c_str());
+                    throw std::runtime_error(msg);
+                }
+                this->poBuffers_PassCB[i] = pBufferUniform;
+            }
+
+            F_LogInfo("OpenGLWindow::createUniform_PassCB: Create Uniform Pass constant buffer success !");
+        }
+
+    //PipelineCompute
+    void OpenGLWindow::destroyPipelineCompute_Internal()
+    {
+        destroyPipelineCompute_Cull();
+        destroyPipelineCompute_Terrain();
+    }
+        void OpenGLWindow::destroyPipelineCompute_Cull()
+        {
+
+        }
+        void OpenGLWindow::destroyPipelineCompute_Terrain()
+        {
+
+        }
+
+    void OpenGLWindow::createPipelineCompute_Internal()
+    {
+        createPipelineCompute_Cull();
+        createPipelineCompute_Terrain();
+    }
+        void OpenGLWindow::createPipelineCompute_Cull()
+        {
+
+        }
+        void OpenGLWindow::createPipelineCompute_Terrain()
+        {
+
+        }
+
+    //PipelineGraphics
+    void OpenGLWindow::destroyPipelineGraphics_Internal()
+    {
+        destroyPipelineGraphics_Terrain();
+        destroyPipelineGraphics_DepthHiz();
+        destroyPipelineGraphics_DepthShadowMap();
+        destroyPipelineGraphics_CopyBlitToFrame();
+        destroyPipelineGraphics_CopyBlitFromFrame();
+    }
+        void OpenGLWindow::destroyPipelineGraphics_CopyBlitFromFrame()
+        {
+
+        }
+        void OpenGLWindow::destroyPipelineGraphics_CopyBlitToFrame()
+        {
+            F_DELETE(m_pPipelineGraphics_CopyBlitToFrame)
+        }
+        void OpenGLWindow::destroyPipelineGraphics_DepthShadowMap()
+        {
+
+        }
+        void OpenGLWindow::destroyPipelineGraphics_DepthHiz()
+        {
+
+        }
+        void OpenGLWindow::destroyPipelineGraphics_Terrain()
+        {
+
+        }
+
+    void OpenGLWindow::createPipelineGraphics_Internal()
+    {
+        createPipelineGraphics_CopyBlitFromFrame();
+        createPipelineGraphics_CopyBlitToFrame();
+        createPipelineGraphics_DepthShadowMap();
+        createPipelineGraphics_DepthHiz();
+        createPipelineGraphics_Terrain();
+
+    }
+        void OpenGLWindow::createPipelineGraphics_CopyBlitFromFrame()
+        {
+
+        }
+
+        void OpenGLWindow::createPipelineGraphics_CopyBlitToFrame()
+        {
+
+        }
+    void OpenGLWindow::UpdateDescriptorSets_Graphics_CopyBlitToFrame()
+    {
+        this->m_pPipelineGraphics_CopyBlitToFrame->UpdateDescriptorSets();
+    }
+    void OpenGLWindow::UpdateBuffer_Graphics_CopyBlitToFrame(const CopyBlitObjectConstants& object)
+    {
+        this->m_pPipelineGraphics_CopyBlitToFrame->UpdateBuffer(object);
+    }   
+    void OpenGLWindow::Draw_Graphics_CopyBlitToFrame()
+    {
+
+    }
+
+        void OpenGLWindow::createPipelineGraphics_DepthShadowMap()
+        {
+
+        }
+
+        void OpenGLWindow::createPipelineGraphics_DepthHiz()
+        {
+
+        }
+
+        void OpenGLWindow::createPipelineGraphics_Terrain()
+        {
+            
+        }
+
 
     /////////////////////////// OpenGLWindow //////////////////////
     const String OpenGLWindow::c_strShaderProgram = "ShaderProgram";
@@ -101,6 +891,11 @@ namespace LostPeterOpenGL
         , imgui_MinimalSwapchainImages(0)
         , imgui_PathIni("")
         , imgui_PathLog("")
+
+        //Internal
+
+        , m_pPipelineGraphics_CopyBlitToFrame(nullptr)
+
 
         , pCamera(nullptr)
         , pCameraRight(nullptr)
@@ -490,6 +1285,10 @@ namespace LostPeterOpenGL
             createPipelineObjects();
 
 
+            //11> createInternal/createResourceInternal
+            createInternal();
+            createResourceInternal();
+
 
             //13> isCreateDevice
             this->isCreateDevice = true;
@@ -670,8 +1469,8 @@ namespace LostPeterOpenGL
         void OpenGLWindow::createSwapChain()
         {
             //1> Default Framebuffer Color/Depth format
-            glGetIntegerv(GL_COLOR_ATTACHMENT0, &this->poSwapChainImageFormat);
-            glGetIntegerv(GL_DEPTH_STENCIL_ATTACHMENT, &this->poDepthImageFormat);
+            //glGetIntegerv(GL_COLOR_ATTACHMENT0, &this->poSwapChainImageFormat);
+            //glGetIntegerv(GL_DEPTH_STENCIL_ATTACHMENT, &this->poDepthImageFormat);
 
             //2> Framebuffer
             int w, h;
@@ -1269,6 +2068,35 @@ namespace LostPeterOpenGL
                                                isDelete_Index);
                 }   
 
+                GLBufferUniform* OpenGLWindow::createBufferUniform(const String& nameBuffer,
+                                                                   size_t bufSize, 
+                                                                   uint8* pBuf,
+                                                                   bool isDelete)
+                {
+                    GLBufferUniform* pBufferUniform = new GLBufferUniform(nameBuffer);
+                    if (!pBufferUniform->Init(bufSize, 
+                                              pBuf, 
+                                              isDelete))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createBufferUniform: Failed to create buffer uniform: [%s] !", nameBuffer.c_str());
+                        F_DELETE(pBufferUniform)
+                        return nullptr;
+                    }
+                    return pBufferUniform;
+                }   
+                void OpenGLWindow::updateBufferUniform(GLBufferUniform* pBufferUniform,
+                                                       size_t bufSize, 
+                                                       uint8* pBuf,
+                                                       bool isDelete)
+                {
+                    if (pBufferUniform == nullptr)
+                        return;
+
+                    pBufferUniform->Update(bufSize,  
+                                           pBuf,
+                                           isDelete);
+                }
+
                 bool OpenGLWindow::createGLBufferVertex(const String& nameBuffer,
                                                         FMeshVertexType type,
                                                         size_t bufSize,
@@ -1389,6 +2217,54 @@ namespace LostPeterOpenGL
                         glDeleteBuffers(1, &nVEO);
                     }
                 }
+
+                bool OpenGLWindow::createGLBufferUniform(const String& nameBuffer,
+                                                         size_t bufSize, 
+                                                         uint8* pBuf,
+                                                         uint32& nBufferUniformID)
+                {
+                    glGenBuffers(1, &nBufferUniformID);
+
+                    updateGLBufferUniform(bufSize,
+                                          pBuf,
+                                          nBufferUniformID);
+
+                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "BufferUniform-" + nameBuffer);
+                    return true;
+                }
+                void OpenGLWindow::updateGLBufferUniform(size_t bufSize,
+                                                         uint8* pBuf,
+                                                         uint32 nBufferUniformID)
+                {
+                    glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
+                    glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
+                    glBindBufferBase(GL_UNIFORM_BUFFER, 0, nBufferUniformID);
+                    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+                }
+                void OpenGLWindow::updateGLBufferUniform(size_t offset,
+                                                         size_t bufSize,
+                                                         uint8* pBuf,
+                                                         uint32 nBufferUniformID)
+                {
+                    glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
+                    glBufferSubData(GL_UNIFORM_BUFFER, offset, bufSize, pBuf);
+                    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+                }
+                void OpenGLWindow::bindGLBufferUniform(uint32 nBufferUniformID)
+                {
+                    if (nBufferUniformID > 0)
+                    {
+                        glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID); 
+                    }
+                }
+                void OpenGLWindow::destroyGLBufferUniform(uint32 nBufferUniformID)
+                {
+                    if (nBufferUniformID > 0)
+                    {
+                        glDeleteBuffers(1, &nBufferUniformID);
+                    }
+                }
+
 
             void OpenGLWindow::loadTexture()
             {
@@ -1812,6 +2688,10 @@ namespace LostPeterOpenGL
                     return nullptr;
                 }
                 return pShader;
+            }
+            String OpenGLWindow::getShaderPathRelative(const String& nameShader)
+            {
+                return getShaderPathRelative(nameShader, ShaderSort_Platform);
             }
             String OpenGLWindow::getShaderPathRelative(const String& nameShader, ShaderSortType type)
             {
@@ -2349,11 +3229,85 @@ namespace LostPeterOpenGL
             }
                 void OpenGLWindow::updateCBs_Pass()
                 {
+                    //TransformConstants/CameraConstants
+                    if (this->pCamera != nullptr)
+                    {
+                        updateCBs_PassTransformAndCamera(this->passCB, this->pCamera, 0);
+                        if (this->pCameraRight == nullptr)
+                        {
+                            this->passCB.g_Transforms[1] = this->passCB.g_Transforms[0];
+                            this->passCB.g_Cameras[1] = this->passCB.g_Cameras[0];
+                        }
+                    }
+                    else
+                    {
+                        TransformConstants& transformConstants = this->passCB.g_Transforms[0];
+                        transformConstants.mat4View = glm::lookAtLH(this->cfg_cameraPos, 
+                                                                    this->cfg_cameraLookTarget,
+                                                                    this->cfg_cameraUp);
+                        transformConstants.mat4View_Inv = FMath::InverseMatrix4(transformConstants.mat4View);
+                        transformConstants.mat4Proj = glm::perspectiveLH(glm::radians(this->cfg_cameraFov), 
+                                                                         this->poViewport.right / (float)this->poViewport.bottom,
+                                                                         this->cfg_cameraNear, 
+                                                                         this->cfg_cameraFar);
+                        transformConstants.mat4Proj_Inv = FMath::InverseMatrix4(transformConstants.mat4Proj);
+                        transformConstants.mat4ViewProj = transformConstants.mat4Proj * transformConstants.mat4View;
+                        transformConstants.mat4ViewProj_Inv = FMath::InverseMatrix4(transformConstants.mat4ViewProj);
+                        
+                        //CameraConstants
+                        CameraConstants& cameraConstants = this->passCB.g_Cameras[0];
+                        cameraConstants.posEyeWorld = this->cfg_cameraPos;
+                        cameraConstants.fNearZ = this->cfg_cameraNear;
+                        cameraConstants.fFarZ = this->cfg_cameraFar;
+                    }   
+                    if (this->pCameraRight != nullptr)
+                    {
+                        updateCBs_PassTransformAndCamera(this->passCB, this->pCameraRight, 1); 
+                    }
 
+                    //TimeConstants
+                    this->passCB.g_TotalTime = this->pTimer->GetTimeSinceStart();
+                    this->passCB.g_DeltaTime = this->pTimer->GetTimeDelta();
+
+                    //RenderTarget
+                    this->passCB.g_RenderTargetSize = FVector2(this->poViewport.right, this->poViewport.bottom);
+                    this->passCB.g_RenderTargetSize_Inv = FVector2(1.0f / this->poViewport.right, 1.0f / this->poViewport.bottom);
+
+                    //Light Settings
+                    // if (this->cfg_isRenderPassShadowMap)
+                    // {
+                    //     const FMatrix4& depthViewMatrix = this->pCameraMainLight->GetMatrix4View();
+                    //     const FMatrix4& depthProjectionMatrix = this->pCameraMainLight->GetMatrix4Projection();
+                    //     this->mainLight.depthMVP = depthProjectionMatrix * depthViewMatrix;
+                    // }
+                    //memcpy(&this->passCB.g_MainLight, &this->mainLight, sizeof(LightConstants));
+                    // for (int i = 0; i < MAX_LIGHT_COUNT; i++)
+                    // {
+                    //     memcpy(&this->passCB.g_AdditionalLights[i], &this->aAdditionalLights[i], sizeof(LightConstants));
+                    // }
+
+                    //Update Buffer
+                    GLBufferUniform* pBufferUniform = this->poBuffers_PassCB[this->poCurrentFrame];
+                    pBufferUniform->Update(0, 
+                                           sizeof(PassConstants),
+                                           (uint8*)(&this->passCB));
                 }
                     void OpenGLWindow::updateCBs_PassTransformAndCamera(PassConstants& pass, FCamera* pCam, int nIndex)
                     {
+                        //TransformConstants
+                        TransformConstants& transformConstants = pass.g_Transforms[nIndex];
+                        transformConstants.mat4View = pCam->GetMatrix4View();
+                        transformConstants.mat4View_Inv = FMath::InverseMatrix4(transformConstants.mat4View);
+                        transformConstants.mat4Proj = pCam->GetMatrix4Projection();
+                        transformConstants.mat4Proj_Inv = FMath::InverseMatrix4(transformConstants.mat4Proj);
+                        transformConstants.mat4ViewProj = transformConstants.mat4Proj * transformConstants.mat4View;
+                        transformConstants.mat4ViewProj_Inv = FMath::InverseMatrix4(transformConstants.mat4ViewProj);
 
+                        //CameraConstants
+                        CameraConstants& cameraConstants = pass.g_Cameras[nIndex];
+                        cameraConstants.posEyeWorld = pCam->GetPos();
+                        cameraConstants.fNearZ = pCam->GetNearZ();
+                        cameraConstants.fFarZ = pCam->GetFarZ();
                     }
                 void OpenGLWindow::updateCBs_Objects()
                 {
@@ -2528,7 +3482,16 @@ namespace LostPeterOpenGL
                             }
                         void OpenGLWindow::passConstantsConfig()
                         {
-
+                            if (ImGui::CollapsingHeader("PassConstants Settings"))
+                            {
+                                //g_AmbientLight
+                                if (ImGui::ColorEdit4("Global AmbientLight", (float*)&(this->passCB.g_AmbientLight)))
+                                {
+                                    
+                                }
+                            }
+                            ImGui::Separator();
+                            ImGui::Spacing();
                         }
                         void OpenGLWindow::modelConfig()
                         {
@@ -2720,7 +3683,7 @@ namespace LostPeterOpenGL
             cleanupEditor();
             cleanupImGUI();
             cleanupDefault();
-            //cleanupInternal();
+            cleanupInternal();
 
             
         }
@@ -2778,6 +3741,7 @@ namespace LostPeterOpenGL
                 cleanupSwapChain_Custom();
                 cleanupSwapChain_Editor();
                 cleanupSwapChain_Default();
+                destroyResourceInternal();
 
                 //1> DepthImage/ColorImage    
                 F_DELETE(poDepthStencil)
@@ -2837,6 +3801,23 @@ namespace LostPeterOpenGL
         {
             F_LogInfo("++++++++++ OpenGLWindow::recreateSwapChain start ++++++++++");
             {
+                int width = 0;
+                int height = 0;
+                glfwGetFramebufferSize(this->pWindow, &width, &height);
+                while (width == 0 || height == 0)
+                {
+                    glfwGetFramebufferSize(this->pWindow, &width, &height);
+                    glfwWaitEvents();
+                    if (glfwWindowShouldClose(this->pWindow)) 
+                    {
+                        //Closing a minimized window
+                        cleanup();
+                        this->isMinimizedWindowNeedClose = true;
+                        return;
+                    }
+                }
+
+
 
             }
             F_LogInfo("++++++++++ OpenGLWindow::recreateSwapChain finish ++++++++++");

@@ -181,6 +181,11 @@ namespace LostPeterOpenGL
     {
         ObjectLabel(GL_VERTEX_ARRAY, id, -1, name.c_str());
     }
+    void GLDebug::SetGLBufferUniformName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_UNIFORM_BUFFER, id, -1, name.c_str());
+    }
+
     void GLDebug::SetGLShaderName(uint32 id, const String& name)
     {
         ObjectLabel(GL_SHADER, id, -1, name.c_str());
@@ -189,6 +194,7 @@ namespace LostPeterOpenGL
     {
         ObjectLabel(GL_PROGRAM, id, -1, name.c_str());
     }
+
     void GLDebug::SetGLTextureName(uint32 id, const String& name)
     {
         ObjectLabel(GL_TEXTURE, id, -1, name.c_str());

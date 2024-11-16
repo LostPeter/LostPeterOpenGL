@@ -98,6 +98,70 @@ namespace LostPeterOpenGL
     }
 
 
+    //DescriptorSetType
+    static String s_nameDescriptorSetTypes[] = 
+    {
+        "Pass",                             //0:   Pass
+        "Object",                           //1:   Object
+        "ObjectTerrain",                    //2:   ObjectTerrain
+        "ObjectGrid",                       //3:   ObjectGrid
+        "ObjectCameraAxis",                 //4:   ObjectCameraAxis
+        "ObjectCoordinateAxis",             //5:   ObjectCoordinateAxis
+        "ObjectLineFlat2D",                 //6:   ObjectLineFlat2D
+        "ObjectLineFlat3D",                 //7:   ObjectLineFlat3D
+        "ObjectCopyBlit",                   //8:   ObjectCopyBlit
+        "ObjectCull",                       //9:   ObjectCull
+        "Material",                         //10:  Material
+        "Instance",                         //11:  Instance
+        "TextureCopy",                      //12:  TextureCopy
+        "Tessellation",                     //13:  Tessellation
+        "Geometry",                         //14:  Geometry
+        "TextureVS",                        //15:  TextureVS
+        "TextureTESC",                      //16:  TextureTESC
+        "TextureTESE",                      //17:  TextureTESE
+        "TextureFS",                        //18:  TextureFS
+        "TextureFrameColor",                //19:  TextureFrameColor
+        "TextureFrameDepth",                //20:  TextureFrameDepth
+        "TextureCSR",                       //21:  TextureCSR
+        "TextureCSRW",                      //22:  TextureCSRW
+        "TextureCSRWSrc",                   //23:  TextureCSRWSrc
+        "TextureCSRWDst",                   //24:  TextureCSRWDst
+        "TextureDepthShadow",               //25:  TextureDepthShadow
+        "InputAttachRed",                   //26:  InputAttachRed
+        "InputAttachGreen",                 //27:  InputAttachGreen
+        "InputAttachBlue",                  //28:  InputAttachBlue
+        "Terrain",                          //29:  Terrain
+        "Cull",                             //30:  Cull
+        "HizDepth",                         //31:  HizDepth
+        "BufferRWArgsCB",                   //32:  BufferRWArgsCB
+        "BufferRWLodCB",                    //33:  BufferRWLodCB
+        "BufferRWResultCB",                 //34:  BufferRWResultCB
+        "BufferRWClipCB",                   //35:  BufferRWClipCB
+        "BufferRWObjectCullInstance",       //36:  BufferRWObjectCullInstance
+        "CullInstance",                     //37:  CullInstance
+        "BufferObjectLineFlat2D",           //38:  BufferObjectLineFlat2D
+        "BufferObjectLineFlat3D",           //39:  BufferObjectLineFlat3D
+    };
+    const String& Util_GetDescriptorSetTypeName(DescriptorSetType type)
+    {
+        return s_nameDescriptorSetTypes[(int)type];
+    }
+    const String& Util_GetDescriptorSetTypeName(int type)
+    {
+        return s_nameDescriptorSetTypes[type];
+    }
+    DescriptorSetType Util_ParseDescriptorSetType(const String& strName)
+    {
+        for (size_t i = 0; i < (int)DescriptorSet_Count; i++)
+        {
+            if (s_nameDescriptorSetTypes[i] == strName)
+                return (DescriptorSetType)(i);
+        }
+        F_Assert(false && "Util_ParseDescriptorSetType: Wrong type name !")
+        return DescriptorSet_Pass;
+    }
+
+
 ////////////////////////////// OpenGL //////////////////////////////   
     void Util_CreateAttributeDescriptions(FMeshVertexType type)
     {

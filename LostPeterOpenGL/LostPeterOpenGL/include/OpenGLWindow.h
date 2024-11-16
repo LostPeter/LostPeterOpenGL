@@ -23,9 +23,114 @@ namespace LostPeterOpenGL
         OpenGLWindow(int width, int height, String name);
         virtual ~OpenGLWindow();
 
+    ///////////////////////// Internal /////////////////////////
     public:
-        
+        //RenderPass
 
+        //Uniform ConstantBuffer
+        PassConstants passCB;
+        GLBufferUniformPtrVector poBuffers_PassCB;
+
+        //PipelineCompute
+
+        //PipelineGraphics
+        GLPipelineGraphicsCopyBlitToFrame* m_pPipelineGraphics_CopyBlitToFrame;
+
+
+        //Mesh
+        MeshPtrVector m_aMeshes_Internal;
+        MeshPtrMap m_mapMeshes_Internal;    
+
+        //Texture
+        GLTexturePtrVector m_aTextures_Internal;
+        GLTexturePtrMap m_mapTextures_Internal;
+
+        //DescriptorSetLayouts
+        DescriptorSetLayoutPtrVector m_aDescriptorSetLayouts_Internal;
+        DescriptorSetLayoutPtrMap m_mapDescriptorSetLayouts_Internal;
+        std::map<String, StringVector> m_mapName2Layouts_Internal;
+
+        //Shader
+        GLShaderPtrVector m_aShaders_Internal;
+        GLShaderPtrMap m_mapShaders_Internal;
+
+
+    public:
+        //Mesh
+        virtual Mesh* FindMesh_Internal(const String& nameMesh);
+
+        //Texture
+        virtual GLTexture* FindTexture_Internal(const String& nameTexture);
+
+        //DescriptorSetLayouts
+        virtual DescriptorSetLayout* FindDescriptorSetLayout_Internal(const String& nameDescriptorSetLayout);
+        virtual StringVector* FindDescriptorSetLayoutNames_Internal(const String& nameDescriptorSetLayout);
+        
+        //Shader
+        virtual GLShader* FindShader_Internal(const String& nameShader);
+
+        //PipelineCompute
+
+        //PipelineGraphics
+
+        //PipelineGraphics-CopyBlitToFrame
+        virtual void UpdateDescriptorSets_Graphics_CopyBlitToFrame();
+        virtual void UpdateBuffer_Graphics_CopyBlitToFrame(const CopyBlitObjectConstants& object);
+        virtual void Draw_Graphics_CopyBlitToFrame();
+
+
+
+    protected:
+        virtual void createInternal();
+        virtual void cleanupInternal();
+
+        virtual void createResourceInternal();
+        virtual void destroyResourceInternal();
+
+        //Mesh
+        virtual void destroyMeshes_Internal();
+        virtual void createMeshes_Internal();
+
+        //Texture
+        virtual void destroyTextures_Internal();
+        virtual void createTextures_Internal();
+
+        //DescriptorSetLayouts
+        virtual void destroyDescriptorSetLayouts_Internal();
+        virtual void createDescriptorSetLayouts_Internal();
+
+        //Shader
+        virtual void destroyShaders_Internal();
+        virtual void createShaders_Internal();
+        
+        //Uniform ConstantBuffer
+        virtual void destroyUniformCB_Internal();
+            virtual void destroyUniform_PassCB();
+        virtual void createUniformCB_Internal();
+            virtual void createUniform_PassCB();
+
+        //PipelineCompute
+        virtual void destroyPipelineCompute_Internal();
+            virtual void destroyPipelineCompute_Cull();
+            virtual void destroyPipelineCompute_Terrain();
+        virtual void createPipelineCompute_Internal();
+            virtual void createPipelineCompute_Cull();
+            virtual void createPipelineCompute_Terrain();
+
+        //PipelineGraphics
+        virtual void destroyPipelineGraphics_Internal();
+            virtual void destroyPipelineGraphics_CopyBlitFromFrame();
+            virtual void destroyPipelineGraphics_CopyBlitToFrame();
+            virtual void destroyPipelineGraphics_DepthShadowMap();
+            virtual void destroyPipelineGraphics_DepthHiz();
+            virtual void destroyPipelineGraphics_Terrain();
+        virtual void createPipelineGraphics_Internal();
+            virtual void createPipelineGraphics_CopyBlitFromFrame();
+            virtual void createPipelineGraphics_CopyBlitToFrame();
+            virtual void createPipelineGraphics_DepthShadowMap();
+            virtual void createPipelineGraphics_DepthHiz();
+            virtual void createPipelineGraphics_Terrain();
+        
     ///////////////////////// Internal /////////////////////////
 
 
@@ -304,6 +409,7 @@ namespace LostPeterOpenGL
                     virtual void loadModel();
                         virtual void loadModel_Default();
                         virtual void loadModel_Custom();
+                    //BufferVertex
                     virtual GLBufferVertex* createBufferVertex(const String& nameBuffer,
                                                                FMeshVertexType type,
                                                                size_t bufSize, 
@@ -315,6 +421,7 @@ namespace LostPeterOpenGL
                                                     uint8* pBuf,
                                                     bool isDelete);
 
+                    //BufferVertexIndex
                     virtual GLBufferVertexIndex* createBufferVertexIndex(const String& nameBuffer,
                                                                          FMeshVertexType type,
                                                                          size_t bufSize_Vertex, 
@@ -331,6 +438,17 @@ namespace LostPeterOpenGL
                                                          size_t bufSize_Index, 
                                                          uint8* pBuf_Index,
                                                          bool isDelete_Index);
+
+                    //BufferUniform
+                    virtual GLBufferUniform* createBufferUniform(const String& nameBuffer,
+                                                                 size_t bufSize, 
+                                                                 uint8* pBuf,
+                                                                 bool isDelete);
+                    virtual void updateBufferUniform(GLBufferUniform* pBufferUniform,
+                                                     size_t bufSize, 
+                                                     uint8* pBuf,
+                                                     bool isDelete);
+
 
                     virtual bool createGLBufferVertex(const String& nameBuffer,
                                                       FMeshVertexType type,
@@ -364,6 +482,20 @@ namespace LostPeterOpenGL
                                                            uint32 nVEO);
                     virtual void bindGLVertexArray(uint32 nVAO);
                     virtual void destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO);
+
+                    virtual bool createGLBufferUniform(const String& nameBuffer,
+                                                       size_t bufSize, 
+                                                       uint8* pBuf,
+                                                       uint32& nBufferUniformID);
+                    virtual void updateGLBufferUniform(size_t bufSize,
+                                                       uint8* pBuf,
+                                                       uint32 nBufferUniformID);
+                    virtual void updateGLBufferUniform(size_t offset,
+                                                       size_t bufSize,
+                                                       uint8* pBuf,
+                                                       uint32 nBufferUniformID);
+                    virtual void bindGLBufferUniform(uint32 nBufferUniformID);
+                    virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
 
 
                 virtual void loadTexture();
@@ -480,6 +612,7 @@ namespace LostPeterOpenGL
                     virtual void createCustomCB();
 
                 virtual GLShader* createShader(const String& nameShader, const String& pathFile, FShaderType typeShader);
+                virtual String getShaderPathRelative(const String& nameShader);
                 virtual String getShaderPathRelative(const String& nameShader, ShaderSortType type);
                 virtual String getShaderPath(const String& nameShader, ShaderSortType type);
 
