@@ -47,6 +47,9 @@ namespace LostPeterOpenGL
 
     public:
         void BindFrameBuffer();
+
+    public:
+        GLTexture* GetColorTexture(int index);
     };
 
 }; //LostPeterOpenGL

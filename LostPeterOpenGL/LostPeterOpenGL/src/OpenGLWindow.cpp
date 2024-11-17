@@ -118,19 +118,19 @@ namespace LostPeterOpenGL
         "geo_flat_cone_3d",             "Pos3Color4",                 "geometry",         "",                                   "FlatCone3D",               "0;0;0;0;1;0;0.5;1;50;30;1;1;1;1",                              "false", //geo_flat_cone_3d
         "geo_flat_torus_3d",            "Pos3Color4",                 "geometry",         "",                                   "FlatTorus3D",              "0;0;0;0;1;0;0.5;0.2;50;20;1;1;1;1",                            "false", //geo_flat_torus_3d
 
-        "geo_entity_triangle",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTriangle",           "false;false",                                                  "false", //geo_entity_triangle
-        "geo_entity_quad",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityQuad",               "false;false;0;0;1;1;0",                                        "false", //geo_entity_quad
-        "geo_entity_grid",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGrid",               "false;false;1;1;10;10",                                        "false", //geo_entity_grid
-        "geo_entity_circle",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCircle",             "false;false;0.5;100",                                          "false", //geo_entity_circle
-        "geo_entity_aabb",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityAABB",               "false;false;1;1;1;0",                                          "false", //geo_entity_aabb
-        "geo_entity_sphere",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntitySphere",             "false;false;0.5;30;30",                                        "false", //geo_entity_sphere
-        "geo_entity_geosphere",         "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGeoSphere",          "false;false;0.5;5",                                            "false", //geo_entity_geosphere
-        "geo_entity_cylinder",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCylinder",           "false;false;0.5;0.5;1;0;50;30",                                "false", //geo_entity_cylinder
-        "geo_entity_capsule",           "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCapsule",            "false;false;0.5;1;0;10;50;30",                                 "false", //geo_entity_capsule
-        "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;false;0.5;1;0;50;30",                                    "false", //geo_entity_cone
-        "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;false;0.5;0.2;50;20",                                    "false", //geo_entity_torus
+        "geo_entity_triangle",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTriangle",           "false;true",                                                   "false", //geo_entity_triangle
+        "geo_entity_quad",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityQuad",               "false;true;0;0;1;1;0",                                         "false", //geo_entity_quad
+        "geo_entity_grid",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGrid",               "false;true;1;1;10;10",                                         "false", //geo_entity_grid
+        "geo_entity_circle",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCircle",             "false;true;0.5;100",                                           "false", //geo_entity_circle
+        "geo_entity_aabb",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityAABB",               "false;true;1;1;1;0",                                           "false", //geo_entity_aabb
+        "geo_entity_sphere",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntitySphere",             "false;true;0.5;30;30",                                         "false", //geo_entity_sphere
+        "geo_entity_geosphere",         "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGeoSphere",          "false;true;0.5;5",                                             "false", //geo_entity_geosphere
+        "geo_entity_cylinder",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCylinder",           "false;true;0.5;0.5;1;0;50;30",                                 "false", //geo_entity_cylinder
+        "geo_entity_capsule",           "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCapsule",            "false;true;0.5;1;0;10;50;30",                                  "false", //geo_entity_capsule
+        "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;true;0.5;1;0;50;30",                                     "false", //geo_entity_cone
+        "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;true;0.5;0.2;50;20",                                     "false", //geo_entity_torus
 
-        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "",                                                             "false", //quad
+        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "false;true;0;0;1;1;0",                                         "false", //quad
         "plane",                        "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/plane.fbx",       "",                         "",                                                             "false", //plane
         "cube",                         "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/cube.obj",        "",                         "",                                                             "false", //cube
         "sphere",                       "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/sphere.fbx",      "",                         "",                                                             "false", //sphere
@@ -754,7 +754,7 @@ namespace LostPeterOpenGL
         }
         void OpenGLWindow::destroyPipelineGraphics_CopyBlitToFrame()
         {
-            F_DELETE(m_pPipelineGraphics_CopyBlitToFrame)
+            F_DELETE(this->m_pPipelineGraphics_CopyBlitToFrame)
         }
         void OpenGLWindow::destroyPipelineGraphics_DepthShadowMap()
         {
@@ -785,7 +785,31 @@ namespace LostPeterOpenGL
 
         void OpenGLWindow::createPipelineGraphics_CopyBlitToFrame()
         {
+            this->m_pPipelineGraphics_CopyBlitToFrame = new GLPipelineGraphicsCopyBlitToFrame("PipelineGraphics-CopyBlitToFrame");
+            String descriptorSetLayout = "ObjectCopyBlit-TextureFrameColor";
+            StringVector* pDescriptorSetLayoutNames = FindDescriptorSetLayoutNames_Internal(descriptorSetLayout);
 
+            F_Assert(pDescriptorSetLayoutNames != nullptr &&
+                     "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame")
+
+            String nameShaderVert = "vert_standard_copy_blit_to_frame";
+            String nameShaderFrag = "frag_standard_copy_blit_to_frame";
+            GLShader* pShaderVertex = FindShader_Internal(nameShaderVert);
+            GLShader* pShaderFrag = FindShader_Internal(nameShaderFrag);
+            F_Assert(pShaderVertex && pShaderFrag && "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame");
+
+            Mesh* pMeshBlit = FindMesh_Internal("quad");
+            F_Assert(pMeshBlit && "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame");
+            if (!this->m_pPipelineGraphics_CopyBlitToFrame->Init(pShaderVertex,
+                                                                 pShaderFrag,
+                                                                 pMeshBlit,
+                                                                 descriptorSetLayout,
+                                                                 pDescriptorSetLayoutNames))
+            {
+                F_LogError("*********************** OpenGLWindow::createPipelineGraphics_CopyBlitToFrame: PipelineGraphics_CopyBlitToFrame->Init failed !");
+                return;
+            }
+            F_LogInfo("OpenGLWindow::createPipelineGraphics_CopyBlitToFrame: [PipelineGraphics_CopyBlitToFrame] create success !");
         }
     void OpenGLWindow::UpdateDescriptorSets_Graphics_CopyBlitToFrame()
     {
@@ -795,9 +819,19 @@ namespace LostPeterOpenGL
     {
         this->m_pPipelineGraphics_CopyBlitToFrame->UpdateBuffer(object);
     }   
-    void OpenGLWindow::Draw_Graphics_CopyBlitToFrame()
+    void OpenGLWindow::Draw_Graphics_CopyBlitToFrame(GLFrameBuffer* pFrameBuffer)
     {
+        if (pFrameBuffer == nullptr)
+            return;
 
+        Mesh* pMesh = this->m_pPipelineGraphics_CopyBlitToFrame->pMeshBlit;
+        MeshSub* pMeshSub = pMesh->aMeshSubs[0];
+        GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
+        if (pTexture != nullptr)
+            pTexture->BindTexture();
+        this->m_pPipelineGraphics_CopyBlitToFrame->pShaderProgram->BindProgram();
+        pMeshSub->pBufferVertexIndex->BindVertexArray();
+        drawIndexed(GL_TRIANGLES, (int)pMeshSub->poVertexCount, GL_UNSIGNED_INT, 0);
     }
 
         void OpenGLWindow::createPipelineGraphics_DepthShadowMap()
@@ -1401,8 +1435,8 @@ namespace LostPeterOpenGL
                 glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
                 if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
                 {
-                    glEnable(GL_DEBUG_OUTPUT);
-                    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // makes sure errors are displayed synchronously
+                    setEnable(GL_DEBUG_OUTPUT);
+                    setEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); //makes sure errors are displayed synchronously
                     glDebugMessageCallback(glDebugOutput, nullptr);
                     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
                 }
@@ -1894,7 +1928,7 @@ namespace LostPeterOpenGL
                     F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: Create FrameBuffer failed, id: [%d], name: [%s] !", nFrameBufferID, nameFrameBuffer.c_str());
                     return false;
                 }
-                glBindFramebuffer(GL_FRAMEBUFFER, nFrameBufferID);
+                bindGLFrameBuffer(nFrameBufferID);
                 {
                     //Color Attachment
                     for (UintType2UintIDMap::const_iterator it = mapType2IDs.begin();
@@ -1910,18 +1944,13 @@ namespace LostPeterOpenGL
                         F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: FrameBuffer is not complete, id: [%d], name: [%s] !", nFrameBufferID, nameFrameBuffer.c_str());
                     }
                 }
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                bindGLFrameBuffer(0);
 
                 this->poDebug->SetGLFrameBuffer(nFrameBufferID, nameFrameBuffer);
                 return true;
             }
             void OpenGLWindow::bindGLFrameBuffer(uint32 nFrameBufferID)
             {
-                if (nFrameBufferID <= 0)
-                {
-                    F_LogError("*********************** OpenGLWindow::bindGLFrameBuffer: FrameBuffer id: [%d] is not valid !", nFrameBufferID);
-                    return;
-                }
                 glBindFramebuffer(GL_FRAMEBUFFER, nFrameBufferID);
             }
             void OpenGLWindow::destroyGLFrameBuffer(uint32 nFrameBufferID)
@@ -3644,7 +3673,7 @@ namespace LostPeterOpenGL
                             //3> ImGui 
                             drawMeshDefault_Imgui();
                         }
-                        endRenderPass();
+                        endRenderPass(this->poRenderPass);
                     }
                     updateMeshDefault_After();
                 }
@@ -3716,18 +3745,54 @@ namespace LostPeterOpenGL
                 {
                     this->poDebug->BeginRegion(nameRenderPass.c_str(), GL_DEBUG_SOURCE_APPLICATION);
 
-                    glClearColor(clBg.x, clBg.y, clBg.z, clBg.w);
-                    glClearDepth(depth);
-                    glClearStencil(stencil);
-                    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-                    glEnable(GL_FRAMEBUFFER_SRGB);
+                    setClearColorDepthStencil(clBg, depth, stencil);
+                    clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                    setEnable(GL_FRAMEBUFFER_SRGB);
 
                     if (pRenderPass != nullptr &&
                         pRenderPass->pFrameBuffer != nullptr)
                     {   
-
+                        pRenderPass->pFrameBuffer->BindFrameBuffer();
                     }   
                 }
+
+                    void OpenGLWindow::setEnable(GLenum cap)
+                    {
+                        glEnable(cap);
+                    }   
+                    void OpenGLWindow::setEnableDepthTest(bool enable)
+                    {
+                        if (enable)
+                            glEnable(GL_DEPTH_TEST); 
+                        else
+                            glDisable(GL_DEPTH_TEST);
+                    }
+                    void OpenGLWindow::setClearColor(float r, float g, float b, float a)
+                    {
+                        glClearColor(r, g, b, a);
+                    }
+                    void OpenGLWindow::setClearDepth(float depth)
+                    {
+                        glClearDepth(depth);
+                    }
+                    void OpenGLWindow::setClearStencil(int stencil)
+                    {
+                        glClearStencil(stencil);
+                    }
+                    void OpenGLWindow::setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil)
+                    {
+                        setClearColor(r, g, b, a);
+                        setClearDepth(depth);
+                        setClearStencil(stencil);
+                    }
+                    void OpenGLWindow::setClearColorDepthStencil(const FVector4& color, float depth, int stencil)
+                    {
+                        setClearColorDepthStencil(color.x, color.y, color.z, color.w, depth, stencil);
+                    }
+                    void OpenGLWindow::clear(GLbitfield mask)
+                    {
+                        glClear(mask);
+                    }
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
                     {
@@ -3738,10 +3803,21 @@ namespace LostPeterOpenGL
                         glDrawElements(mode, count, type, indices);
                     }
 
-                void OpenGLWindow::endRenderPass()
+                void OpenGLWindow::endRenderPass(GLRenderPass* pRenderPass)
                 {
+                    if (pRenderPass != nullptr &&
+                        pRenderPass->pFrameBuffer != nullptr)
+                    {   
+                        bindGLFrameBuffer(0);
 
-                    this->poDebug->EndRegion();
+                        setEnableDepthTest(false);
+                        // setClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
+                        clear(GL_COLOR_BUFFER_BIT);
+
+                        Draw_Graphics_CopyBlitToFrame(pRenderPass->pFrameBuffer);
+                    }   
+
+                    this->poDebug->EndRegion(); 
                 }
 
 

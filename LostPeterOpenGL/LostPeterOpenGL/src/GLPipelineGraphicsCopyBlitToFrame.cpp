@@ -11,6 +11,9 @@
 
 #include "../include/GLPipelineGraphicsCopyBlitToFrame.h"
 #include "../include/OpenGLWindow.h"
+#include "../include/GLBufferUniform.h"
+#include "../include/GLShader.h"
+#include "../include/GLShaderProgram.h"
 #include "../include/Mesh.h"
 
 namespace LostPeterOpenGL
@@ -20,8 +23,10 @@ namespace LostPeterOpenGL
 
         , nameDescriptorSetLayout("")
         , poDescriptorSetLayoutNames(nullptr)
-        
 
+        , pBuffer_CopyBlit(nullptr)
+        
+        , pShaderProgram(nullptr)
         , pMeshBlit(nullptr)
     {
 
@@ -39,39 +44,62 @@ namespace LostPeterOpenGL
     }
         void GLPipelineGraphicsCopyBlitToFrame::destroyBufferCopyBlitObject()
         {
-            
+            F_DELETE(this->pBuffer_CopyBlit)
         }
 
 
-    bool GLPipelineGraphicsCopyBlitToFrame::Init(Mesh* pMesh,
+    bool GLPipelineGraphicsCopyBlitToFrame::Init(GLShader* pShaderVertex,
+                                                 GLShader* pShaderFrag,
+                                                 Mesh* pMesh,
                                                  const String& descriptorSetLayout,
                                                  StringVector* pDescriptorSetLayoutNames)
     {
         this->pMeshBlit = pMesh;
         this->nameDescriptorSetLayout = descriptorSetLayout;
+        this->poDescriptorSetLayoutNames = pDescriptorSetLayoutNames;
 
-        //1> VkBuffer
-        
-
-        //2> VkPipeline
+        //1> GLBufferUniform
+        if (this->pBuffer_CopyBlit == nullptr)
         {
-            
+            if (!createBufferCopyBlitObject())
+            {
+                F_LogError("*********************** GLPipelineGraphicsCopyBlitToFrame::Init: createBufferCopyBlitObject failed !");
+                return false;
+            }
         }
 
-        //3> VkDescriptorSet
-        
+        //2> GLShaderProgram
+        {
+            String nameShaderProgram = "ShaderProgram-" + GetName();
+            this->pShaderProgram = Base::GetWindowPtr()->createShaderProgram(nameShaderProgram,
+                                                                             pShaderVertex,
+                                                                             nullptr,
+                                                                             nullptr,
+                                                                             nullptr,
+                                                                             pShaderFrag);
+            if (this->pShaderProgram == nullptr)
+            {
+                F_LogError("*********************** GLPipelineGraphicsCopyBlitToFrame::Init: createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
+                return false;
+            }
+        }
 
         return true;
     }
         bool GLPipelineGraphicsCopyBlitToFrame::createBufferCopyBlitObject()
         {
-            
+            this->objectCB_CopyBlit.offsetX = 0.0f;
+            this->objectCB_CopyBlit.offsetY = 0.0f;
+            this->objectCB_CopyBlit.scaleX = 2.0f;
+            this->objectCB_CopyBlit.scaleY = 2.0f;
+            Base::GetWindowPtr()->createBufferUniform("CopyBlitObjectConstants-" + this->name, sizeof(CopyBlitObjectConstants), (uint8*)(&this->objectCB_CopyBlit), false);
             return true;
         }
 
     void GLPipelineGraphicsCopyBlitToFrame::CleanupSwapChain()
     {
-        
+        this->poDescriptorSetLayoutNames = nullptr;
+        F_DELETE(this->pShaderProgram)
     }  
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateDescriptorSets()
@@ -81,7 +109,11 @@ namespace LostPeterOpenGL
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer(const CopyBlitObjectConstants& object)
     {
-
+        this->objectCB_CopyBlit = object;
+        if (this->pBuffer_CopyBlit != nullptr)
+        {
+            this->pBuffer_CopyBlit->Update(0, sizeof(CopyBlitObjectConstants), (uint8*)(&this->objectCB_CopyBlit));
+        }
     }
 
 }; //LostPeterOpenGL

@@ -120,4 +120,11 @@ namespace LostPeterOpenGL
         }
     }
 
+    GLTexture* GLFrameBuffer::GetColorTexture(int index)
+    {
+        if (index < 0 || index > (int)this->aColorTexture.size())
+            return nullptr;
+        return this->aColorTexture[index];
+    }
+
 }; //LostPeterOpenGL

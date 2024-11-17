@@ -26,13 +26,17 @@ namespace LostPeterOpenGL
         String nameDescriptorSetLayout;
         StringVector* poDescriptorSetLayoutNames;
 
-        CopyBlitObjectConstants m_objectCB_CopyBlit;
+        CopyBlitObjectConstants objectCB_CopyBlit;
+        GLBufferUniform* pBuffer_CopyBlit;
 
+        GLShaderProgram* pShaderProgram;
         Mesh* pMeshBlit;
 
     public:
         void Destroy();
-        virtual bool Init(Mesh* pMesh,
+        virtual bool Init(GLShader* pShaderVertex,
+                          GLShader* pShaderFrag,
+                          Mesh* pMesh,
                           const String& descriptorSetLayout,
                           StringVector* pDescriptorSetLayoutNames);
 

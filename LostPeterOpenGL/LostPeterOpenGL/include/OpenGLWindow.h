@@ -76,7 +76,7 @@ namespace LostPeterOpenGL
         //PipelineGraphics-CopyBlitToFrame
         virtual void UpdateDescriptorSets_Graphics_CopyBlitToFrame();
         virtual void UpdateBuffer_Graphics_CopyBlitToFrame(const CopyBlitObjectConstants& object);
-        virtual void Draw_Graphics_CopyBlitToFrame();
+        virtual void Draw_Graphics_CopyBlitToFrame(GLFrameBuffer* pFrameBuffer);
 
 
 
@@ -789,11 +789,20 @@ namespace LostPeterOpenGL
                                                  const FVector4& clBg,
                                                  float depth,
                                                  int stencil);
+
+                        virtual void setEnable(GLenum cap);
+                        virtual void setEnableDepthTest(bool enable);
+                        virtual void setClearColor(float r, float g, float b, float a);
+                        virtual void setClearDepth(float depth);
+                        virtual void setClearStencil(int stencil);
+                        virtual void setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil);
+                        virtual void setClearColorDepthStencil(const FVector4& color, float depth, int stencil);
+                        virtual void clear(GLbitfield mask);
                     
                         virtual void draw(GLenum mode, GLint first, GLsizei count);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
 
-                    virtual void endRenderPass();
+                    virtual void endRenderPass(GLRenderPass* pRenderPass);
 
 
                 virtual void updateRenderCommandBuffers_CustomAfterDefault();
