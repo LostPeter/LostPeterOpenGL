@@ -139,6 +139,7 @@ namespace LostPeterOpenGL
 
     public:
         GLDebug* poDebug;
+        GLShaderInclude* poShaderInclude;
         int poMSAASamples;
 
         int poSwapChainImageFormat;
@@ -329,7 +330,11 @@ namespace LostPeterOpenGL
             virtual void createWindowCallback();
             virtual void createDevice();
                 virtual void setUpDebugMessenger();
-
+                    virtual bool isExtensionSupported(const char* extension);
+                virtual void createSurface();
+                virtual void pickPhysicalDevice();
+                virtual void setUpEnabledFeatures();
+                virtual void createLogicalDevice();
 
             virtual void createFeatureSupport();
 
@@ -669,10 +674,15 @@ namespace LostPeterOpenGL
                     virtual void setUniformMatrix2fv(int location, const glm::mat2& m2);
                     virtual void setUniformMatrix3fv(int location, const FMatrix3& m3);
                     virtual void setUniformMatrix4fv(int location, const FMatrix4& m4);
-                
+
+                    virtual bool hasGLShaderGLSLInclude(const String& key);
+                    virtual void addGLShaderGLSLInclude(const String& key, const String& content);
+                    virtual void removeGLShaderGLSLInclude(const String& key);
+
                 virtual void destroyGLShaderProgram(uint32 nShaderProgramID);
                 virtual bool checkGLShaderCompileErrors(uint32 nShader, const String& type);    
-
+                virtual void getGLShaderCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog);
+                virtual void getGLShaderProgramCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog);
 
                 virtual void createCustomBeforePipeline();
                 virtual void createGraphicsPipeline();

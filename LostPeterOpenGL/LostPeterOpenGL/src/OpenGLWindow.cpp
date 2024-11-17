@@ -822,6 +822,7 @@ namespace LostPeterOpenGL
         : OpenGLBase(width, height, name)
 
         , poDebug(nullptr)
+        , poShaderInclude(nullptr)
         , poMSAASamples(1)
 
         , poSwapChainImageFormat(GL_RGBA)
@@ -1324,15 +1325,22 @@ namespace LostPeterOpenGL
                 glfwTerminate();
                 return;
             }
+            this->poDebug = new GLDebug();
+            this->poDebug->Init();
+            this->poShaderInclude = new GLShaderInclude();
+            this->poShaderInclude->Init();
 
             //3> setUpDebugMessenger
             setUpDebugMessenger();
 
-            //4> GLDebug
-            this->poDebug = new GLDebug();
-            this->poDebug->Init();
+            //3> createSurface
+            createSurface();
 
+            //4> pickPhysicalDevice
+            pickPhysicalDevice();
 
+            //5> createLogicalDevice
+            createLogicalDevice();
         }
         F_LogInfo("*****<1-2> OpenGLWindow::createDevice finish *****");
     }
@@ -1401,6 +1409,55 @@ namespace LostPeterOpenGL
             }
             
             F_LogInfo("<1-1-2> OpenGLWindow::setUpDebugMessenger finish !");
+        }
+            bool OpenGLWindow::isExtensionSupported(const char* extension)
+            {
+                GLint numExtensions = 0;
+                glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+                for (int i = 0; i < numExtensions; i++) 
+                {
+                    const GLubyte* extenName = glGetStringi(GL_EXTENSIONS, i);
+                    if (strcmp((const char*)extenName, extension) == 0) 
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        void OpenGLWindow::createSurface()
+        {
+
+            F_LogInfo("<1-2-3> OpenGLWindow::createSurface finish !");
+        }
+        void OpenGLWindow::pickPhysicalDevice()
+        {
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Extensions ****************");
+            GLint numExtensions = 0;
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+            for (int i = 0; i < numExtensions; i++) 
+            {
+                const GLubyte* extenName = glGetStringi(GL_EXTENSIONS, i);
+                F_LogInfo("  Extension: Index: [%d], Name: [%s] !", i, extenName);
+            }
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Extensions ****************");
+
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Features ****************");
+            {
+
+            }
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Features ****************");
+
+
+            F_LogInfo("<1-2-4> OpenGLWindow::pickPhysicalDevice finish !");
+        }
+        void OpenGLWindow::setUpEnabledFeatures()
+        {
+
+        }
+        void OpenGLWindow::createLogicalDevice()
+        {
+
+            F_LogInfo("<1-2-5> OpenGLWindow::createLogicalDevice finish !");
         }
 
 
@@ -2543,7 +2600,7 @@ namespace LostPeterOpenGL
                         return false;
                     }
 
-                    F_LogError("OpenGLWindow::createTextureRenderTarget2D: Success to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
+                    F_LogInfo("OpenGLWindow::createTextureRenderTarget2D: Success to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
                     return true;
                 }
 
@@ -2727,8 +2784,8 @@ namespace LostPeterOpenGL
                 if (pathFile.empty())
                     return false;
 
-                CharVector code;
-                if (!FUtil::LoadAssetFileContent(pathFile.c_str(), code, true))
+                String code;
+                if (!FUtil::LoadAssetFileToString(pathFile.c_str(), code))
                 {
                     F_LogError("*********************** OpenGLWindow::createGLShader failed, path: [%s] !", pathFile.c_str());
                     return false;
@@ -2737,12 +2794,14 @@ namespace LostPeterOpenGL
                 {
                     return false;
                 }
-                const char* pCode = code.data();
+                const char* pCode = code.c_str();
 
                 GLenum shaderType = Util_Transform2GLShaderType(typeShader);
                 nShaderID = glCreateShader(shaderType);
 
                 glShaderSource(nShaderID, 1, &pCode, nullptr);
+                this->poShaderInclude->ShaderInclude(nameShader, 
+                                                     code);
                 glCompileShader(nShaderID);
                 if (checkGLShaderCompileErrors(nShaderID, strTypeShader))
                 {
@@ -2988,6 +3047,22 @@ namespace LostPeterOpenGL
                     glUniformMatrix4fv(location, 1, GL_FALSE, &m4[0][0]);
                 }
 
+                bool OpenGLWindow::hasGLShaderGLSLInclude(const String& key)
+                {
+                    return glIsNamedStringARB((int)key.size(), key.c_str());
+                }
+                void OpenGLWindow::addGLShaderGLSLInclude(const String& key, const String& content)
+                {
+                    if (!hasGLShaderGLSLInclude(key))
+                    {
+                        glNamedStringARB(GL_SHADER_INCLUDE_ARB, (int)key.size(), key.c_str(), (int)content.size(), content.c_str());
+                    }
+                }
+                void OpenGLWindow::removeGLShaderGLSLInclude(const String& key)
+                {
+                    glDeleteNamedStringARB((int)key.size(), key.c_str());
+                }
+
             void OpenGLWindow::destroyGLShaderProgram(uint32 nShaderProgramID)
             {
                 if (nShaderProgramID > 0)
@@ -2998,14 +3073,14 @@ namespace LostPeterOpenGL
             bool OpenGLWindow::checkGLShaderCompileErrors(uint32 nShader, const String& type)
             {
                 int32 nSuccess;
-                char infoLog[1024];
+                std::vector<GLchar> errorLog; 
                 if (type != c_strShaderProgram)
                 {
                     glGetShaderiv(nShader, GL_COMPILE_STATUS, &nSuccess);
                     if (!nSuccess)
                     {
-                        glGetShaderInfoLog(nShader, 1024, NULL, infoLog);
-                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), infoLog);
+                        getGLShaderCompileErrors(nShader, errorLog);
+                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), errorLog.data());
                         return true;
                     }
                 }
@@ -3014,13 +3089,27 @@ namespace LostPeterOpenGL
                     glGetProgramiv(nShader, GL_LINK_STATUS, &nSuccess);
                     if (!nSuccess)
                     {
-                        glGetProgramInfoLog(nShader, 1024, NULL, infoLog);
-                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), infoLog);
+                        getGLShaderProgramCompileErrors(nShader, errorLog);
+                        F_LogError("*********************** OpenGLWindow::checkGLShaderCompileErrors: Failed to compile shader type: [%s], error: [%s] !", type.c_str(), errorLog.data());
                         return true;
                     }
                 }
                 return false;
             }   
+            void OpenGLWindow::getGLShaderCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog)
+            {
+                GLint maxLength = 0;
+                glGetShaderiv(nShader, GL_INFO_LOG_LENGTH, &maxLength);
+                errorLog.resize(maxLength);
+                glGetShaderInfoLog(nShader, maxLength, &maxLength, &errorLog[0]);
+            }
+            void OpenGLWindow::getGLShaderProgramCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog)
+            {
+                GLint maxLength = 0;
+                glGetShaderiv(nShader, GL_INFO_LOG_LENGTH, &maxLength);
+                errorLog.resize(maxLength);
+                glGetProgramInfoLog(nShader, maxLength, &maxLength, &errorLog[0]);
+            }
             
 
             void OpenGLWindow::createCustomBeforePipeline()

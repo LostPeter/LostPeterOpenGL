@@ -10,6 +10,8 @@
 ****************************************************************************/
 
 #version 330 core
+#extension GL_ARB_shading_language_include : enable
+#include "/glsl_common.glsl"
 
 layout (location = 0) in vec2 inPosition;
 layout (location = 1) in vec4 inColor;

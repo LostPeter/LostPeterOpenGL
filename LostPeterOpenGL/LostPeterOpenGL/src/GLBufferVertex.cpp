@@ -14,8 +14,8 @@
 
 namespace LostPeterOpenGL
 {
-    GLBufferVertex::GLBufferVertex(const String& nameRenderPass)
-        : GLBuffer(nameRenderPass)
+    GLBufferVertex::GLBufferVertex(const String& nameBuffer)
+        : GLBuffer(nameBuffer)
         , nVAO(0)
         , nVBO(0)
 

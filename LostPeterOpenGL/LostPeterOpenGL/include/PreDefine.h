@@ -398,6 +398,7 @@ namespace LostPeterOpenGL
 
     class GLDebug;
     class GLBuffer;
+    class GLBufferStorage;
     class GLBufferUniform; 
     class GLBufferVertex;
     class GLBufferVertexIndex;
@@ -406,6 +407,7 @@ namespace LostPeterOpenGL
     class GLRenderBuffer;
     class GLRenderPass;
     class GLShader;
+    class GLShaderInclude;
     class GLShaderProgram;
     class GLTexture;
 
@@ -414,6 +416,8 @@ namespace LostPeterOpenGL
 
     typedef std::vector<GLBuffer*> GLBufferPtrVector;
     typedef std::map<String, GLBuffer*> GLBufferPtrMap;
+    typedef std::vector<GLBufferStorage*> GLBufferStoragePtrVector;
+    typedef std::map<String, GLBufferStorage*> GLBufferStoragePtrMap;
     typedef std::vector<GLBufferUniform*> GLBufferUniformPtrVector;
     typedef std::map<String, GLBufferUniform*> GLBufferUniformPtrMap;
     typedef std::vector<GLBufferVertex*> GLBufferVertexPtrVector;

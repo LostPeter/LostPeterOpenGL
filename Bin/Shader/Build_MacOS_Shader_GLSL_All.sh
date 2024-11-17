@@ -14,9 +14,11 @@ dirSrc="./$name_folder/sample"
 dirDst="../Assets/Shader"
 
 mkdir -p $dirDst
+rm -rf $dirDst"/Include"
 rm -rf $dirDst"/Common"
 rm -rf $dirDst"/MacOS"
 
+mkdir -p $dirDst"/Include"
 mkdir -p $dirDst"/Common"
 mkdir -p $dirDst"/MacOS"
 
@@ -42,6 +44,11 @@ function read_dir() {
 
 echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
 {
+    for file in ${dirSrc}/Include/*.glsl
+    do 
+        cp -rfp $file $dirDst/Include
+    done
+
     compile_shader $dirSrc/Common Common
     compile_shader $dirSrc/MacOS MacOS
 }
@@ -50,6 +57,7 @@ echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp *********
 
 echo "************** Shader Copy ****************************************************"
 {
+    read_dir $dirDst/Include
     read_dir $dirDst/Common
     read_dir $dirDst/MacOS
 }

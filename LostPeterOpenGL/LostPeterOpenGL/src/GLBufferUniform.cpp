@@ -14,8 +14,8 @@
 
 namespace LostPeterOpenGL
 {
-    GLBufferUniform::GLBufferUniform(const String& nameRenderPass)
-        : GLBuffer(nameRenderPass)
+    GLBufferUniform::GLBufferUniform(const String& nameBuffer)
+        : GLBuffer(nameBuffer)
 
         , nBufferSize(0)
         , pBuffer(nullptr)

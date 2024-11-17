@@ -23,6 +23,7 @@
 
 #include "GLDebug.h"
 #include "GLBuffer.h"
+#include "GLBufferStorage.h"
 #include "GLBufferUniform.h"
 #include "GLBufferVertex.h"
 #include "GLBufferVertexIndex.h"
@@ -31,6 +32,7 @@
 #include "GLRenderBuffer.h"
 #include "GLRenderPass.h"
 #include "GLShader.h"
+#include "GLShaderInclude.h"
 #include "GLShaderProgram.h"
 #include "GLTexture.h"
 

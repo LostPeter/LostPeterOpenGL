@@ -122,7 +122,7 @@ namespace LostPeterOpenGL
 
         virtual void UpdateTimer();
 
-    protected:
+    public:
         String GetAssetFullPath(const String& assetName);
 
     };

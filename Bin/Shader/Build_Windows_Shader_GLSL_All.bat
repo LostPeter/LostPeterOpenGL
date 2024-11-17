@@ -18,6 +18,12 @@ set folderDst=..\Assets\Shader
 if not exist %folderDst% (
     mkdir %folderDst%
 )
+
+if exist %folderDst%\Include (
+    rmdir /S/Q %folderDst%\Include
+)
+mkdir %folderDst%\Include
+
 if exist %folderDst%\Common (
     rmdir /S/Q %folderDst%\Common
 )
@@ -32,11 +38,13 @@ mkdir %folderDst%\Windows
 
 
 echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
+xcopy /S /E /Y /F %folderSrc%\Include %folderDst%"\Include\"
 call :buildShader %folderSrc%\Common Common
 call :buildShader %folderSrc%\Windows Windows
 echo "************** Shader Source .vert/.tesc/.tese/.geom/.frag/.comp **************"
 
 echo "************** Shader Copy ****************************************************"
+for %%i in (%folderDst%\Include\*.*) do echo %%i
 for %%i in (%folderDst%\Common\*.*) do echo %%i
 for %%i in (%folderDst%\Windows\*.*) do echo %%i
 echo "************** Shader Copy ****************************************************"
