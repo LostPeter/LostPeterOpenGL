@@ -1470,6 +1470,29 @@ namespace LostPeterOpenGL
         }
         void OpenGLWindow::pickPhysicalDevice()
         {
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL PhysicalDeviceProperties ****************");
+            {
+                F_LogInfo("  VendorName: [%s]", glGetString(GL_VENDOR));
+                F_LogInfo("  RendererName: [%s]", glGetString(GL_RENDERER));
+                F_LogInfo("  OpenGLVersion: [%s]", glGetString(GL_VERSION));
+                F_LogInfo("  GLSLVersion: [%s]", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+                GLint size2D = 0;
+                GLint size3D = 0;
+                GLint sizeCubeMap = 0;
+                glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size2D);
+                glGetIntegerv(GL_MAX_3D_TEXTURE_SIZE, &size3D);
+                glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &sizeCubeMap);
+                F_LogInfo("  maxImageDimension1D: [%d]", size2D);
+                F_LogInfo("  maxImageDimension2D: [%d]", size2D);
+                F_LogInfo("  maxImageDimension3D: [%d]", size3D);
+                F_LogInfo("  maxImageDimensionCube: [%d]", sizeCubeMap);
+                
+                
+            }
+            F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL PhysicalDeviceProperties ****************");
+
+
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Extensions ****************");
             GLint numExtensions = 0;
             glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
@@ -1479,6 +1502,7 @@ namespace LostPeterOpenGL
                 F_LogInfo("  Extension: Index: [%d], Name: [%s] !", i, extenName);
             }
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Extensions ****************");
+
 
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Features ****************");
             {
@@ -2329,7 +2353,8 @@ namespace LostPeterOpenGL
                 {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
-                    glBindBufferBase(GL_UNIFORM_BUFFER, 0, nBufferUniformID);
+                    //glBindBufferBase(GL_UNIFORM_BUFFER, 0, nBufferUniformID);
+                    glBindBufferRange(GL_UNIFORM_BUFFER, 0, nBufferUniformID, 0, bufSize);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
                 }
                 void OpenGLWindow::updateGLBufferUniform(size_t offset,
