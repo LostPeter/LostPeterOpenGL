@@ -130,7 +130,7 @@ namespace LostPeterOpenGL
         "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;true;0.5;1;0;50;30",                                     "false", //geo_entity_cone
         "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;true;0.5;0.2;50;20",                                     "false", //geo_entity_torus
 
-        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "false;true;0;0;1;1;0",                                         "false", //quad
+        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "true;true;0;0;1;1;0",                                          "false", //quad
         "plane",                        "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/plane.fbx",       "",                         "",                                                             "false", //plane
         "cube",                         "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/cube.obj",        "",                         "",                                                             "false", //cube
         "sphere",                       "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/sphere.fbx",      "",                         "",                                                             "false", //sphere
@@ -190,7 +190,7 @@ namespace LostPeterOpenGL
         false, //geo_entity_cone
         false, //geo_entity_torus
 
-        false, //quad
+        true, //quad
         true, //plane
         false, //cube
         false, //sphere
@@ -836,7 +836,7 @@ namespace LostPeterOpenGL
         UpdateBuffer_Graphics_CopyBlitToFrame();
         this->m_pPipelineGraphics_CopyBlitToFrame->pShaderProgram->BindProgram();
         pMeshSub->pBufferVertexIndex->BindVertexArray();
-        drawIndexed(GL_TRIANGLES, (int)pMeshSub->poVertexCount, GL_UNSIGNED_INT, 0);
+        drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
     }
 
         void OpenGLWindow::createPipelineGraphics_DepthShadowMap()
@@ -1440,8 +1440,8 @@ namespace LostPeterOpenGL
                 glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
                 if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
                 {
-                    setEnable(GL_DEBUG_OUTPUT);
-                    setEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); //makes sure errors are displayed synchronously
+                    setEnable(GL_DEBUG_OUTPUT, true);
+                    setEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS, true); //makes sure errors are displayed synchronously
                     glDebugMessageCallback(glDebugOutput, nullptr);
                     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
                 }
@@ -3703,7 +3703,7 @@ namespace LostPeterOpenGL
                             else if (this->pBufferVertexIndex != nullptr)
                             {   
                                 this->pBufferVertexIndex->BindVertexArray();
-                                drawIndexed(this->cfg_glPrimitiveTopology, this->poVertexCount, GL_UNSIGNED_INT, 0);
+                                drawIndexed(this->cfg_glPrimitiveTopology, this->poIndexCount, GL_UNSIGNED_INT, 0);
                             }
                         }
                         void OpenGLWindow::drawMeshTerrain()
@@ -3750,20 +3750,22 @@ namespace LostPeterOpenGL
                 {
                     this->poDebug->BeginRegion(nameRenderPass.c_str(), GL_DEBUG_SOURCE_APPLICATION);
 
-                    setClearColorDepthStencil(clBg, depth, stencil);
-                    clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-                    setEnable(GL_FRAMEBUFFER_SRGB);
-
                     if (pRenderPass != nullptr &&
                         pRenderPass->pFrameBuffer != nullptr)
                     {   
                         pRenderPass->pFrameBuffer->BindFrameBuffer();
                     }   
+
+                    setClearColorDepthStencil(clBg, depth, stencil);
+                    clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                 }
 
-                    void OpenGLWindow::setEnable(GLenum cap)
+                    void OpenGLWindow::setEnable(GLenum cap, bool enable)
                     {
-                        glEnable(cap);
+                        if (enable)
+                            glEnable(cap);
+                        else
+                            glDisable(cap);
                     }   
                     void OpenGLWindow::setEnableDepthTest(bool enable)
                     {
@@ -3775,6 +3777,10 @@ namespace LostPeterOpenGL
                     void OpenGLWindow::setClearColor(float r, float g, float b, float a)
                     {
                         glClearColor(r, g, b, a);
+                    }
+                    void OpenGLWindow::setClearColor(const FVector4& color)
+                    {
+                        setClearColor(color.x, color.y, color.z, color.w);
                     }
                     void OpenGLWindow::setClearDepth(float depth)
                     {
@@ -3816,8 +3822,9 @@ namespace LostPeterOpenGL
                         bindGLFrameBuffer(0);
 
                         setEnableDepthTest(false);
-                        // setClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
+                        setClearColor(this->cfg_colorBackground);
                         clear(GL_COLOR_BUFFER_BIT);
+                        setEnable(GL_FRAMEBUFFER_SRGB, true);
 
                         Draw_Graphics_CopyBlitToFrame(pRenderPass->pFrameBuffer);
                     }   

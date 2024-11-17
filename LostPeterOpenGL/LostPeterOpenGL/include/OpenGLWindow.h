@@ -791,9 +791,10 @@ namespace LostPeterOpenGL
                                                  float depth,
                                                  int stencil);
 
-                        virtual void setEnable(GLenum cap);
+                        virtual void setEnable(GLenum cap, bool enable);
                         virtual void setEnableDepthTest(bool enable);
                         virtual void setClearColor(float r, float g, float b, float a);
+                        virtual void setClearColor(const FVector4& color);
                         virtual void setClearDepth(float depth);
                         virtual void setClearStencil(int stencil);
                         virtual void setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil);
