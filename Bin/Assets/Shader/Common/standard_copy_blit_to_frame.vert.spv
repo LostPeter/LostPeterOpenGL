@@ -24,8 +24,8 @@ out vec2 fragTexCoord;
 
 void main()
 {
-    float x = inPosition.x * copyBlitObjectConsts.scaleX + copyBlitObjectConsts.offsetX;
-    float y = inPosition.y * copyBlitObjectConsts.scaleY + copyBlitObjectConsts.offsetY;
+    float x = inPosition.x * 2; //* copyBlitObjectConsts.scaleX + copyBlitObjectConsts.offsetX;
+    float y = inPosition.y * 2; //* copyBlitObjectConsts.scaleY + copyBlitObjectConsts.offsetY;
     gl_Position = vec4(x, y, 0.0, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;

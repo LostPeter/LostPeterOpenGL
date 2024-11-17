@@ -190,7 +190,7 @@ namespace LostPeterOpenGL
         false, //geo_entity_cone
         false, //geo_entity_torus
 
-        true, //quad
+        false, //quad
         true, //plane
         false, //cube
         false, //sphere
@@ -815,6 +815,10 @@ namespace LostPeterOpenGL
     {
         this->m_pPipelineGraphics_CopyBlitToFrame->UpdateDescriptorSets();
     }
+    void OpenGLWindow::UpdateBuffer_Graphics_CopyBlitToFrame()
+    {
+        this->m_pPipelineGraphics_CopyBlitToFrame->UpdateBuffer();
+    }   
     void OpenGLWindow::UpdateBuffer_Graphics_CopyBlitToFrame(const CopyBlitObjectConstants& object)
     {
         this->m_pPipelineGraphics_CopyBlitToFrame->UpdateBuffer(object);
@@ -829,6 +833,7 @@ namespace LostPeterOpenGL
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
         if (pTexture != nullptr)
             pTexture->BindTexture();
+        UpdateBuffer_Graphics_CopyBlitToFrame();
         this->m_pPipelineGraphics_CopyBlitToFrame->pShaderProgram->BindProgram();
         pMeshSub->pBufferVertexIndex->BindVertexArray();
         drawIndexed(GL_TRIANGLES, (int)pMeshSub->poVertexCount, GL_UNSIGNED_INT, 0);

@@ -49,6 +49,7 @@ namespace LostPeterOpenGL
         virtual void CleanupSwapChain();
 
         virtual void UpdateDescriptorSets();
+        virtual void UpdateBuffer();
         virtual void UpdateBuffer(const CopyBlitObjectConstants& object);
     };  
 

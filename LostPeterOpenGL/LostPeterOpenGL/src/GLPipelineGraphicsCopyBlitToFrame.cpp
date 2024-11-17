@@ -107,13 +107,17 @@ namespace LostPeterOpenGL
         
     }
 
-    void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer(const CopyBlitObjectConstants& object)
+    void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer()
     {
-        this->objectCB_CopyBlit = object;
         if (this->pBuffer_CopyBlit != nullptr)
         {
             this->pBuffer_CopyBlit->Update(0, sizeof(CopyBlitObjectConstants), (uint8*)(&this->objectCB_CopyBlit));
         }
+    }
+    void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer(const CopyBlitObjectConstants& object)
+    {
+        this->objectCB_CopyBlit = object;
+        UpdateBuffer();
     }
 
 }; //LostPeterOpenGL

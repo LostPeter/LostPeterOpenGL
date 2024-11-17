@@ -75,6 +75,7 @@ namespace LostPeterOpenGL
 
         //PipelineGraphics-CopyBlitToFrame
         virtual void UpdateDescriptorSets_Graphics_CopyBlitToFrame();
+        virtual void UpdateBuffer_Graphics_CopyBlitToFrame();
         virtual void UpdateBuffer_Graphics_CopyBlitToFrame(const CopyBlitObjectConstants& object);
         virtual void Draw_Graphics_CopyBlitToFrame(GLFrameBuffer* pFrameBuffer);
 
