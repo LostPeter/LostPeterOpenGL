@@ -227,6 +227,10 @@ namespace LostPeterOpenGL
         String imgui_PathIni;
         String imgui_PathLog;
 
+        //Constants Buffer
+        std::vector<ObjectConstants> objectCBs;
+        
+
         //Camera
         FCamera* pCamera; //Eye Left
         FCamera* pCameraRight; //Eye Right
@@ -447,6 +451,7 @@ namespace LostPeterOpenGL
 
                     //BufferUniform
                     virtual GLBufferUniform* createBufferUniform(const String& nameBuffer,
+                                                                 uint32 bindingIndex,
                                                                  size_t bufSize, 
                                                                  uint8* pBuf,
                                                                  bool isDelete);
@@ -490,10 +495,12 @@ namespace LostPeterOpenGL
                     virtual void destroyGLBufferVertexIndex(uint32 nVAO, uint32 nVBO, uint32 nVEO);
 
                     virtual bool createGLBufferUniform(const String& nameBuffer,
+                                                       uint32 bindingIndex,
                                                        size_t bufSize, 
                                                        uint8* pBuf,
                                                        uint32& nBufferUniformID);
-                    virtual void updateGLBufferUniform(size_t bufSize,
+                    virtual void updateGLBufferUniform(uint32 bindingIndex,
+                                                       size_t bufSize,
                                                        uint8* pBuf,
                                                        uint32 nBufferUniformID);
                     virtual void updateGLBufferUniform(size_t offset,
@@ -648,6 +655,9 @@ namespace LostPeterOpenGL
                                                    uint32 nShaderComputeID,
                                                    uint32& nShaderProgramID);
                     virtual void bindGLShaderProgram(uint32 nShaderProgramID);
+
+                    virtual uint32 getUniformBlockIndex(uint32 nShaderProgramID, const String& name);
+                    virtual void setUniformBlockBinding(uint32 nShaderProgramID, uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
 
                     virtual void setUniform1i(uint32 nShaderProgramID, const String& name, int value);
                     virtual void setUniform1f(uint32 nShaderProgramID, const String& name, float value);

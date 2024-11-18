@@ -538,8 +538,8 @@ namespace LostPeterOpenGL
         "Pass",
         "Pass-Object",
         "Pass-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
-        "ObjectCopyBlit-TextureFrameColor",
-        "ObjectCopyBlit-TextureFrameDepth",
+        "CopyBlitObjectConstants-TextureFrameColor",
+        "CopyBlitObjectConstants-TextureFrameDepth",
         "Cull-BufferRWArgsCB",
         "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
         "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
@@ -695,6 +695,7 @@ namespace LostPeterOpenGL
             {
                 String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
                 GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
+                                                                      0,
                                                                       bufferSize,
                                                                       (uint8*)(&this->passCB),
                                                                       false);
@@ -786,7 +787,7 @@ namespace LostPeterOpenGL
         void OpenGLWindow::createPipelineGraphics_CopyBlitToFrame()
         {
             this->m_pPipelineGraphics_CopyBlitToFrame = new GLPipelineGraphicsCopyBlitToFrame("PipelineGraphics-CopyBlitToFrame");
-            String descriptorSetLayout = "ObjectCopyBlit-TextureFrameColor";
+            String descriptorSetLayout = "CopyBlitObjectConstants-TextureFrameColor";
             StringVector* pDescriptorSetLayoutNames = FindDescriptorSetLayoutNames_Internal(descriptorSetLayout);
 
             F_Assert(pDescriptorSetLayoutNames != nullptr &&
@@ -833,7 +834,7 @@ namespace LostPeterOpenGL
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
         if (pTexture != nullptr)
             pTexture->BindTexture();
-        UpdateBuffer_Graphics_CopyBlitToFrame();
+        //UpdateBuffer_Graphics_CopyBlitToFrame();
         this->m_pPipelineGraphics_CopyBlitToFrame->pShaderProgram->BindProgram();
         pMeshSub->pBufferVertexIndex->BindVertexArray();
         drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
@@ -2184,12 +2185,14 @@ namespace LostPeterOpenGL
                 }   
 
                 GLBufferUniform* OpenGLWindow::createBufferUniform(const String& nameBuffer,
+                                                                   uint32 bindingIndex,
                                                                    size_t bufSize, 
                                                                    uint8* pBuf,
                                                                    bool isDelete)
                 {
                     GLBufferUniform* pBufferUniform = new GLBufferUniform(nameBuffer);
-                    if (!pBufferUniform->Init(bufSize, 
+                    if (!pBufferUniform->Init(bindingIndex,
+                                              bufSize, 
                                               pBuf, 
                                               isDelete))
                     {
@@ -2334,27 +2337,29 @@ namespace LostPeterOpenGL
                 }
 
                 bool OpenGLWindow::createGLBufferUniform(const String& nameBuffer,
+                                                         uint32 bindingIndex,
                                                          size_t bufSize, 
                                                          uint8* pBuf,
                                                          uint32& nBufferUniformID)
                 {
                     glGenBuffers(1, &nBufferUniformID);
 
-                    updateGLBufferUniform(bufSize,
+                    updateGLBufferUniform(bindingIndex,
+                                          bufSize,
                                           pBuf,
                                           nBufferUniformID);
 
                     this->poDebug->SetGLBufferUniformName(nBufferUniformID, "BufferUniform-" + nameBuffer);
                     return true;
                 }
-                void OpenGLWindow::updateGLBufferUniform(size_t bufSize,
+                void OpenGLWindow::updateGLBufferUniform(uint32 bindingIndex,
+                                                         size_t bufSize,
                                                          uint8* pBuf,
                                                          uint32 nBufferUniformID)
                 {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
-                    //glBindBufferBase(GL_UNIFORM_BUFFER, 0, nBufferUniformID);
-                    glBindBufferRange(GL_UNIFORM_BUFFER, 0, nBufferUniformID, 0, bufSize);
+                    glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
                 }
                 void OpenGLWindow::updateGLBufferUniform(size_t offset,
@@ -3006,6 +3011,23 @@ namespace LostPeterOpenGL
                         glUseProgram(nShaderProgramID); 
                     }
                 }   
+
+                uint32 OpenGLWindow::getUniformBlockIndex(uint32 nShaderProgramID, const String& name)
+                {
+                    uint32 index = 0;
+                    if (nShaderProgramID > 0)
+                    {
+                        glGetUniformBlockIndex(nShaderProgramID, name.c_str()); 
+                    }
+                    return index;
+                }
+                void OpenGLWindow::setUniformBlockBinding(uint32 nShaderProgramID, uint32 nUniformBlockIndex, uint32 nUniformBlockBinding)
+                {
+                    if (nShaderProgramID > 0)
+                    {
+                        glUniformBlockBinding(nShaderProgramID, nUniformBlockIndex, nUniformBlockBinding); 
+                    }
+                }
 
                 void OpenGLWindow::setUniform1i(uint32 nShaderProgramID, const String& name, int value)
                 {
@@ -3782,7 +3804,7 @@ namespace LostPeterOpenGL
                     }   
 
                     setClearColorDepthStencil(clBg, depth, stencil);
-                    clear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                    clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                 }
 
                     void OpenGLWindow::setEnable(GLenum cap, bool enable)
@@ -3846,10 +3868,10 @@ namespace LostPeterOpenGL
                     {   
                         bindGLFrameBuffer(0);
 
+                        setEnable(GL_FRAMEBUFFER_SRGB, true);
                         setEnableDepthTest(false);
                         setClearColor(this->cfg_colorBackground);
                         clear(GL_COLOR_BUFFER_BIT);
-                        setEnable(GL_FRAMEBUFFER_SRGB, true);
 
                         Draw_Graphics_CopyBlitToFrame(pRenderPass->pFrameBuffer);
                     }   

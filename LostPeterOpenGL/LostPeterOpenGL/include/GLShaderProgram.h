@@ -44,7 +44,10 @@ namespace LostPeterOpenGL
 
     public:
         void BindProgram();
-    
+
+        uint32 GetUniformBlockIndex(const String& name);
+        void SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding);
+
     public:
         void SetBool(const String& name, bool value) const;
         void SetInt(const std::string& name, int value) const;

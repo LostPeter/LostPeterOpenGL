@@ -98,6 +98,16 @@ namespace LostPeterOpenGL
         Base::GetWindowPtr()->bindGLShaderProgram(this->nShaderProgramID);
     }
 
+    uint32 GLShaderProgram::GetUniformBlockIndex(const String& name)
+    {
+        return Base::GetWindowPtr()->getUniformBlockIndex(this->nShaderProgramID, name);
+    }
+    void GLShaderProgram::SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding)
+    {
+        uint32 nUniformBlockIndex = GetUniformBlockIndex(name);
+        Base::GetWindowPtr()->setUniformBlockBinding(this->nShaderProgramID, nUniformBlockIndex, nUniformBlockBinding);
+    }
+
     void GLShaderProgram::SetBool(const String& name, bool value) const
     {
         Base::GetWindowPtr()->setUniform1i(this->nShaderProgramID, name, (int)value);

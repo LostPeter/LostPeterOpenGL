@@ -17,15 +17,13 @@ layout (location = 0) in vec2 inPosition;
 layout (location = 1) in vec4 inColor;
 layout (location = 2) in vec2 inTexCoord;
 
-uniform CopyBlitObjectConstants copyBlitObjectConsts;
-
 out vec4 fragColor;
 out vec2 fragTexCoord;
 
 void main()
 {
-    float x = inPosition.x * copyBlitObjectConsts.scaleX + copyBlitObjectConsts.offsetX;
-    float y = inPosition.y * copyBlitObjectConsts.scaleY + copyBlitObjectConsts.offsetY;
+    float x = inPosition.x * objectCopyBlit.scaleX + objectCopyBlit.offsetX;
+    float y = inPosition.y * objectCopyBlit.scaleY + objectCopyBlit.offsetY;
     gl_Position = vec4(x, y, 0.0, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;

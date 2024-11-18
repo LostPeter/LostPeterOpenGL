@@ -54,7 +54,7 @@ struct LightConstants
 };
 
 //PassConstants
-struct PassConstants
+layout (std140) uniform PassConstants
 {
     //TransformConstants
     TransformConstants g_Transforms[2]; //0: Eye Left(Main); 1: Eye Right
@@ -77,15 +77,15 @@ struct PassConstants
     //Light
     LightConstants g_MainLight;
     LightConstants g_AdditionalLights[MAX_LIGHT_COUNT];
-};
+} passConsts;
 
 
 ///////////////////////////////// ObjectConstants ///////////////////////////////
 //ObjectConstants
-struct ObjectConstants
+layout (std140) uniform ObjectConstants
 {
     mat4 g_MatWorld;
-};
+} objectConsts;
 
 //OutlineObjectConstants
 struct OutlineObjectConstants
@@ -131,13 +131,13 @@ struct LineFlat3DObjectConstants
 };
 
 //CopyBlitObjectConstants
-struct CopyBlitObjectConstants
+layout (std140) uniform CopyBlitObjectConstants
 {
     float offsetX;
     float offsetY;
     float scaleX;
     float scaleY;
-};
+} objectCopyBlit;
 
 
 

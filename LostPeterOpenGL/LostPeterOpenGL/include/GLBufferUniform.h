@@ -27,11 +27,13 @@ namespace LostPeterOpenGL
         uint8* pBuffer;
         bool bIsDelete;
 
+        uint32 nBindingIndex;
         uint32 nBufferUniformID;
 
     public:
         virtual void Destroy();
-        virtual bool Init(size_t bufSize, 
+        virtual bool Init(uint32 bindingIndex,
+                          size_t bufSize, 
                           uint8* pBuf,
                           bool isDelete);
 

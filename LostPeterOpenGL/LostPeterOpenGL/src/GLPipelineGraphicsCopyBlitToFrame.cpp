@@ -84,6 +84,9 @@ namespace LostPeterOpenGL
             }
         }
 
+        //3> Binding
+        UpdateDescriptorSets();
+
         return true;
     }
         bool GLPipelineGraphicsCopyBlitToFrame::createBufferCopyBlitObject()
@@ -92,7 +95,11 @@ namespace LostPeterOpenGL
             this->objectCB_CopyBlit.offsetY = 0.0f;
             this->objectCB_CopyBlit.scaleX = 2.0f;
             this->objectCB_CopyBlit.scaleY = 2.0f;
-            Base::GetWindowPtr()->createBufferUniform("CopyBlitObjectConstants-" + this->name, sizeof(CopyBlitObjectConstants), (uint8*)(&this->objectCB_CopyBlit), false);
+            Base::GetWindowPtr()->createBufferUniform("CopyBlitObjectConstants-" + this->name, 
+                                                      0,
+                                                      sizeof(CopyBlitObjectConstants), 
+                                                      (uint8*)(&this->objectCB_CopyBlit), 
+                                                      false);
             return true;
         }
 
@@ -104,7 +111,8 @@ namespace LostPeterOpenGL
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateDescriptorSets()
     {
-        
+        String nameCopyBlit = (*this->poDescriptorSetLayoutNames)[0];
+        this->pShaderProgram->SetUniformBlockBinding(nameCopyBlit, 0);
     }
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer()

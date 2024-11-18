@@ -21,6 +21,7 @@ namespace LostPeterOpenGL
         , pBuffer(nullptr)
         , bIsDelete(true)
 
+        , nBindingIndex(0)
         , nBufferUniformID(0)
     {
 
@@ -48,15 +49,18 @@ namespace LostPeterOpenGL
         this->nBufferUniformID = 0;
     }
 
-    bool GLBufferUniform::Init(size_t bufSize, 
+    bool GLBufferUniform::Init(uint32 bindingIndex,
+                               size_t bufSize, 
                                uint8* pBuf,
                                bool isDelete)
     {
         this->nBufferSize = bufSize;
         this->pBuffer = pBuf;
         this->bIsDelete = isDelete;
+        this->nBindingIndex = bindingIndex;
 
         if (!Base::GetWindowPtr()->createGLBufferUniform(GetName(),
+                                                         bindingIndex,
                                                          bufSize, 
                                                          pBuf, 
                                                          this->nBufferUniformID))
@@ -77,7 +81,8 @@ namespace LostPeterOpenGL
         this->pBuffer = pBuf;
         this->bIsDelete = isDelete;
 
-        Base::GetWindowPtr()->updateGLBufferUniform(bufSize, 
+        Base::GetWindowPtr()->updateGLBufferUniform(this->nBindingIndex,
+                                                    bufSize, 
                                                     pBuf, 
                                                     this->nBufferUniformID);
     }
