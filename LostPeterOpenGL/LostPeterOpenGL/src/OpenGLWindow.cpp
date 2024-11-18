@@ -695,7 +695,7 @@ namespace LostPeterOpenGL
             {
                 String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
                 GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
-                                                                      0,
+                                                                      DescriptorSet_Pass,
                                                                       bufferSize,
                                                                       (uint8*)(&this->passCB),
                                                                       false);
@@ -2768,15 +2768,51 @@ namespace LostPeterOpenGL
 
             void OpenGLWindow::createConstBuffers()
             {
+                F_LogInfo("**<2-1-3> OpenGLWindow::createConstBuffers start **");
+                {
+                    //1> createObjectCB
+                    createObjectCB();
 
+                    //2> createMaterialCB
+                    createMaterialCB();
+
+                    //3> createInstanceCB
+                    createInstanceCB();
+
+                    //4> createCustomCB
+                    createCustomCB();
+                }
+                F_LogInfo("**<2-1-3> OpenGLWindow::createConstBuffers finish **");
             }
                 void OpenGLWindow::createObjectCB()
                 {
+                    buildObjectCB();
+                    size_t bufferSize = sizeof(ObjectConstants) * this->objectCBs.size();
 
+                    size_t count = this->poSwapChains.size();
+                    this->poBuffers_ObjectCB.resize(count);
+                    for (size_t i = 0; i < count; i++) 
+                    {
+                        String nameBuffer = "Object-" + FUtilString::SaveSizeT(i);
+                        GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
+                                                                              DescriptorSet_Object,
+                                                                              bufferSize,
+                                                                              (uint8*)(this->objectCBs.data()),
+                                                                              false);
+                        if (!pBufferUniform)
+                        {
+                            String msg = "*********************** OpenGLWindow::createObjectCB: create buffer uniform: [" + nameBuffer + "] failed !";
+                            F_LogError(msg.c_str());
+                            throw std::runtime_error(msg);
+                        }
+                        this->poBuffers_ObjectCB[i] = pBufferUniform;
+                    }
+                    F_LogInfo("<2-1-3-1> OpenGLWindow::createObjectCB finish !");
                 }
                     void OpenGLWindow::buildObjectCB()
                     {
-
+                        ObjectConstants objectConstants;
+                        this->objectCBs.push_back(objectConstants);
                     }
                 void OpenGLWindow::createMaterialCB()
                 {
@@ -3395,7 +3431,10 @@ namespace LostPeterOpenGL
         }
             void OpenGLWindow::updateCBs_Default()
             {
-
+                // updateCBs_Pass();
+                // updateCBs_Objects();
+                // updateCBs_Materials();
+                // updateCBs_Instances();
             }
                 void OpenGLWindow::updateCBs_Pass()
                 {
@@ -3481,11 +3520,38 @@ namespace LostPeterOpenGL
                     }
                 void OpenGLWindow::updateCBs_Objects()
                 {
+                    if (this->poBuffers_ObjectCB.size() <= 0)
+                        return;
 
+                    size_t count = this->objectCBs.size();
+                    if (count >= MAX_OBJECT_COUNT)
+                    {
+                        F_LogError("*********************** OpenGLWindow::updateCBs_Objects: Max object count can not > [%d]", MAX_OBJECT_COUNT);
+                        return;
+                    }
+
+                    updateCBs_ObjectsContent();
+
+                    //Update Buffer
+                    GLBufferUniform* pBufferUniform = this->poBuffers_ObjectCB[this->poCurrentFrame];
+                    pBufferUniform->Update(0, 
+                                           sizeof(ObjectConstants) * count,
+                                           (uint8*)this->objectCBs.data());
                 }
                     void OpenGLWindow::updateCBs_ObjectsContent()
                     {
-
+                        ObjectConstants& objectCB = this->objectCBs[0];
+                        if (this->cfg_isRotate)
+                        {
+                            float time = this->pTimer->GetTimeSinceStart();
+                            objectCB.g_MatWorld = glm::rotate(this->poMatWorld, 
+                                                              time * glm::radians(90.0f), 
+                                                              FVector3(0.0f, 1.0f, 0.0f));
+                        }
+                        else
+                        {
+                            objectCB.g_MatWorld = this->poMatWorld;
+                        }
                     }
                 void OpenGLWindow::updateCBs_Materials()    
                 {
@@ -4006,6 +4072,13 @@ namespace LostPeterOpenGL
                 size_t count = 0;
 
                 //1> ConstBuffers
+                count = this->poBuffers_ObjectCB.size();
+                for (size_t i = 0; i < count; i++) 
+                {
+                    F_DELETE(this->poBuffers_ObjectCB[i])
+                }
+                this->poBuffers_ObjectCB.clear();
+
 
                 //2> Pipelines
                 F_DELETE(this->poShaderProgram)

@@ -229,7 +229,7 @@ namespace LostPeterOpenGL
 
         //Constants Buffer
         std::vector<ObjectConstants> objectCBs;
-        
+        GLBufferUniformPtrVector poBuffers_ObjectCB;
 
         //Camera
         FCamera* pCamera; //Eye Left
