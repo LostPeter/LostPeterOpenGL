@@ -97,6 +97,7 @@ namespace LostPeterOpenGL
             this->objectCB_CopyBlit.scaleY = 2.0f;
             Base::GetWindowPtr()->createBufferUniform("CopyBlitObjectConstants-" + this->name, 
                                                       0,
+                                                      GL_DYNAMIC_DRAW,
                                                       sizeof(CopyBlitObjectConstants), 
                                                       (uint8*)(&this->objectCB_CopyBlit), 
                                                       false);

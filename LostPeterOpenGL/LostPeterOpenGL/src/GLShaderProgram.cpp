@@ -105,6 +105,10 @@ namespace LostPeterOpenGL
     void GLShaderProgram::SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding)
     {
         uint32 nUniformBlockIndex = GetUniformBlockIndex(name);
+        SetUniformBlockBinding(nUniformBlockIndex, nUniformBlockBinding);
+    }
+    void GLShaderProgram::SetUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding)
+    {
         Base::GetWindowPtr()->setUniformBlockBinding(this->nShaderProgramID, nUniformBlockIndex, nUniformBlockBinding);
     }
 

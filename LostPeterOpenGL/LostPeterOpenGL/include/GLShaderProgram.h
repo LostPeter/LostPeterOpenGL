@@ -47,6 +47,7 @@ namespace LostPeterOpenGL
 
         uint32 GetUniformBlockIndex(const String& name);
         void SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding);
+        void SetUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
 
     public:
         void SetBool(const String& name, bool value) const;

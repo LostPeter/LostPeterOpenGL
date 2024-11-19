@@ -31,8 +31,12 @@ protected:
         //Geometry
             virtual void loadModel_Default();
 
+        virtual void buildObjectCB();
+
     //Render/Update
         virtual bool beginRenderImgui();
+            virtual void modelConfig();
+            
         virtual void endRenderImgui();
 
 private:

@@ -20,6 +20,7 @@ namespace LostPeterOpenGL
         , nBufferSize(0)
         , pBuffer(nullptr)
         , bIsDelete(true)
+        , eUsage(GL_DYNAMIC_DRAW)
 
         , nBindingIndex(0)
         , nBufferUniformID(0)
@@ -50,6 +51,7 @@ namespace LostPeterOpenGL
     }
 
     bool GLBufferUniform::Init(uint32 bindingIndex,
+                               GLenum usage,
                                size_t bufSize, 
                                uint8* pBuf,
                                bool isDelete)
@@ -57,10 +59,13 @@ namespace LostPeterOpenGL
         this->nBufferSize = bufSize;
         this->pBuffer = pBuf;
         this->bIsDelete = isDelete;
+        this->eUsage = usage;
+
         this->nBindingIndex = bindingIndex;
 
         if (!Base::GetWindowPtr()->createGLBufferUniform(GetName(),
                                                          bindingIndex,
+                                                         usage,
                                                          bufSize, 
                                                          pBuf, 
                                                          this->nBufferUniformID))
@@ -82,6 +87,7 @@ namespace LostPeterOpenGL
         this->bIsDelete = isDelete;
 
         Base::GetWindowPtr()->updateGLBufferUniform(this->nBindingIndex,
+                                                    this->eUsage,
                                                     bufSize, 
                                                     pBuf, 
                                                     this->nBufferUniformID);
@@ -100,6 +106,10 @@ namespace LostPeterOpenGL
     void GLBufferUniform::BindBufferUniform()
     {
         Base::GetWindowPtr()->bindGLBufferUniform(this->nBufferUniformID);
+    }
+    void GLBufferUniform::BindBufferUniformBlockIndex(uint32 nUniformBlockIndex)
+    {
+        Base::GetWindowPtr()->bindGLBufferUniformBlockIndex(this->nBufferUniformID, nUniformBlockIndex);
     }
 
 }; //LostPeterOpenGL

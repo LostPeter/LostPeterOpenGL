@@ -178,6 +178,9 @@ namespace LostPeterOpenGL
         GLShader* poShaderFragment;
         GLShaderProgram* poShaderProgram;
 
+        String poDescriptorSetLayoutName;
+        DescriptorSetLayout* pDescriptorSetLayout;
+
         GLTexture* poTexture;
 
         bool isFrameBufferResized;
@@ -359,6 +362,10 @@ namespace LostPeterOpenGL
                     virtual void createDepthResources();
                 virtual void createColorResourceLists();
 
+            virtual void createDescriptorSetLayouts();
+                virtual void createDescriptorSetLayout_Default();
+                virtual void createDescriptorSetLayout_Custom();
+
             virtual void createPipelineObjects();
                 virtual void createRenderPasses();
                     virtual void createRenderPass_ShadowMap();
@@ -452,6 +459,7 @@ namespace LostPeterOpenGL
                     //BufferUniform
                     virtual GLBufferUniform* createBufferUniform(const String& nameBuffer,
                                                                  uint32 bindingIndex,
+                                                                 GLenum usage,
                                                                  size_t bufSize, 
                                                                  uint8* pBuf,
                                                                  bool isDelete);
@@ -496,10 +504,12 @@ namespace LostPeterOpenGL
 
                     virtual bool createGLBufferUniform(const String& nameBuffer,
                                                        uint32 bindingIndex,
+                                                       GLenum usage,
                                                        size_t bufSize, 
                                                        uint8* pBuf,
                                                        uint32& nBufferUniformID);
                     virtual void updateGLBufferUniform(uint32 bindingIndex,
+                                                       GLenum usage,
                                                        size_t bufSize,
                                                        uint8* pBuf,
                                                        uint32 nBufferUniformID);
@@ -508,6 +518,7 @@ namespace LostPeterOpenGL
                                                        uint8* pBuf,
                                                        uint32 nBufferUniformID);
                     virtual void bindGLBufferUniform(uint32 nBufferUniformID);
+                    virtual void bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex);
                     virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
 
 
@@ -695,6 +706,7 @@ namespace LostPeterOpenGL
                 virtual void getGLShaderCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog);
                 virtual void getGLShaderProgramCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog);
 
+
                 virtual void createCustomBeforePipeline();
                 virtual void createGraphicsPipeline();
                     virtual void createGraphicsPipeline_Default();
@@ -704,6 +716,14 @@ namespace LostPeterOpenGL
                 virtual void createComputePipeline();
                     virtual void createComputePipeline_Default();
                     virtual void createComputePipeline_Custom();
+
+
+                virtual void createDescriptorSets();
+                    virtual void createDescriptorSets_Default();
+                    virtual void createDescriptorSets_Terrain();
+                    virtual void createDescriptorSets_Custom();
+                        virtual void updateDescriptorSets(DescriptorSetLayout* pDSL, GLShaderProgram* pSP); 
+
 
 
             //Imgui

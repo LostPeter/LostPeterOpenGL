@@ -115,6 +115,8 @@ OpenGL_004_Model::OpenGL_004_Model(int width, int height, String name)
     this->cfg_shaderVertex_Path = getShaderPathRelative("pos3_color4_tex2_ubo.vert.spv", ShaderSort_Common);
     this->cfg_shaderFragment_Path = getShaderPathRelative("pos3_color4_tex2_ubo.frag.spv", ShaderSort_Common);
 
+    this->poDescriptorSetLayoutName = "PassConstants-ObjectConstants";
+
     resetSetting(0);
 }
 
@@ -146,7 +148,7 @@ void OpenGL_004_Model::changeModel(int index)
     //2> Texture
     cleanupTexture();
     loadTexture();
-    //updateDescriptorSets(this->poDescriptorSets, this->poTextureImageView, this->poTextureSampler);
+    updateDescriptorSets(this->pDescriptorSetLayout, this->poShaderProgram);
 }
 
 
@@ -197,6 +199,11 @@ void OpenGL_004_Model::loadModel_Default()
     F_LogInfo("Vertex count: [%d], Index count: [%d] !", (int)this->vertices.size(), (int)this->indices.size());
 }
 
+void OpenGL_004_Model::buildObjectCB()
+{
+    ObjectConstants objectConstants;
+    this->objectCBs.push_back(objectConstants);
+}
 
 bool OpenGL_004_Model::beginRenderImgui()
 {
@@ -209,11 +216,43 @@ bool OpenGL_004_Model::beginRenderImgui()
         //0> Common
         commonConfig();
         
+        //1> Model
+        modelConfig();
+
     }
     ImGui::End();
 
     return true;
 }
+    void OpenGL_004_Model::modelConfig()
+    {
+        if (ImGui::CollapsingHeader("Model Settings"))
+        {
+            if (ImGui::BeginTable("split_model", 1))
+            {
+                static String s_Name = "Model - ";
+                for (int i = 0; i < g_CountLen; i++)
+                {
+                    ImGui::TableNextColumn(); 
+                    bool isShowModel = g_isShowModels[i];
+                    String nameModel = s_Name + g_pathModels[3 * i + 0];
+                    if (isShowModel)
+                    {
+                        nameModel += "(" + FUtilString::SaveSizeT(this->vertices.size()) + 
+                                    "/" + FUtilString::SaveSizeT(this->indices.size()) +
+                                    ")";
+                    }
+                    ImGui::Checkbox(nameModel.c_str(), &isShowModel);
+                    if (!g_isShowModels[i] && isShowModel != g_isShowModels[i])
+                    {
+                        changeModel(i);
+                    }
+                }
+
+                ImGui::EndTable();
+            }
+        }
+    }
 
 void OpenGL_004_Model::endRenderImgui()
 {

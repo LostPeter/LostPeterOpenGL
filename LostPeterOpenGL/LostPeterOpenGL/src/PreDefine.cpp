@@ -101,8 +101,8 @@ namespace LostPeterOpenGL
     //DescriptorSetType
     static String s_nameDescriptorSetTypes[] = 
     {
-        "Pass",                             //0:   Pass
-        "Object",                           //1:   Object
+        "PassConstants",                    //0:   PassConstants
+        "ObjectConstants",                  //1:   ObjectConstants
         "ObjectTerrain",                    //2:   ObjectTerrain
         "ObjectGrid",                       //3:   ObjectGrid
         "ObjectCameraAxis",                 //4:   ObjectCameraAxis
@@ -158,7 +158,7 @@ namespace LostPeterOpenGL
                 return (DescriptorSetType)(i);
         }
         F_Assert(false && "Util_ParseDescriptorSetType: Wrong type name !")
-        return DescriptorSet_Pass;
+        return DescriptorSet_PassConstants;
     }
 
 
@@ -501,6 +501,15 @@ namespace LostPeterOpenGL
 
 
   
-
+    void DescriptorSetLayout::Init(const String& nameLayout)
+    {
+        this->nameDescriptorSetLayout = nameLayout;
+        this->aLayouts = FUtilString::Split(nameLayout, "-");
+        int count_ds = (int)this->aLayouts.size();
+        for (int i= 0; i < count_ds; i++)
+        {
+            this->mapName2Index[this->aLayouts[i]] = i;
+        }
+    }
 
 }; //LostPeterOpenGL

@@ -535,9 +535,9 @@ namespace LostPeterOpenGL
     static const int g_DescriptorSetLayoutCount_Internal = 13;
     static const char* g_DescriptorSetLayoutNames_Internal[g_DescriptorSetLayoutCount_Internal] =
     {
-        "Pass",
-        "Pass-Object",
-        "Pass-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
+        "PassConstants",
+        "PassConstants-ObjectConstants",
+        "PassConstants-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
         "CopyBlitObjectConstants-TextureFrameColor",
         "CopyBlitObjectConstants-TextureFrameDepth",
         "Cull-BufferRWArgsCB",
@@ -547,7 +547,7 @@ namespace LostPeterOpenGL
         "HizDepth-TextureFS",
         "HizDepth-TextureCSRWSrc-TextureCSRWDst",
         "TextureCopy-TextureCSR-TextureCSRW",
-        "Pass-ObjectTerrain-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
+        "PassConstants-ObjectTerrain-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
     };
     void OpenGLWindow::destroyDescriptorSetLayouts_Internal()
     {
@@ -566,14 +566,12 @@ namespace LostPeterOpenGL
         for (int i = 0; i < g_DescriptorSetLayoutCount_Internal; i++)
         {
             String nameLayout(g_DescriptorSetLayoutNames_Internal[i]);
-            StringVector aLayouts = FUtilString::Split(nameLayout, "-");
             DescriptorSetLayout* pDes = new DescriptorSetLayout();
-            pDes->nameDescriptorSetLayout = nameLayout;
-            pDes->aLayouts = aLayouts;
+            pDes->Init(nameLayout);
 
             this->m_aDescriptorSetLayouts_Internal.push_back(pDes);
             this->m_mapDescriptorSetLayouts_Internal[nameLayout] = pDes;
-            this->m_mapName2Layouts_Internal[nameLayout] = aLayouts;
+            this->m_mapName2Layouts_Internal[nameLayout] = pDes->aLayouts;
 
             F_LogInfo("OpenGLWindow::createDescriptorSetLayouts_Internal: create DescriptorSetLayout: [%s] success !", nameLayout.c_str());
         }
@@ -695,7 +693,8 @@ namespace LostPeterOpenGL
             {
                 String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
                 GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
-                                                                      DescriptorSet_Pass,
+                                                                      DescriptorSet_PassConstants,
+                                                                      GL_DYNAMIC_DRAW,
                                                                       bufferSize,
                                                                       (uint8*)(&this->passCB),
                                                                       false);
@@ -887,6 +886,9 @@ namespace LostPeterOpenGL
         , poShaderVertex(nullptr)
         , poShaderFragment(nullptr)
         , poShaderProgram(nullptr)
+
+        , poDescriptorSetLayoutName("")
+        , pDescriptorSetLayout(nullptr)
 
         , poTexture(nullptr)
         
@@ -1244,15 +1246,60 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnCameraMouseMoveProcess(double newX, double newY, double oldX, double oldY)
     {
-
+        if (this->pCamera != nullptr)
+        {
+            float fX = static_cast<float>(newX - oldX);
+            float fY = static_cast<float>(newY - oldY);
+            if (fX != 0 || fY != 0)
+            {
+                float fRotYAngle = fX * this->cfg_cameraSpeedRotate;
+                float fRotXAngle = fY * this->cfg_cameraSpeedRotate;
+                FVector3 vEulerAngles = pCamera->GetEulerAngles();
+                vEulerAngles.x += fRotXAngle;
+                vEulerAngles.y += fRotYAngle;
+                vEulerAngles.z = 0;
+                pCamera->SetEulerAngles(vEulerAngles);
+            }
+        }
     }
     void OpenGLWindow::OnCameraMouseZoomProcess(double zoom) 
     {
-
+        if (this->pCamera != nullptr)
+        {
+            float fDis = (float)(this->cfg_cameraSpeedZoom * zoom);
+            this->pCamera->Walk(fDis);
+        }
     }
     void OpenGLWindow::OnCameraMouseKeyboardProcess()
     {
-       
+        if (this->pCamera != nullptr)
+        {
+            float speedMove = this->cfg_cameraSpeedMove;
+            if (glfwGetKey(this->pWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+                glfwGetKey(this->pWindow, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) 
+            {
+                speedMove *= 10.0f;
+            }
+
+            float timeDelta = this->pTimer->GetTimeDelta();
+            if (glfwGetKey(this->pWindow, GLFW_KEY_W) == GLFW_PRESS)
+            {
+                this->pCamera->Walk(speedMove * timeDelta);
+            }
+            if (glfwGetKey(this->pWindow, GLFW_KEY_S) == GLFW_PRESS)
+            {
+                this->pCamera->Walk(- speedMove * timeDelta);
+            }
+            if (glfwGetKey(this->pWindow, GLFW_KEY_A) == GLFW_PRESS)
+            {
+                this->pCamera->Strafe(- speedMove * timeDelta);
+            }
+            if (glfwGetKey(this->pWindow, GLFW_KEY_D) == GLFW_PRESS)
+            {
+                this->pCamera->Strafe(speedMove * timeDelta);
+            }
+            this->pCamera->UpdateViewMatrix();
+        }
     }
 
     void OpenGLWindow::OnEditorCoordinateMouseLeftDown(double x, double y)
@@ -1330,6 +1377,8 @@ namespace LostPeterOpenGL
             createInternal();
             createResourceInternal();
 
+            //12> createDescriptorSetLayouts
+            createDescriptorSetLayouts();
 
             //13> isCreateDevice
             this->isCreateDevice = true;
@@ -1722,6 +1771,32 @@ namespace LostPeterOpenGL
 
         }
 
+    void OpenGLWindow::createDescriptorSetLayouts()
+    {
+        F_LogInfo("*****<1-12> OpenGLWindow::createDescriptorSetLayouts start *****");
+        {
+            //1> createDescriptorSetLayout_Default
+            createDescriptorSetLayout_Default();
+            F_LogInfo("<1-12-1> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Default finish !");
+
+            //3> createDescriptorSetLayout_Custom
+            createDescriptorSetLayout_Custom();
+            F_LogInfo("<1-12-2> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Custom finish !");
+        }
+        F_LogInfo("*****<1-12> OpenGLWindow::createDescriptorSetLayouts finish *****");
+    }
+    void OpenGLWindow::createDescriptorSetLayout_Default()
+    {
+        if (this->poDescriptorSetLayoutName.empty())
+            return;
+
+        this->pDescriptorSetLayout = new DescriptorSetLayout();
+        this->pDescriptorSetLayout->Init(this->poDescriptorSetLayoutName);
+    }
+    void OpenGLWindow::createDescriptorSetLayout_Custom()
+    {
+        
+    }
 
     void OpenGLWindow::createPipelineObjects()
     {
@@ -2042,6 +2117,8 @@ namespace LostPeterOpenGL
                 //6> createComputePipeline
                 createComputePipeline();
 
+                //7> createDescriptorSets
+                createDescriptorSets();   
 
             }
             F_LogInfo("*****<2-1> OpenGLWindow::loadGeometry finish *****");
@@ -2186,12 +2263,14 @@ namespace LostPeterOpenGL
 
                 GLBufferUniform* OpenGLWindow::createBufferUniform(const String& nameBuffer,
                                                                    uint32 bindingIndex,
+                                                                   GLenum usage,
                                                                    size_t bufSize, 
                                                                    uint8* pBuf,
                                                                    bool isDelete)
                 {
                     GLBufferUniform* pBufferUniform = new GLBufferUniform(nameBuffer);
                     if (!pBufferUniform->Init(bindingIndex,
+                                              usage,
                                               bufSize, 
                                               pBuf, 
                                               isDelete))
@@ -2338,6 +2417,7 @@ namespace LostPeterOpenGL
 
                 bool OpenGLWindow::createGLBufferUniform(const String& nameBuffer,
                                                          uint32 bindingIndex,
+                                                         GLenum usage,
                                                          size_t bufSize, 
                                                          uint8* pBuf,
                                                          uint32& nBufferUniformID)
@@ -2345,6 +2425,7 @@ namespace LostPeterOpenGL
                     glGenBuffers(1, &nBufferUniformID);
 
                     updateGLBufferUniform(bindingIndex,
+                                          usage,
                                           bufSize,
                                           pBuf,
                                           nBufferUniformID);
@@ -2353,12 +2434,13 @@ namespace LostPeterOpenGL
                     return true;
                 }
                 void OpenGLWindow::updateGLBufferUniform(uint32 bindingIndex,
+                                                         GLenum usage,
                                                          size_t bufSize,
                                                          uint8* pBuf,
                                                          uint32 nBufferUniformID)
                 {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
-                    glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
+                    glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, usage);
                     glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
                 }
@@ -2377,6 +2459,12 @@ namespace LostPeterOpenGL
                     {
                         glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID); 
                     }
+                }
+                void OpenGLWindow::bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex)
+                {
+                    glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
+                    glBindBufferBase(GL_UNIFORM_BUFFER, nUniformBlockIndex, nBufferUniformID);
+                    glBindBuffer(GL_UNIFORM_BUFFER, 0);
                 }
                 void OpenGLWindow::destroyGLBufferUniform(uint32 nBufferUniformID)
                 {
@@ -2787,15 +2875,19 @@ namespace LostPeterOpenGL
                 void OpenGLWindow::createObjectCB()
                 {
                     buildObjectCB();
-                    size_t bufferSize = sizeof(ObjectConstants) * this->objectCBs.size();
 
+                    size_t count_object = this->objectCBs.size();
+                    if (count_object <= 0)
+                        return;
+                    size_t bufferSize = sizeof(ObjectConstants) * count_object;
                     size_t count = this->poSwapChains.size();
                     this->poBuffers_ObjectCB.resize(count);
                     for (size_t i = 0; i < count; i++) 
                     {
                         String nameBuffer = "Object-" + FUtilString::SaveSizeT(i);
                         GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
-                                                                              DescriptorSet_Object,
+                                                                              DescriptorSet_ObjectConstants,
+                                                                              GL_DYNAMIC_DRAW,
                                                                               bufferSize,
                                                                               (uint8*)(this->objectCBs.data()),
                                                                               false);
@@ -2811,8 +2903,7 @@ namespace LostPeterOpenGL
                 }
                     void OpenGLWindow::buildObjectCB()
                     {
-                        ObjectConstants objectConstants;
-                        this->objectCBs.push_back(objectConstants);
+                        
                     }
                 void OpenGLWindow::createMaterialCB()
                 {
@@ -3053,7 +3144,11 @@ namespace LostPeterOpenGL
                     uint32 index = 0;
                     if (nShaderProgramID > 0)
                     {
-                        glGetUniformBlockIndex(nShaderProgramID, name.c_str()); 
+                        index = glGetUniformBlockIndex(nShaderProgramID, name.c_str()); 
+                        if (GL_INVALID_INDEX == index)
+                        {
+                            F_LogError("*********************** OpenGLWindow::getUniformBlockIndex: Failed to get uniform block index from shader program: [%u], name: [%s] !", nShaderProgramID, name.c_str());
+                        }
                     }
                     return index;
                 }
@@ -3320,6 +3415,78 @@ namespace LostPeterOpenGL
                 }
 
 
+            void OpenGLWindow::createDescriptorSets()
+            {
+                F_LogInfo("**<2-1-7> OpenGLWindow::createDescriptorSets start **");
+                {
+                    //1> createDescriptorSets_Default
+                    createDescriptorSets_Default();
+                    F_LogInfo("<2-1-7-1> OpenGLWindow::createDescriptorSets: createDescriptorSets_Default finish !");
+
+                    //2> createDescriptorSets_Terrain
+                    createDescriptorSets_Terrain();
+                    F_LogInfo("<2-1-7-2> OpenGLWindow::createDescriptorSets: createDescriptorSets_Terrain finish !");
+
+                    //3> createDescriptorSets_Custom
+                    createDescriptorSets_Custom();
+                    F_LogInfo("<2-1-7-3> OpenGLWindow::createDescriptorSets: createDescriptorSets_Custom finish !");
+                }
+                F_LogInfo("**<2-1-7> OpenGLWindow::createDescriptorSets finish **");
+            }
+                void OpenGLWindow::createDescriptorSets_Default()
+                {
+                    if (this->pDescriptorSetLayout == nullptr)
+                        return;
+
+                    updateDescriptorSets(this->pDescriptorSetLayout, this->poShaderProgram);
+                }
+                void OpenGLWindow::createDescriptorSets_Terrain()
+                {
+
+                }
+                void OpenGLWindow::createDescriptorSets_Custom()
+                {
+
+                }
+                    void OpenGLWindow::updateDescriptorSets(DescriptorSetLayout* pDSL, GLShaderProgram* pSP)
+                    {
+                        F_Assert(pDSL && pSP && "OpenGLWindow::updateDescriptorSets")
+                        
+                        uint32 count_fb = (uint32)this->poSwapChains.size();
+                        uint32 count_ds = (uint32)pDSL->aLayouts.size();
+                        for (uint32 i = 0; i < count_ds; i++)
+                        {
+                            const String& nameDS = pDSL->aLayouts[i];
+                            uint32 nUniformBlockIndex = pSP->GetUniformBlockIndex(nameDS);
+
+                            if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
+                            {
+                                for (uint32 j = 0; j < count_fb; j++)
+                                {
+                                    GLBufferUniform* pUBO_Pass = this->poBuffers_PassCB[j];
+                                    pUBO_Pass->BindBufferUniformBlockIndex(nUniformBlockIndex);
+                                }
+                            }
+                            else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)) //ObjectConstants
+                            {
+                                for (uint32 j = 0; j < count_fb; j++)
+                                {
+                                    GLBufferUniform* pUBO_Object = this->poBuffers_ObjectCB[j];
+                                    pUBO_Object->BindBufferUniformBlockIndex(nUniformBlockIndex);
+                                }
+                            }
+                            else
+                            {
+                                String msg = "*********************** OpenGLWindow::updateDescriptorSets: Wrong DescriptorSet name: " + nameDS;
+                                F_LogError(msg.c_str());
+                                throw std::runtime_error(msg.c_str());
+                            }
+                            pSP->SetUniformBlockBinding(nUniformBlockIndex, i);
+                        }
+                    }
+
+
+
         void OpenGLWindow::createImgui()
         {
             F_LogInfo("**********<2-2> OpenGLWindow::createImgui start **********");
@@ -3431,10 +3598,10 @@ namespace LostPeterOpenGL
         }
             void OpenGLWindow::updateCBs_Default()
             {
-                // updateCBs_Pass();
-                // updateCBs_Objects();
-                // updateCBs_Materials();
-                // updateCBs_Instances();
+                updateCBs_Pass();
+                updateCBs_Objects();
+                updateCBs_Materials();
+                updateCBs_Instances();
             }
                 void OpenGLWindow::updateCBs_Pass()
                 {
@@ -3500,6 +3667,14 @@ namespace LostPeterOpenGL
                     pBufferUniform->Update(0, 
                                            sizeof(PassConstants),
                                            (uint8*)(&this->passCB));
+                    // size_t count = this->poBuffers_PassCB.size();
+                    // for (size_t i = 0; i < count; i++)
+                    // {
+                    //     GLBufferUniform* pBufferUniform = this->poBuffers_PassCB[i];
+                    //     pBufferUniform->Update(0, 
+                    //                            sizeof(PassConstants),
+                    //                            (uint8*)(&this->passCB));
+                    // }
                 }
                     void OpenGLWindow::updateCBs_PassTransformAndCamera(PassConstants& pass, FCamera* pCam, int nIndex)
                     {
@@ -3666,11 +3841,197 @@ namespace LostPeterOpenGL
                             }
                         void OpenGLWindow::cameraConfig()
                         {
+                            if (this->pCamera == nullptr)
+                                return;
 
+                            if (ImGui::CollapsingHeader("Camera Settings"))
+                            {
+                                if (ImGui::Button("Camera Reset"))
+                                {
+                                    cameraReset();
+                                }
+                                if (ImGui::CollapsingHeader("Camera Transform"))
+                                {
+                                    //Position
+                                    FVector3 vPos = this->pCamera->GetPos();
+                                    if (ImGui::DragFloat3("Position", &vPos[0], 0.05f, -FLT_MAX, FLT_MAX))
+                                    {
+                                        this->pCamera->SetPos(vPos);
+                                        this->pCamera->UpdateViewMatrix();
+                                    }
+                                    //Rotation
+                                    FVector3 vEulerAngle = this->pCamera->GetEulerAngles();
+                                    if (ImGui::DragFloat3("Rotation", &vEulerAngle[0], 0.1f, -180, 180))
+                                    {
+                                        this->pCamera->SetEulerAngles(vEulerAngle);
+                                        this->pCamera->UpdateViewMatrix();
+                                    }
+                                    ImGui::Spacing();
+                                    //Right
+                                    FVector3 vRight = this->pCamera->GetRight();
+                                    if (ImGui::DragFloat3("Right (X axis)", &vRight[0], 0.1f, -1.0f, 1.0f))
+                                    {
+                                        
+                                    }
+                                    //Up
+                                    FVector3 vUp = this->pCamera->GetUp();
+                                    if (ImGui::DragFloat3("Up (Y axis)", &vUp[0], 0.1f, -1.0f, 1.0f))
+                                    {
+                                        
+                                    }
+                                    //Direction
+                                    FVector3 vDir = this->pCamera->GetDir();
+                                    if (ImGui::DragFloat3("Direction (Z axis)", &vDir[0], 0.1f, -1.0f, 1.0f))
+                                    {
+                                        
+                                    }
+                                }
+                                if (ImGui::CollapsingHeader("Camera Param"))
+                                {
+                                    //FovY
+                                    float fAngle = this->pCamera->GetFovY();
+                                    if (ImGui::DragFloat("FovY Angle", &fAngle, 0.1f, 0.1f, 180.0f))
+                                    {
+                                        this->pCamera->SetFovY(fAngle);
+                                        this->pCamera->UpdateProjectionMatrix();
+                                    }
+                                    //Aspect
+                                    float fAspect = this->pCamera->GetAspect();
+                                    if (ImGui::DragFloat("Aspect", &fAspect, 0.1f, 0.1f, 10.0f))
+                                    {
+                                        this->pCamera->SetAspect(fAspect);
+                                        this->pCamera->UpdateProjectionMatrix();
+                                    }
+
+                                    //NearZ/FarZ
+                                    float fNearDist = this->pCamera->GetNearZ();
+                                    float fFarDist = this->pCamera->GetFarZ();
+                                    if (ImGui::DragFloat("Near Distance", &fNearDist, 0.1f, 0.1f, fFarDist - 1.0f))
+                                    {
+                                        this->pCamera->SetNearZ(fNearDist);
+                                        this->pCamera->UpdateProjectionMatrix();
+                                    }
+                                    if (ImGui::DragFloat("Far Distance", &fFarDist, 0.1f, fNearDist + 1.0f, FLT_MAX))
+                                    {
+                                        this->pCamera->SetFarZ(fFarDist);
+                                        this->pCamera->UpdateProjectionMatrix();
+                                    }
+
+                                    ImGui::Separator();
+                                    ImGui::Spacing();
+                                    
+                                    //SpeedMove
+                                    if (ImGui::DragFloat("Speed Move", &cfg_cameraSpeedMove, 0.1f, 1.0f, 10000.0f))
+                                    {
+                                        
+                                    }
+                                    //SpeedZoom
+                                    if (ImGui::DragFloat("Speed Zoom", &cfg_cameraSpeedZoom, 0.001f, 0.01f, 5.0f))
+                                    {
+
+                                    }
+                                    //SpeedRotate
+                                    if (ImGui::DragFloat("Speed Rotate", &cfg_cameraSpeedRotate, 0.001f, 0.001f, 5.0f))
+                                    {
+
+                                    }
+                                }
+                                if (ImGui::CollapsingHeader("Camera Matrix4 World"))
+                                {
+                                    FMatrix4 mat4World = this->pCamera->GetMatrix4World();
+                                    if (ImGui::BeginTable("split_camera_world", 4))
+                                    {
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[0][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[0][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[0][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[0][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[1][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[1][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[1][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[1][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[2][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[2][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[2][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[2][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[3][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[3][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[3][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[3][3]);
+                                    
+                                        ImGui::EndTable();
+                                    }
+                                }
+                                if (ImGui::CollapsingHeader("Camera Matrix4 View"))
+                                {
+                                    const FMatrix4& mat4View = this->pCamera->GetMatrix4View();
+                                    if (ImGui::BeginTable("split_camera_view", 4))
+                                    {
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[0][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[0][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[0][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[0][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[1][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[1][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[1][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[1][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[2][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[2][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[2][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[2][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[3][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[3][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[3][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4View[3][3]);
+                                    
+                                        ImGui::EndTable();
+                                    }
+                                }
+                                if (ImGui::CollapsingHeader("Camera Matrix4 Projection"))
+                                {
+                                    const FMatrix4& mat4Projection = pCamera->GetMatrix4Projection();
+                                    if (ImGui::BeginTable("split_camera_projection", 4))
+                                    {
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[0][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[0][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[0][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[0][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[1][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[1][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[1][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[1][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[2][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[2][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[2][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[2][3]);
+
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[3][0]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[3][1]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[3][2]);
+                                        ImGui::TableNextColumn(); ImGui::Text("%f", mat4Projection[3][3]);
+
+                                        ImGui::EndTable();
+                                    }
+                                }
+                            }
+                            ImGui::Separator();
+                            ImGui::Spacing();
                         }
                             void OpenGLWindow::cameraReset()
                             {
+                                if (this->pCamera == nullptr)
+                                    return;
 
+                                this->pCamera->LookAtLH(this->cfg_cameraPos, this->cfg_cameraLookTarget, this->cfg_cameraUp);
+                                this->pCamera->PerspectiveLH(this->cfg_cameraFov, this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
+                                this->pCamera->UpdateViewMatrix();
                             }
                         void OpenGLWindow::lightConfig()
                         {
@@ -4081,6 +4442,8 @@ namespace LostPeterOpenGL
 
 
                 //2> Pipelines
+                this->poDescriptorSetLayoutName = "";
+                F_DELETE(this->pDescriptorSetLayout)
                 F_DELETE(this->poShaderProgram)
                 F_DELETE(this->poShaderVertex)
                 F_DELETE(this->poShaderFragment)
@@ -4116,6 +4479,8 @@ namespace LostPeterOpenGL
 
 
 
+
+                cameraReset();
             }
             F_LogInfo("++++++++++ OpenGLWindow::recreateSwapChain finish ++++++++++");
         }

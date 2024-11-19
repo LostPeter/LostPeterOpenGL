@@ -26,13 +26,15 @@ namespace LostPeterOpenGL
         size_t nBufferSize;
         uint8* pBuffer;
         bool bIsDelete;
-
+        GLenum eUsage;
+        
         uint32 nBindingIndex;
         uint32 nBufferUniformID;
 
     public:
         virtual void Destroy();
         virtual bool Init(uint32 bindingIndex,
+                          GLenum usage,
                           size_t bufSize, 
                           uint8* pBuf,
                           bool isDelete);
@@ -46,6 +48,7 @@ namespace LostPeterOpenGL
 
     public:
         void BindBufferUniform();
+        void BindBufferUniformBlockIndex(uint32 nUniformBlockIndex);
 
     protected:
         virtual void destroyBuffer();

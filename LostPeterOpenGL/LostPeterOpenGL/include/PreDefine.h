@@ -263,8 +263,8 @@ namespace LostPeterOpenGL
 
     enum DescriptorSetType
     {
-        DescriptorSet_Pass = 0,                      //0:  Pass
-        DescriptorSet_Object,                        //1:  Object
+        DescriptorSet_PassConstants = 0,             //0:  PassConstants
+        DescriptorSet_ObjectConstants,               //1:  ObjectConstants
         DescriptorSet_ObjectTerrain,                 //2:  ObjectTerrain
         DescriptorSet_ObjectGrid,                    //3:  ObjectGrid
         DescriptorSet_ObjectCameraAxis,              //4:  ObjectCameraAxis
@@ -382,10 +382,14 @@ namespace LostPeterOpenGL
     typedef std::vector<ShaderModuleInfo> ShaderModuleInfoVector;
 
 
+    typedef std::map<String, uint32> DescriptorSetName2IndexMap;
     struct openglExport DescriptorSetLayout
     {
         String nameDescriptorSetLayout;
         StringVector aLayouts;
+        DescriptorSetName2IndexMap mapName2Index;
+
+        void Init(const String& nameLayout);
     };
     typedef std::vector<DescriptorSetLayout> DescriptorSetLayoutVector;
     typedef std::vector<DescriptorSetLayout*> DescriptorSetLayoutPtrVector;
