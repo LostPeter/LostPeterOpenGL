@@ -183,7 +183,7 @@ namespace LostPeterOpenGL
     }
     void GLDebug::SetGLBufferUniformName(uint32 id, const String& name)
     {
-        ObjectLabel(GL_UNIFORM_BUFFER, id, -1, name.c_str());
+        ObjectLabel(GL_BUFFER, id, -1, name.c_str());
     }
 
     void GLDebug::SetGLShaderName(uint32 id, const String& name)
@@ -198,6 +198,10 @@ namespace LostPeterOpenGL
     void GLDebug::SetGLTextureName(uint32 id, const String& name)
     {
         ObjectLabel(GL_TEXTURE, id, -1, name.c_str());
+    }
+    void GLDebug::SetGLSamplerName(uint32 id, const String& name)
+    {
+        ObjectLabel(GL_SAMPLER, id, -1, name.c_str());
     }
 
     void GLDebug::SetGLRenderBuffer(uint32 id, const String& name)

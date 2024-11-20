@@ -118,19 +118,19 @@ namespace LostPeterOpenGL
         "geo_flat_cone_3d",             "Pos3Color4",                 "geometry",         "",                                   "FlatCone3D",               "0;0;0;0;1;0;0.5;1;50;30;1;1;1;1",                              "false", //geo_flat_cone_3d
         "geo_flat_torus_3d",            "Pos3Color4",                 "geometry",         "",                                   "FlatTorus3D",              "0;0;0;0;1;0;0.5;0.2;50;20;1;1;1;1",                            "false", //geo_flat_torus_3d
 
-        "geo_entity_triangle",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTriangle",           "false;true",                                                   "false", //geo_entity_triangle
-        "geo_entity_quad",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityQuad",               "false;true;0;0;1;1;0",                                         "false", //geo_entity_quad
-        "geo_entity_grid",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGrid",               "false;true;1;1;10;10",                                         "false", //geo_entity_grid
-        "geo_entity_circle",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCircle",             "false;true;0.5;100",                                           "false", //geo_entity_circle
-        "geo_entity_aabb",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityAABB",               "false;true;1;1;1;0",                                           "false", //geo_entity_aabb
-        "geo_entity_sphere",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntitySphere",             "false;true;0.5;30;30",                                         "false", //geo_entity_sphere
-        "geo_entity_geosphere",         "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGeoSphere",          "false;true;0.5;5",                                             "false", //geo_entity_geosphere
-        "geo_entity_cylinder",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCylinder",           "false;true;0.5;0.5;1;0;50;30",                                 "false", //geo_entity_cylinder
-        "geo_entity_capsule",           "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCapsule",            "false;true;0.5;1;0;10;50;30",                                  "false", //geo_entity_capsule
-        "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;true;0.5;1;0;50;30",                                     "false", //geo_entity_cone
-        "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;true;0.5;0.2;50;20",                                     "false", //geo_entity_torus
+        "geo_entity_triangle",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTriangle",           "false;false",                                                  "false", //geo_entity_triangle
+        "geo_entity_quad",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityQuad",               "false;false;0;0;1;1;0",                                        "false", //geo_entity_quad
+        "geo_entity_grid",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGrid",               "false;false;1;1;10;10",                                        "false", //geo_entity_grid
+        "geo_entity_circle",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCircle",             "false;false;0.5;100",                                          "false", //geo_entity_circle
+        "geo_entity_aabb",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityAABB",               "false;false;1;1;1;0",                                          "false", //geo_entity_aabb
+        "geo_entity_sphere",            "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntitySphere",             "false;false;0.5;30;30",                                        "false", //geo_entity_sphere
+        "geo_entity_geosphere",         "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityGeoSphere",          "false;false;0.5;5",                                            "false", //geo_entity_geosphere
+        "geo_entity_cylinder",          "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCylinder",           "false;false;0.5;0.5;1;0;50;30",                                "false", //geo_entity_cylinder
+        "geo_entity_capsule",           "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCapsule",            "false;false;0.5;1;0;10;50;30",                                 "false", //geo_entity_capsule
+        "geo_entity_cone",              "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityCone",               "false;false;0.5;1;0;50;30",                                    "false", //geo_entity_cone
+        "geo_entity_torus",             "Pos3Color4Normal3Tex2",      "geometry",         "",                                   "EntityTorus",              "false;false;0.5;0.2;50;20",                                    "false", //geo_entity_torus
 
-        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "true;true;0;0;1;1;0",                                          "false", //quad
+        "quad",                         "Pos3Color4Tex2",             "geometry",         "",                                   "EntityQuad",               "true;false;0;0;1;1;0",                                         "false", //quad
         "plane",                        "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/plane.fbx",       "",                         "",                                                             "false", //plane
         "cube",                         "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/cube.obj",        "",                         "",                                                             "false", //cube
         "sphere",                       "Pos3Color4Normal3Tex2",      "file",             "Assets/Mesh/Common/sphere.fbx",      "",                         "",                                                             "false", //sphere
@@ -905,7 +905,10 @@ namespace LostPeterOpenGL
         , cfg_isRotate(false)
 
         , cfg_glPrimitiveTopology(GL_TRIANGLES)
-
+        , cfg_isCull(true)
+        , cfg_glFrontFace(GL_CW)
+        , cfg_glCulling(GL_BACK)
+        , cfg_glPolygonMode(GL_FILL)
 
         , cfg_cameraPos(0.0f, 0.0f, -5.0f)
         , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
@@ -1237,6 +1240,7 @@ namespace LostPeterOpenGL
         if (key == GLFW_KEY_F)
         {
             this->cfg_isWireFrame = !this->cfg_isWireFrame;
+            SetIsWireFrame(this->cfg_isWireFrame);
         }
     }
     void OpenGLWindow::OnKeyUp(int key)
@@ -1340,6 +1344,16 @@ namespace LostPeterOpenGL
     {
         return this->cfg_isImgui &&
                this->imgui_IsEnable;
+    }
+
+
+    void OpenGLWindow::SetIsWireFrame(bool isWireFrame)
+    {
+        this->cfg_isWireFrame = isWireFrame;
+        if (isWireFrame)
+            this->cfg_glPolygonMode = GL_LINE;
+        else
+            this->cfg_glPolygonMode = GL_FILL;
     }
 
 
@@ -2282,16 +2296,16 @@ namespace LostPeterOpenGL
                     return pBufferUniform;
                 }   
                 void OpenGLWindow::updateBufferUniform(GLBufferUniform* pBufferUniform,
+                                                       size_t offset,
                                                        size_t bufSize, 
-                                                       uint8* pBuf,
-                                                       bool isDelete)
+                                                       uint8* pBuf)
                 {
                     if (pBufferUniform == nullptr)
                         return;
 
-                    pBufferUniform->Update(bufSize,  
-                                           pBuf,
-                                           isDelete);
+                    pBufferUniform->Update(offset,
+                                           bufSize,  
+                                           pBuf);
                 }
 
                 bool OpenGLWindow::createGLBufferVertex(const String& nameBuffer,
@@ -2423,26 +2437,18 @@ namespace LostPeterOpenGL
                                                          uint32& nBufferUniformID)
                 {
                     glGenBuffers(1, &nBufferUniformID);
-
-                    updateGLBufferUniform(bindingIndex,
-                                          usage,
-                                          bufSize,
-                                          pBuf,
-                                          nBufferUniformID);
-
-                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "BufferUniform-" + nameBuffer);
-                    return true;
-                }
-                void OpenGLWindow::updateGLBufferUniform(uint32 bindingIndex,
-                                                         GLenum usage,
-                                                         size_t bufSize,
-                                                         uint8* pBuf,
-                                                         uint32 nBufferUniformID)
-                {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, usage);
                     glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+                    if (GL_NO_ERROR != glGetError())
+                    {
+                        F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, GL error: [%u] !", glGetError());
+                    }
+
+                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "BufferUniform-" + nameBuffer);
+                    return true;
                 }
                 void OpenGLWindow::updateGLBufferUniform(size_t offset,
                                                          size_t bufSize,
@@ -2455,10 +2461,7 @@ namespace LostPeterOpenGL
                 }
                 void OpenGLWindow::bindGLBufferUniform(uint32 nBufferUniformID)
                 {
-                    if (nBufferUniformID > 0)
-                    {
-                        glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID); 
-                    }
+                    glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID); 
                 }
                 void OpenGLWindow::bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex)
                 {
@@ -2472,6 +2475,45 @@ namespace LostPeterOpenGL
                     {
                         glDeleteBuffers(1, &nBufferUniformID);
                     }
+                }
+
+                void* OpenGLWindow::mapGLBuffer(uint32 nBufferID, GLenum target, GLenum access)
+                {
+                    if (nBufferID <= 0)
+                        return nullptr;
+
+                    glBindBuffer(target, nBufferID);
+                    void* pData = glMapBuffer(target, access);
+                    if (pData == nullptr)
+                    {
+                        F_LogError("*********************** OpenGLWindow::mapGLBuffer: Map buffer data failed, GL error: [%u] !", glGetError());
+                    }
+                    return pData;
+                }
+                void OpenGLWindow::unMapGLBuffer(GLenum target)
+                {
+                    if (!glUnmapBuffer(target))
+                    {
+                        F_LogError("*********************** OpenGLWindow::unMapGLBuffer: UnMap buffer data failed, GL error: [%u] !", glGetError());
+                    }
+                    glBindBuffer(target, 0);
+                }
+
+                void* OpenGLWindow::mapGLBufferRange(uint32 nBufferID, size_t offset, size_t bufSize, GLbitfield access)
+                {
+                    if (nBufferID <= 0)
+                        return nullptr;
+
+                    void* pData = glMapBufferRange(nBufferID, offset, bufSize, access);
+                    if (pData == nullptr)
+                    {
+                        F_LogError("*********************** OpenGLWindow::mapGLBufferRange: GL error: [%u] !", glGetError());
+                    }
+                    return pData;
+                }
+                void OpenGLWindow::flushGLMappedBufferRange(uint32 nBufferID, size_t offset, size_t bufSize)
+                {
+                    glFlushMappedBufferRange(nBufferID, offset, bufSize);
                 }
 
 
@@ -3664,17 +3706,9 @@ namespace LostPeterOpenGL
 
                     //Update Buffer
                     GLBufferUniform* pBufferUniform = this->poBuffers_PassCB[this->poCurrentFrame];
-                    pBufferUniform->Update(0, 
-                                           sizeof(PassConstants),
-                                           (uint8*)(&this->passCB));
-                    // size_t count = this->poBuffers_PassCB.size();
-                    // for (size_t i = 0; i < count; i++)
-                    // {
-                    //     GLBufferUniform* pBufferUniform = this->poBuffers_PassCB[i];
-                    //     pBufferUniform->Update(0, 
-                    //                            sizeof(PassConstants),
-                    //                            (uint8*)(&this->passCB));
-                    // }
+                    pBufferUniform->UpdateBuffer(sizeof(PassConstants),
+                                                 (uint8*)(&this->passCB),
+                                                 GL_WRITE_ONLY);
                 }
                     void OpenGLWindow::updateCBs_PassTransformAndCamera(PassConstants& pass, FCamera* pCam, int nIndex)
                     {
@@ -3819,7 +3853,10 @@ namespace LostPeterOpenGL
                             }
                             void OpenGLWindow::commonEditorConfig()
                             {
-                                ImGui::Checkbox("Is WireFrame", &cfg_isWireFrame);
+                                if (ImGui::Checkbox("Is WireFrame", &cfg_isWireFrame))
+                                {
+                                    SetIsWireFrame(cfg_isWireFrame);
+                                }
                                 ImGui::Checkbox("Is Rotate", &cfg_isRotate);
                                 ImGui::Separator();
                                 if (ImGui::CollapsingHeader("EditorGrid Settings"))
@@ -4165,9 +4202,20 @@ namespace LostPeterOpenGL
                             if (this->poShaderProgram == nullptr)
                                 return;
 
+                            //State
+                            setFrontFace(this->cfg_glFrontFace);
+                            setEnable(GL_CULL_FACE, this->cfg_isCull);
+                            setCullFace(this->cfg_glCulling);
+                            setPolygonMode(GL_FRONT_AND_BACK, this->cfg_glPolygonMode);
+
+                            //Texture
                             if (this->poTexture != nullptr)
                                 this->poTexture->BindTexture();
+
+                            //Shader
                             this->poShaderProgram->BindProgram();
+
+                            //Draw
                             Util_EnableAttributeDescriptions(this->poTypeVertex, true);
                             if (this->pBufferVertex != nullptr)
                             {
@@ -4278,6 +4326,22 @@ namespace LostPeterOpenGL
                     {
                         glClear(mask);
                     }
+                    void OpenGLWindow::setFrontFace(GLenum mode)
+                    {
+                        glFrontFace(mode);
+                    }
+                    void OpenGLWindow::setCullFace(GLenum mode)
+                    {
+                        glCullFace(mode);
+                    }
+                    void OpenGLWindow::setPolygonMode(GLenum face, GLenum mode)
+                    {
+                        glPolygonMode(face, mode);
+                    }
+                    void OpenGLWindow::setBlendFunc(GLenum sfactor, GLenum dfactor)
+                    {
+                        glBlendFunc(sfactor, dfactor);
+                    }
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
                     {
@@ -4297,6 +4361,7 @@ namespace LostPeterOpenGL
 
                         setEnable(GL_FRAMEBUFFER_SRGB, true);
                         setEnableDepthTest(false);
+                        setPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                         setClearColor(this->cfg_colorBackground);
                         clear(GL_COLOR_BUFFER_BIT);
 

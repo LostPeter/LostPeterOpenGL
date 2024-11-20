@@ -197,7 +197,10 @@ namespace LostPeterOpenGL
         bool cfg_isRotate;
         
         GLenum cfg_glPrimitiveTopology;
-        
+        bool cfg_isCull;
+        GLenum cfg_glFrontFace;
+        GLenum cfg_glCulling;
+        GLenum cfg_glPolygonMode;
 
 
         FVector3 cfg_cameraPos;
@@ -330,7 +333,9 @@ namespace LostPeterOpenGL
         virtual bool IsEnable_Imgui();
 
     public:
+        virtual void SetIsWireFrame(bool isWireFrame);
 
+        
 
     public:
         //Create Pipeline
@@ -464,9 +469,9 @@ namespace LostPeterOpenGL
                                                                  uint8* pBuf,
                                                                  bool isDelete);
                     virtual void updateBufferUniform(GLBufferUniform* pBufferUniform,
+                                                     size_t offset,
                                                      size_t bufSize, 
-                                                     uint8* pBuf,
-                                                     bool isDelete);
+                                                     uint8* pBuf);
 
 
                     virtual bool createGLBufferVertex(const String& nameBuffer,
@@ -508,11 +513,6 @@ namespace LostPeterOpenGL
                                                        size_t bufSize, 
                                                        uint8* pBuf,
                                                        uint32& nBufferUniformID);
-                    virtual void updateGLBufferUniform(uint32 bindingIndex,
-                                                       GLenum usage,
-                                                       size_t bufSize,
-                                                       uint8* pBuf,
-                                                       uint32 nBufferUniformID);
                     virtual void updateGLBufferUniform(size_t offset,
                                                        size_t bufSize,
                                                        uint8* pBuf,
@@ -520,6 +520,12 @@ namespace LostPeterOpenGL
                     virtual void bindGLBufferUniform(uint32 nBufferUniformID);
                     virtual void bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex);
                     virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
+
+                    virtual void* mapGLBuffer(uint32 nBufferID, GLenum target, GLenum access);
+                    virtual void unMapGLBuffer(GLenum target);
+
+                    virtual void* mapGLBufferRange(uint32 nBufferID, size_t offset, size_t bufSize, GLbitfield access);
+                    virtual void flushGLMappedBufferRange(uint32 nBufferID, size_t offset, size_t bufSize);
 
 
                 virtual void loadTexture();
@@ -830,6 +836,10 @@ namespace LostPeterOpenGL
                         virtual void setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil);
                         virtual void setClearColorDepthStencil(const FVector4& color, float depth, int stencil);
                         virtual void clear(GLbitfield mask);
+                        virtual void setFrontFace(GLenum mode);
+                        virtual void setCullFace(GLenum mode);
+                        virtual void setPolygonMode(GLenum face, GLenum mode);
+                        virtual void setBlendFunc(GLenum sfactor, GLenum dfactor);
                     
                         virtual void draw(GLenum mode, GLint first, GLsizei count);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);

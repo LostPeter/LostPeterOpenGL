@@ -76,23 +76,6 @@ namespace LostPeterOpenGL
         return true;
     }
 
-    void GLBufferUniform::Update(size_t bufSize, 
-                                 uint8* pBuf,
-                                 bool isDelete)
-    {
-        destroyBuffer();
-
-        this->nBufferSize = bufSize;
-        this->pBuffer = pBuf;
-        this->bIsDelete = isDelete;
-
-        Base::GetWindowPtr()->updateGLBufferUniform(this->nBindingIndex,
-                                                    this->eUsage,
-                                                    bufSize, 
-                                                    pBuf, 
-                                                    this->nBufferUniformID);
-    }
-
     void GLBufferUniform::Update(size_t offset,
                                  size_t bufSize, 
                                  uint8* pBuf)
@@ -102,6 +85,24 @@ namespace LostPeterOpenGL
                                                     pBuf, 
                                                     this->nBufferUniformID);
     }                        
+
+    void* GLBufferUniform::MapBuffer(GLenum access)
+    {
+        return Base::GetWindowPtr()->mapGLBuffer(this->nBufferUniformID, GL_UNIFORM_BUFFER, access);
+    }
+    void GLBufferUniform::UnMapBuffer()
+    {
+        Base::GetWindowPtr()->unMapGLBuffer(GL_UNIFORM_BUFFER);
+    }
+    void GLBufferUniform::UpdateBuffer(size_t bufSize, 
+                                       uint8* pBuf,
+                                       GLenum access)
+    {
+        void* pData = MapBuffer(access);
+        F_Assert(pData && "GLBufferUniform::UpdateBuffer")
+        memcpy(pData, pBuf, bufSize);
+        UnMapBuffer();
+    }
 
     void GLBufferUniform::BindBufferUniform()
     {

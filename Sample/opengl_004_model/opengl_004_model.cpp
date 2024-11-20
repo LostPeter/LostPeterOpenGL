@@ -84,7 +84,7 @@ static bool g_isFlipYModels[g_CountLen] =
     false, //viking_room
     false, //bunny
 };
-static bool g_isFlipY = true;
+static bool g_isFlipY = false;
 
 static FVector3 g_vCameraPos[g_CountLen] = 
 {
