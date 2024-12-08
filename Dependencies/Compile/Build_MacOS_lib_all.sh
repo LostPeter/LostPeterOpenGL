@@ -23,7 +23,7 @@ rebuild=${2}
 ./Build_MacOS_lib_tinyxml.sh $debug $rebuild
 ./Build_MacOS_lib_zlib.sh $debug $rebuild
 ./Build_MacOS_lib_zziplib.sh $debug $rebuild
-./Build_MacOS_lib_glad.sh $debug $rebuild
+./Build_MacOS_lib_glad.sh 4.1 $debug $rebuild
 ./Build_MacOS_lib_glfw.sh $debug $rebuild
 ./Build_MacOS_lib_imgui.sh $debug $rebuild
 ./Build_MacOS_lib_assimp.sh $debug $rebuild

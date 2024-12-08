@@ -89,7 +89,7 @@ namespace LostPeterOpenGL
 
             if (flag1 == -1 || flag2 == -1)
             {
-                F_LogError("*********************** GLShaderInclude::FindIncludes: glsl include format error, flag1: [%d], flag2: [%d] !", flag1, flag2);
+                F_LogError("*********************** GLShaderInclude::FindIncludes: glsl include format error, flag1: [%d], flag2: [%d] !", (int)flag1, (int)flag2);
             }
             else
             {
