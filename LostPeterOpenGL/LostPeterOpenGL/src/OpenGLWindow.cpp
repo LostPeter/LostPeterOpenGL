@@ -895,7 +895,7 @@ namespace LostPeterOpenGL
         , isFrameBufferResized(false)
 
 
-        , cfg_colorBackground(0.0f, 0.2f, 0.4f, 1.0f)
+        , cfg_colorBackground(FMath::ToLinear(FColor(0.0f, 0.2f, 0.4f, 1.0f)))
 
         , cfg_isRenderPassDefaultCustom(false)
 
@@ -4358,8 +4358,7 @@ namespace LostPeterOpenGL
                         pRenderPass->pFrameBuffer != nullptr)
                     {   
                         bindGLFrameBuffer(0);
-
-                        setEnable(GL_FRAMEBUFFER_SRGB, true);
+                        
                         setEnableDepthTest(false);
                         setPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                         setClearColor(this->cfg_colorBackground);
