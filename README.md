@@ -91,7 +91,7 @@ License:
 
 
 ### <000> opengl_000_window
-[OpenGL学习例子000: opengl_000_window 基础跨平台窗口显示](https://zhuanlan.zhihu.com/p/578806815)
+[OpenGL学习例子000: opengl_000_window 基础跨平台窗口显示](https://zhuanlan.zhihu.com/p/19289601385)
 * sample000：Setup a framework, compile all sort of dependencies libraries, show a Window 
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_000_window.png)
