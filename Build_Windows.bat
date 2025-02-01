@@ -2,7 +2,7 @@
 @REM # LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 @REM # 
 @REM # Author:   LostPeter
-@REM # Time:     2022-12-10
+@REM # Time:     2025-01-26
 @REM # Github:   https://github.com/LostPeter/LostPeterOpenGL
 @REM # Document: https://www.zhihu.com/people/lostpeter/posts
 @REM #
@@ -30,7 +30,7 @@ if "%depends%" == "depends" (
 cd Bin
 cd Shader
 
-call ./Build_Windows_Shader_HLSL_All.bat %debug% 
+call ./Build_Windows_Shader_GLSL_All.bat %debug% 
 
 cd ..
 cd ..

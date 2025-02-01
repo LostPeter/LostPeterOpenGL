@@ -2,7 +2,7 @@
 # LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 # 
 # Author:   LostPeter
-# Time:     2022-12-10
+# Time:     2025-01-26
 # Github:   https://github.com/LostPeter/LostPeterOpenGL
 # Document: https://www.zhihu.com/people/lostpeter/posts
 #
@@ -30,7 +30,7 @@ fi
 cd Bin
 cd Shader
 
-./Build_MacOS_Shader_HLSL_All.sh $debug
+./Build_MacOS_Shader_GLSL_All.sh $debug
 
 cd ..
 cd ..
