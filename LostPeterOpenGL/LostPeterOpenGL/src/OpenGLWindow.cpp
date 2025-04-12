@@ -867,8 +867,8 @@ namespace LostPeterOpenGL
         , poSwapChainImageFormat(GL_RGBA)
         , poDepthImageFormat(GL_DEPTH24_STENCIL8)
 
-        , poColor(nullptr)
-        , poDepthStencil(nullptr)
+        , poTextureColor(nullptr)
+        , poRenderBufferDepthStencil(nullptr)
         , poRenderPass(nullptr)
         , poCurrentFrame(0)
         , poSwapChainImageIndex(0)
@@ -891,14 +891,12 @@ namespace LostPeterOpenGL
         , pDescriptorSetLayout(nullptr)
 
         , poTexture(nullptr)
-        
-        , isFrameBufferResized(false)
 
 
         , cfg_colorBackground(FMath::ToLinear(FColor(0.0f, 0.2f, 0.4f, 1.0f)))
 
         , cfg_isRenderPassDefaultCustom(false)
-
+		, cfg_isDepthStencil(false)
         , cfg_isMSAA(false)
         , cfg_isImgui(false)
         , cfg_isWireFrame(false)
@@ -994,11 +992,16 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnResize(int w, int h, bool force)
     {
-        resizeWindow(w, h, force);
+		if (this->width != w || this->height != h)
+		{
+			recreateSwapChain();
+		}
+		resizeWindow(w, h, force);
+		createViewport();
 
         if (this->pCamera != nullptr)
         {
-            this->pCamera->PerspectiveLH(glm::radians(this->cfg_cameraFov), this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
+            this->pCamera->PerspectiveLH(this->cfg_cameraFov, this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
         }
     }
 
@@ -1327,6 +1330,10 @@ namespace LostPeterOpenGL
     {
         return this->cfg_isRenderPassDefaultCustom;
     }
+	bool OpenGLWindow::HasConfig_DepthStencil()
+	{
+		return this->cfg_isDepthStencil;
+	}
     bool OpenGLWindow::HasConfig_MASS()
     {
         return this->cfg_isMSAA;
@@ -1403,8 +1410,11 @@ namespace LostPeterOpenGL
     void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     {
         OpenGLWindow* pWnd = (OpenGLWindow*)glfwGetWindowUserPointer(window);
-        pWnd->isFrameBufferResized = true;
-        pWnd->OnResize(width, height, false);
+		float scaleX = pWnd->GetWindowContentScaleX();
+		float scaleY = pWnd->GetWindowContentScaleY();
+		int w = (int)(width / scaleX);
+		int h = (int)(height / scaleY);
+        pWnd->OnResize(w, h, false);
     }
     void OpenGLWindow::createWindowCallback()
     {   
@@ -1642,8 +1652,11 @@ namespace LostPeterOpenGL
                 createColorResources();
             }
 
-            //4> createDepthResources
-            createDepthResources();
+            //4> createDepthStencilResources
+			if (HasConfig_DepthStencil())
+			{
+				createDepthStencilResources();
+			}
 
             //5> createColorResourceLists
             createColorResourceLists();
@@ -1653,22 +1666,19 @@ namespace LostPeterOpenGL
         void OpenGLWindow::createSwapChain()
         {
             //1> Default Framebuffer Color/Depth format
-            //glGetIntegerv(GL_COLOR_ATTACHMENT0, &this->poSwapChainImageFormat);
-            //glGetIntegerv(GL_DEPTH_STENCIL_ATTACHMENT, &this->poDepthImageFormat);
 
             //2> Framebuffer
-            int w, h;
-            glfwGetFramebufferSize(this->pWindow, &w, &h);
-            this->poFramebufferSize.x = (float)w;
-            this->poFramebufferSize.y = (float)h;
-            float scaleX, scaleY;
-            glfwGetWindowContentScale(this->pWindow, &scaleX, &scaleY);
-            this->poWindowContentScale.x = scaleX;
-            this->poWindowContentScale.y = scaleY;
-            F_LogInfo("<1-5-1> OpenGLWindow::createSwapChain finish, Swapchain size: [%d,%d], window size: [%d,%d], scale: [%f, %f], format color: [%d], format depth: [%d] !", 
-                      w, h, this->width, this->height, scaleX, scaleY, this->poSwapChainImageFormat, this->poDepthImageFormat);
+			refreshFramebufferSize(this->width, this->height);
+
+			//3> createViewport
+			createViewport();
+
             
-            createViewport();
+            F_LogInfo("<1-5-1> OpenGLWindow::createSwapChain finish, Swapchain size: [%f, %f], window size: [%d, %d], scale: [%f, %f], format color: [%d], format depth stencil: [%d] !", 
+					  this->poFramebufferSize.x, this->poFramebufferSize.y, 
+					  this->width, this->height, 
+					  this->poWindowContentScale.x, this->poWindowContentScale.y, 
+					  this->poSwapChainImageFormat, this->poDepthImageFormat);
         }
             void OpenGLWindow::createViewport()
             {
@@ -1689,6 +1699,10 @@ namespace LostPeterOpenGL
                 this->poScissor.top = 0;
                 this->poScissor.right = w;
                 this->poScissor.bottom = h;
+
+				F_LogInfo("OpenGLWindow::createViewport: Viewport change to: WidthHeight: [%d - %d], FrameBuffer: [%f - %f] !", 
+					this->width, this->height,
+					this->poFramebufferSize.x, this->poFramebufferSize.y);
             }
         void OpenGLWindow::createSwapChainImageViews()
         {
@@ -1735,48 +1749,46 @@ namespace LostPeterOpenGL
                 int w = (int)this->poFramebufferSize.x;
                 int h = (int)this->poFramebufferSize.y;
                 String nameColor = "Texture-Color";
-                this->poColor = createTexture(nameColor,
-                                              aPathTexture,
-                                              nullptr,
-                                              4,
-                                              w,
-                                              h,
-                                              0,
-                                              F_Texture_2D,
-                                              F_TexturePixelFormat_R8G8B8A8_SRGB,
-                                              F_TextureAddressing_Wrap,
-                                              F_TextureFilter_Bilinear,
-                                              F_TextureFilter_Bilinear,
-                                              F_MSAASampleCount_1_Bit,
-                                              FColor(0, 0, 0, 1),
-                                              true,
-                                              true,
-                                              false,
-                                              true,
-                                              false);
-                if (this->poColor == nullptr)
+                this->poTextureColor = createTexture(nameColor,
+													 aPathTexture,
+													 nullptr,
+													 4,
+													 w,
+													 h,
+													 0,
+													 F_Texture_2D,
+													 F_TexturePixelFormat_R8G8B8A8_SRGB,
+													 F_TextureAddressing_Wrap,
+													 F_TextureFilter_Bilinear,
+													 F_TextureFilter_Bilinear,
+													 F_MSAASampleCount_1_Bit,
+													 FColor(0, 0, 0, 1),
+													 true,
+													 true,
+													 false,
+													 true,
+													 false);
+                if (this->poTextureColor == nullptr)
                 {
                     F_LogError("*********************** OpenGLWindow::createColorResources: Failed to create texture, name: [%s] !", nameColor.c_str());
-                    F_DELETE(this->poColor)
                     return;
                 }
             }
-            void OpenGLWindow::createDepthResources()
+            void OpenGLWindow::createDepthStencilResources()
             {
                 StringVector aPathTexture;
                 int w = (int)this->poFramebufferSize.x;
                 int h = (int)this->poFramebufferSize.y;
                 String nameDepthStencil = "Texture-DepthStencil";
-                this->poDepthStencil = createRenderBuffer(nameDepthStencil,
-                                                          w,
-                                                          h,
-                                                          GL_DEPTH24_STENCIL8,
-                                                          GL_DEPTH_STENCIL_ATTACHMENT,
-                                                          0);
-                if (this->poDepthStencil == nullptr)
+                this->poRenderBufferDepthStencil = createRenderBuffer(nameDepthStencil,
+																	  w,
+																	  h,
+																	  GL_DEPTH24_STENCIL8,
+																	  GL_DEPTH_STENCIL_ATTACHMENT,
+																	  0);
+                if (this->poRenderBufferDepthStencil == nullptr)
                 {
-                    F_LogError("*********************** OpenGLWindow::createDepthResources: Failed to create texture, name: [%s] !", nameDepthStencil.c_str());
-                    F_DELETE(this->poDepthStencil)
+                    F_LogError("*********************** OpenGLWindow::createDepthStencilResources: Failed to create texture, name: [%s] !", nameDepthStencil.c_str());
                     return;
                 }
             }
@@ -1923,14 +1935,14 @@ namespace LostPeterOpenGL
                     {
                         GLTexturePtrVector aColorTexture;
                         aColorTexture.push_back(this->poSwapChains[i]);
-                        if (poColor != nullptr)
-                            aColorTexture.push_back(poColor); 
+                        if (this->poTextureColor != nullptr)
+                            aColorTexture.push_back(this->poTextureColor); 
                         String nameFrameBuffer = "FrameBuffer-" + FUtilString::SaveSizeT(i);
                         GLFrameBuffer* pFrameBuffer = createFrameBuffer(nameFrameBuffer,
                                                                         w,
                                                                         h,
                                                                         aColorTexture,
-                                                                        this->poDepthStencil,
+                                                                        this->poRenderBufferDepthStencil,
                                                                         false,
                                                                         false);
                         if (pFrameBuffer == nullptr)
@@ -2057,7 +2069,12 @@ namespace LostPeterOpenGL
                     }
 
                     //Depth Stencil Attachment
-                    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, nDepthStencilID); 
+					if (nDepthStencilID > 0)
+					{
+						glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, nDepthStencilID); 
+					}
+                    
+					//Check
                     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
                     {
                         F_LogError("*********************** OpenGLWindow::createGLFrameBuffer: FrameBuffer is not complete, id: [%d], name: [%s] !", nFrameBufferID, nameFrameBuffer.c_str());
@@ -3605,8 +3622,22 @@ namespace LostPeterOpenGL
         }
         this->width = w;
         this->height = h;
+
+		refreshFramebufferSize(w, h);
         RefreshAspectRatio();
     }
+	void OpenGLWindow::refreshFramebufferSize(int w, int h)
+	{
+		float scaleX, scaleY;
+		glfwGetWindowContentScale(this->pWindow, &scaleX, &scaleY);
+		this->poWindowContentScale.x = scaleX;
+		this->poWindowContentScale.y = scaleY;
+
+		int frameW, frameH;
+		glfwGetFramebufferSize(this->pWindow, &frameW, &frameH);
+		this->poFramebufferSize.x = (float)frameW;
+		this->poFramebufferSize.y = (float)frameH;
+	}
 
     bool OpenGLWindow::beginRender()
     {
@@ -4401,11 +4432,18 @@ namespace LostPeterOpenGL
             cleanupInternal();
 
             
+			//2> Device
+			F_DELETE(this->poDebug)
+			F_DELETE(this->poShaderInclude)
+
+
         }
         F_LogInfo("---------- OpenGLWindow::cleanup finish ----------");
     }
         void OpenGLWindow::cleanupDefault()
         {
+			this->poDescriptorSetLayoutName = "";
+            F_DELETE(this->pDescriptorSetLayout)
             
             cleanupTexture();
             cleanupVertexIndexBuffer();
@@ -4459,20 +4497,14 @@ namespace LostPeterOpenGL
                 destroyResourceInternal();
 
                 //1> DepthImage/ColorImage    
-                F_DELETE(poDepthStencil)
-                F_DELETE(poColor)
-                count = this->poColorLists.size();
+                F_DELETE(this->poTextureColor)
+				F_DELETE(this->poRenderBufferDepthStencil)
+                count = this->poTextureColorLists.size();
                 for (size_t i = 0; i < count; i++)
                 {
-                    F_DELETE(this->poColorLists[i])
+                    F_DELETE(this->poTextureColorLists[i])
                 }
-                this->poColorLists.clear();
-                count = this->poSwapChains.size();
-                for (size_t i = 0; i < count; i++)
-                {
-                    F_DELETE(this->poSwapChains[i])
-                }
-                this->poSwapChains.clear();
+                this->poTextureColorLists.clear();
 
                 //2> SwapChainFrameBuffers
                 count = this->poFrameBuffers.size();
@@ -4488,6 +4520,13 @@ namespace LostPeterOpenGL
                 //4> RenderPass
                 F_DELETE(this->poRenderPass)
                 
+				//5> SwapChainImageViews
+				count = this->poSwapChains.size();
+                for (size_t i = 0; i < count; i++)
+                {
+                    F_DELETE(this->poSwapChains[i])
+                }
+                this->poSwapChains.clear();
 
             }
             F_LogInfo("----- OpenGLWindow::cleanupSwapChain finish -----");
@@ -4506,8 +4545,6 @@ namespace LostPeterOpenGL
 
 
                 //2> Pipelines
-                this->poDescriptorSetLayoutName = "";
-                F_DELETE(this->pDescriptorSetLayout)
                 F_DELETE(this->poShaderProgram)
                 F_DELETE(this->poShaderVertex)
                 F_DELETE(this->poShaderFragment)
@@ -4534,14 +4571,38 @@ namespace LostPeterOpenGL
                     glfwWaitEvents();
                     if (glfwWindowShouldClose(this->pWindow)) 
                     {
-                        //Closing a minimized window
                         cleanup();
                         this->isMinimizedWindowNeedClose = true;
                         return;
                     }
                 }
+				
+				cleanupSwapChain();
+				
+				createSwapChain();
+				createSwapChainImageViews();
+				if (HasConfig_MASS())
+				{
+					createColorResources();
+				}  
+				if (HasConfig_DepthStencil())
+				{
+					createDepthStencilResources();
+				}
+				createRenderPasses();
+				createFramebuffers();
 
+				createResourceInternal();
+            
+            	createConstBuffers();
 
+				createCustomBeforePipeline();
+				createGraphicsPipeline();
+				createComputePipeline();
+				createDescriptorSets();
+
+				recreateSwapChain_Editor();
+				recreateSwapChain_Custom();
 
 
                 cameraReset();

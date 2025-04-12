@@ -30,7 +30,7 @@ namespace LostPeterOpenGL
         int nHeight;
         GLTexturePtrVector aColorTexture;
         UintType2UintIDMap mapType2IDs;
-        GLRenderBuffer* pDepthStencil;
+        GLRenderBuffer* pRenderBufferDepthStencil;
         bool bIsDeleteColors;
         bool bIsDeleteDepthStencil;
 

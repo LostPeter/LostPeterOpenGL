@@ -52,7 +52,6 @@ namespace LostPeterOpenGL
         pBase->pWindow = s_pWindow;
 
         glfwSetKeyCallback(s_pWindow, key_callback);
-        glfwSetFramebufferSizeCallback(s_pWindow, framebuffer_size_callback);
         glfwSetMouseButtonCallback(s_pWindow, mouse_button_callback);
         glfwSetCursorPosCallback(s_pWindow, cursor_position_callback);
         glfwSetScrollCallback(s_pWindow, scroll_callback);
@@ -150,10 +149,6 @@ namespace LostPeterOpenGL
         {
             s_pBase->OnKeyUp(key);
         }
-    }
-    void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
-    {
-        s_pBase->OnResize(width, height, true);
     }
     void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     {

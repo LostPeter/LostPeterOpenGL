@@ -63,9 +63,10 @@ namespace LostPeterOpenGL
 
         const String& GetTitle() const { return this->nameTitle; }
 
-
     public:
         // Common
+		virtual float GetWindowContentScaleX() = 0;
+		virtual float GetWindowContentScaleY() = 0;
         virtual void OnInit() = 0;
         virtual void OnLoad() = 0;
         virtual bool OnIsInit() = 0;

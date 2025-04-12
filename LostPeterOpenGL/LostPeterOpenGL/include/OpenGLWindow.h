@@ -155,9 +155,9 @@ namespace LostPeterOpenGL
         FVector2 poWindowContentScale;
 
         GLTexturePtrVector poSwapChains;
-        GLTexture* poColor;
-        GLRenderBuffer* poDepthStencil;
-        GLTexturePtrVector poColorLists;
+        GLTexture* poTextureColor;
+        GLRenderBuffer* poRenderBufferDepthStencil;
+        GLTexturePtrVector poTextureColorLists;
         GLRenderPass* poRenderPass;
         GLFrameBufferPtrVector poFrameBuffers;
         size_t poCurrentFrame;
@@ -183,14 +183,14 @@ namespace LostPeterOpenGL
 
         GLTexture* poTexture;
 
-        bool isFrameBufferResized;
+		
 
         //Config
         FVector4 cfg_colorBackground;
         FVector4Vector cfg_colorValues;
 
         bool cfg_isRenderPassDefaultCustom;
-
+		bool cfg_isDepthStencil;
         bool cfg_isMSAA;
         bool cfg_isImgui;
         bool cfg_isWireFrame;
@@ -273,6 +273,8 @@ namespace LostPeterOpenGL
 
     public:
         // Common
+		virtual float GetWindowContentScaleX() { return this->poWindowContentScale.x; }
+		virtual float GetWindowContentScaleY() { return this->poWindowContentScale.y; }
         virtual void OnInit();
         virtual void OnLoad();
         virtual bool OnIsInit();
@@ -326,6 +328,7 @@ namespace LostPeterOpenGL
 
     public:
         virtual bool HasConfig_RenderPassDefaultCustom();
+		virtual bool HasConfig_DepthStencil();
         virtual bool HasConfig_MASS();
         virtual bool HasConfig_Imgui();
 
@@ -364,7 +367,7 @@ namespace LostPeterOpenGL
                     virtual void createViewport();
                 virtual void createSwapChainImageViews();
                     virtual void createColorResources();
-                    virtual void createDepthResources();
+                    virtual void createDepthStencilResources();
                 virtual void createColorResourceLists();
 
             virtual void createDescriptorSetLayouts();
@@ -748,7 +751,7 @@ namespace LostPeterOpenGL
 
         //Resize
         virtual void resizeWindow(int w, int h, bool force);
-
+		virtual void refreshFramebufferSize(int w, int h);
 
         //Compute Before Render
 
