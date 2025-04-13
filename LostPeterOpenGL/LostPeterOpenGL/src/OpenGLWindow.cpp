@@ -828,13 +828,12 @@ namespace LostPeterOpenGL
         if (pFrameBuffer == nullptr)
             return;
 
-        Mesh* pMesh = this->m_pPipelineGraphics_CopyBlitToFrame->pMeshBlit;
-        MeshSub* pMeshSub = pMesh->aMeshSubs[0];
+		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindShader();
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
-        if (pTexture != nullptr)
-            pTexture->BindTexture();
-        //UpdateBuffer_Graphics_CopyBlitToFrame();
-        this->m_pPipelineGraphics_CopyBlitToFrame->pShaderProgram->BindProgram();
+        pTexture->BindTexture();
+        
+		Mesh* pMesh = this->m_pPipelineGraphics_CopyBlitToFrame->pMeshBlit;
+        MeshSub* pMeshSub = pMesh->aMeshSubs[0];
         pMeshSub->pBufferVertexIndex->BindVertexArray();
         drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
     }
@@ -853,6 +852,70 @@ namespace LostPeterOpenGL
         {
             
         }
+
+
+	Mesh* OpenGLWindow::CreateMesh(const MeshInfo* pMI)
+	{
+		Mesh* pMesh = new Mesh(0,
+							   pMI->nameMesh,
+							   pMI->pathMesh,
+							   pMI->typeMesh,
+							   pMI->typeVertex,
+							   pMI->typeGeometryType,
+							   pMI->pMeshCreateParam);
+		if (!pMesh->LoadMesh(pMI->isFlipY, pMI->isTransformLocal, pMI->matTransformLocal))
+		{
+			String msg = "*********************** OpenGLWindow::CreateMesh: create mesh: name: [" + pMI->nameMesh + "], path: [" + pMI->pathMesh + "] failed !";
+			F_LogError(msg.c_str());
+			throw std::runtime_error(msg);
+		}
+
+		F_LogInfo("OpenGLWindow::CreateMesh: create mesh, name: [%s], path: [%s] success !", 
+				  pMI->nameMesh.c_str(), pMI->pathMesh.c_str());
+		return pMesh;
+	}
+	void OpenGLWindow::CreateMeshes(const MeshInfoPtrVector& aMIs, MeshPtrVector& aMeshes, MeshPtrMap& mapMeshes)
+	{
+		size_t count = aMIs.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			Mesh* pMesh = CreateMesh(aMIs[i]);
+			if (pMesh != nullptr)
+			{
+				aMeshes.push_back(pMesh);
+				mapMeshes[pMesh->GetName()] = pMesh;
+			}
+		}
+	}
+
+	GLShader* OpenGLWindow::CreateShader(const ShaderModuleInfo& si)
+	{ 
+		GLShader* pShader = createShader(si.nameShader, si.pathShader, si.nameShaderType);
+		if (pShader == nullptr)
+		{
+			String msg = "*********************** OpenGLWindow::CreateShader: create shader: name: [" + si.nameShader + "], path: [" + si.pathShader + "], type: [" + si.nameShaderType + "] failed !";
+			F_LogError(msg.c_str());
+			throw std::runtime_error(msg);
+		}
+		
+		F_LogInfo("OpenGLWindow::CreateShader: create shader: name: [%s], path: [%s], type: [%s] success !", 
+				  si.nameShader.c_str(), si.pathShader.c_str(), si.nameShaderType.c_str());
+		return pShader;
+	}
+	void OpenGLWindow::CreateShaders(const ShaderModuleInfoVector& aSIs, GLShaderPtrVector& aShaders, GLShaderPtrMap& mapShaders)
+	{
+		size_t count = aSIs.size();
+		for (size_t i = 0; i < count; i++)
+		{
+			const ShaderModuleInfo& si = aSIs[i];
+			GLShader* pShader = CreateShader(si);
+			if (pShader != nullptr)
+			{
+				aShaders.push_back(pShader);
+				mapShaders[si.nameShader] = pShader;
+			}
+		}
+	}
 
 
     /////////////////////////// OpenGLWindow //////////////////////
@@ -882,10 +945,42 @@ namespace LostPeterOpenGL
         , pBufferVertex(nullptr)
         , pBufferVertexIndex(nullptr)
 
+		, poTypePrimitive(GL_TRIANGLES)
+		, poIsCull(true)
+        , poTypeFrontFace(GL_CW)
+        , poTypeCulling(GL_BACK)
+        , poTypePolygonMode(GL_FILL)
+
+		, poDepthEnabled(false)
+		, poDepthFuncCompare(GL_LEQUAL)
+		, poDepthTestEnabled(false)
+		, poDepthWriteEnabled(false)
+
+		, poStencilEnabled(false)
+		, poStencil_CompareFunction(GL_LEQUAL)
+		, poStencil_StencilFailureOp(GL_KEEP)
+		, poStencil_DepthFailureOp(GL_KEEP)
+		, poStencil_DepthStencilPassOp(GL_KEEP)
+		, poStencil_ReadMask(0)
+		, poStencil_WriteMask(0)
+		
+		, poBlendEnabled(false)
+		, poBlendColorFactorSrc(GL_ONE)
+		, poBlendColorFactorDst(GL_ZERO)
+		, poBlendColorOp(GL_FUNC_ADD)
+		, poBlendAlphaFactorSrc(GL_ONE)
+		, poBlendAlphaFactorDst(GL_ZERO)
+		, poBlendAlphaOp(GL_FUNC_ADD)
+
+		, poColorWriteMask_Red(true)
+		, poColorWriteMask_Green(true)
+		, poColorWriteMask_Blue(true)
+		, poColorWriteMask_Alpha(true)
+
+		, poStatePipelineGraphics(nullptr)
         , poTypeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
         , poShaderVertex(nullptr)
         , poShaderFragment(nullptr)
-        , poShaderProgram(nullptr)
 
         , poDescriptorSetLayoutName("")
         , pDescriptorSetLayout(nullptr)
@@ -901,12 +996,6 @@ namespace LostPeterOpenGL
         , cfg_isImgui(false)
         , cfg_isWireFrame(false)
         , cfg_isRotate(false)
-
-        , cfg_glPrimitiveTopology(GL_TRIANGLES)
-        , cfg_isCull(true)
-        , cfg_glFrontFace(GL_CW)
-        , cfg_glCulling(GL_BACK)
-        , cfg_glPolygonMode(GL_FILL)
 
         , cfg_cameraPos(0.0f, 0.0f, -5.0f)
         , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
@@ -1358,9 +1447,9 @@ namespace LostPeterOpenGL
     {
         this->cfg_isWireFrame = isWireFrame;
         if (isWireFrame)
-            this->cfg_glPolygonMode = GL_LINE;
+            this->poTypePolygonMode = GL_LINE;
         else
-            this->cfg_glPolygonMode = GL_FILL;
+            this->poTypePolygonMode = GL_FILL;
     }
 
 
@@ -2985,6 +3074,11 @@ namespace LostPeterOpenGL
 
                 }
 
+			GLShader* OpenGLWindow::createShader(const String& nameShader, const String& pathFile, const String& nameShaderType)
+			{
+				FShaderType typeShader = F_ParseShaderType(nameShaderType);
+				return createShader(nameShader, pathFile, typeShader);
+			}
             GLShader* OpenGLWindow::createShader(const String& nameShader, const String& pathFile, FShaderType typeShader)
             {
                 GLShader* pShader = new GLShader(nameShader);
@@ -3431,26 +3525,170 @@ namespace LostPeterOpenGL
                         throw std::runtime_error(msg);
                     }
 
-                    //2> Shader Program
-                    String nameShaderProgram = "ShaderProgram-Default";
-                    this->poShaderProgram = createShaderProgram(nameShaderProgram,
-                                                                this->poShaderVertex,
-                                                                nullptr,
-                                                                nullptr,
-                                                                nullptr,
-                                                                this->poShaderFragment);
-                    if (this->poShaderProgram == nullptr)
-                    {
-                        String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create shader program: " + nameShaderProgram;
-                        F_LogError(msg.c_str());
-                        throw std::runtime_error(msg);
-                    }
+                    //2> Shader Pipeline Graphics
+                    String nameStatePipelineGraphics = "StatePipelineGraphics-Default";
+					this->poStatePipelineGraphics = createStatePipelineGraphics(nameStatePipelineGraphics,
+																				this->poShaderVertex,
+						                                            			nullptr,
+																				nullptr,
+																				nullptr,
+																				this->poShaderFragment,
+																				this->poDepthEnabled,
+																				this->poDepthFuncCompare,
+																				this->poDepthTestEnabled,
+																				this->poDepthWriteEnabled,
+																				this->poStencilEnabled,
+																				this->poStencil_CompareFunction,
+																				this->poStencil_StencilFailureOp,
+																				this->poStencil_DepthFailureOp,
+																				this->poStencil_DepthStencilPassOp,
+																				this->poStencil_ReadMask,
+																				this->poStencil_WriteMask,
+																				this->poBlendEnabled,
+																				this->poBlendColorFactorSrc,
+																				this->poBlendColorFactorDst,
+																				this->poBlendColorOp,
+																				this->poBlendAlphaFactorSrc,
+																				this->poBlendAlphaFactorDst,
+																				this->poBlendAlphaOp,
+																				this->poColorWriteMask_Red,
+																				this->poColorWriteMask_Green,
+																				this->poColorWriteMask_Blue,
+																				this->poColorWriteMask_Alpha);
+					if (!this->poStatePipelineGraphics)
+					{
+						String msg = "*********************** OpenGLWindow::createGraphicsPipeline_Default: Failed to create state pipeline graphics: " + nameStatePipelineGraphics;
+						F_LogError(msg.c_str());
+						throw std::runtime_error(msg);
+					}
 
                 }
                 void OpenGLWindow::createGraphicsPipeline_Custom()
                 {
 
                 }
+
+				 	GLStatePipelineGraphics* OpenGLWindow::createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																					   GLShaderProgram* pShaderProgram,
+																					   bool deleteShaderProgram,
+																					   bool depthEnabled,
+																					   GLenum depthFuncCompare,
+																					   bool depthTestEnabled,
+																					   bool depthWriteEnabled,
+																					   bool stencilEnabled,
+																					   GLenum stencil_CompareFunction,
+																					   GLenum stencil_StencilFailureOp,
+																					   GLenum stencil_DepthFailureOp,
+																					   GLenum stencil_DepthStencilPassOp,
+																					   uint32_t stencil_ReadMask,
+																					   uint32_t stencil_WriteMask,
+																					   bool blendEnabled,
+																					   GLenum blendColorFactorSrc, 
+																					   GLenum blendColorFactorDst,
+																					   GLenum blendColorOp,
+																					   GLenum blendAlphaFactorSrc, 
+																					   GLenum blendAlphaFactorDst,
+																					   GLenum blendAlphaOp,
+																					   GLboolean colorWriteMask_Red,
+																					   GLboolean colorWriteMask_Green,
+																					   GLboolean colorWriteMask_Blue,
+																					   GLboolean colorWriteMask_Alpha)
+					{
+						GLStatePipelineGraphics* pStatePipelineGraphics = new GLStatePipelineGraphics(nameStatePipelineGraphics);
+						if (!pStatePipelineGraphics->Init(pShaderProgram,
+														  deleteShaderProgram,
+														  depthEnabled,
+														  depthFuncCompare,
+														  depthTestEnabled,
+														  depthWriteEnabled,
+														  stencilEnabled,
+														  stencil_CompareFunction,
+														  stencil_StencilFailureOp,
+														  stencil_DepthFailureOp,
+														  stencil_DepthStencilPassOp,
+														  stencil_ReadMask,
+														  stencil_WriteMask,
+														  blendEnabled,
+														  blendColorFactorSrc, 
+														  blendColorFactorDst,
+														  blendColorOp,
+														  blendAlphaFactorSrc, 
+														  blendAlphaFactorDst,
+														  blendAlphaOp,
+														  colorWriteMask_Red,
+														  colorWriteMask_Green,
+														  colorWriteMask_Blue,
+														  colorWriteMask_Alpha))
+						{
+							F_DELETE(pStatePipelineGraphics)
+							return nullptr;
+						}
+						return pStatePipelineGraphics;
+					}
+ 					GLStatePipelineGraphics* OpenGLWindow::createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																					   GLShader* pShaderVertex,
+																					   GLShader* pShaderTessellationControl,
+																					   GLShader* pShaderTessellationEvaluation,
+																					   GLShader* pShaderGeometry,
+																					   GLShader* pShaderFragment,
+																					   bool depthEnabled,
+																					   GLenum depthFuncCompare,
+																					   bool depthTestEnabled,
+																					   bool depthWriteEnabled,
+																					   bool stencilEnabled,
+																					   GLenum stencil_CompareFunction,
+																					   GLenum stencil_StencilFailureOp,
+																					   GLenum stencil_DepthFailureOp,
+																					   GLenum stencil_DepthStencilPassOp,
+																					   uint32_t stencil_ReadMask,
+																					   uint32_t stencil_WriteMask,
+																					   bool blendEnabled,
+																					   GLenum blendColorFactorSrc, 
+																					   GLenum blendColorFactorDst,
+																					   GLenum blendColorOp,
+																					   GLenum blendAlphaFactorSrc, 
+																					   GLenum blendAlphaFactorDst,
+																					   GLenum blendAlphaOp,
+																					   GLboolean colorWriteMask_Red,
+																					   GLboolean colorWriteMask_Green,
+																					   GLboolean colorWriteMask_Blue,
+																					   GLboolean colorWriteMask_Alpha)
+					{
+						GLStatePipelineGraphics* pStatePipelineGraphics = new GLStatePipelineGraphics(nameStatePipelineGraphics);
+						if (!pStatePipelineGraphics->Init(pShaderVertex,
+														  pShaderTessellationControl,
+													   	  pShaderTessellationEvaluation,
+														  pShaderGeometry,
+														  pShaderFragment,
+														  depthEnabled,
+														  depthFuncCompare,
+														  depthTestEnabled,
+														  depthWriteEnabled,
+														  stencilEnabled,
+														  stencil_CompareFunction,
+														  stencil_StencilFailureOp,
+														  stencil_DepthFailureOp,
+														  stencil_DepthStencilPassOp,
+														  stencil_ReadMask,
+														  stencil_WriteMask,
+														  blendEnabled,
+														  blendColorFactorSrc, 
+														  blendColorFactorDst,
+														  blendColorOp,
+														  blendAlphaFactorSrc, 
+														  blendAlphaFactorDst,
+														  blendAlphaOp,
+														  colorWriteMask_Red,
+														  colorWriteMask_Green,
+														  colorWriteMask_Blue,
+														  colorWriteMask_Alpha))
+						{
+							F_DELETE(pStatePipelineGraphics)
+							return nullptr;
+						}
+						return pStatePipelineGraphics;
+					}
+
 
             void OpenGLWindow::createComputePipeline()
             {
@@ -3495,9 +3733,15 @@ namespace LostPeterOpenGL
                 void OpenGLWindow::createDescriptorSets_Default()
                 {
                     if (this->pDescriptorSetLayout == nullptr)
-                        return;
+                    {
+						if (this->poTexture != nullptr)
+						{
+							this->poStatePipelineGraphics->BindTextureFragment(this->poTexture, 0);
+						}
+						return;
+					}
 
-                    updateDescriptorSets(this->pDescriptorSetLayout, this->poShaderProgram);
+                    updateDescriptorSets(this->pDescriptorSetLayout, this->poStatePipelineGraphics);
                 }
                 void OpenGLWindow::createDescriptorSets_Terrain()
                 {
@@ -3507,16 +3751,17 @@ namespace LostPeterOpenGL
                 {
 
                 }
-                    void OpenGLWindow::updateDescriptorSets(DescriptorSetLayout* pDSL, GLShaderProgram* pSP)
+                    void OpenGLWindow::updateDescriptorSets(DescriptorSetLayout* pDSL, GLStatePipelineGraphics* pStatePipelineGraphics)
                     {
-                        F_Assert(pDSL && pSP && "OpenGLWindow::updateDescriptorSets")
+                        F_Assert(pDSL && pStatePipelineGraphics && "OpenGLWindow::updateDescriptorSets")
                         
                         uint32 count_fb = (uint32)this->poSwapChains.size();
                         uint32 count_ds = (uint32)pDSL->aLayouts.size();
+						uint32 nBindingTextureFragementIndex = 0;
                         for (uint32 i = 0; i < count_ds; i++)
                         {
                             const String& nameDS = pDSL->aLayouts[i];
-                            uint32 nUniformBlockIndex = pSP->GetUniformBlockIndex(nameDS);
+                            uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
 
                             if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
                             {
@@ -3534,13 +3779,29 @@ namespace LostPeterOpenGL
                                     pUBO_Object->BindBufferUniformBlockIndex(nUniformBlockIndex);
                                 }
                             }
+							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Material)) //Material
+							{
+
+							}
+							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Instance)) //Instance
+							{
+
+							}
+							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_TextureFS)) //TextureFS
+							{
+								if (this->poTexture != nullptr)
+								{
+									pStatePipelineGraphics->BindTextureFragment(this->poTexture, nBindingTextureFragementIndex);
+									nBindingTextureFragementIndex ++;
+								}
+							}
                             else
                             {
                                 String msg = "*********************** OpenGLWindow::updateDescriptorSets: Wrong DescriptorSet name: " + nameDS;
                                 F_LogError(msg.c_str());
                                 throw std::runtime_error(msg.c_str());
                             }
-                            pSP->SetUniformBlockBinding(nUniformBlockIndex, i);
+                            pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                         }
                     }
 
@@ -4230,34 +4491,40 @@ namespace LostPeterOpenGL
                     }
                         void OpenGLWindow::drawMeshDefault()
                         {
-                            if (this->poShaderProgram == nullptr)
+                            if (this->poStatePipelineGraphics == nullptr)
                                 return;
 
                             //State
-                            setFrontFace(this->cfg_glFrontFace);
-                            setEnable(GL_CULL_FACE, this->cfg_isCull);
-                            setCullFace(this->cfg_glCulling);
-                            setPolygonMode(GL_FRONT_AND_BACK, this->cfg_glPolygonMode);
+                            setFrontFace(this->poTypeFrontFace);
+                            setEnable(GL_CULL_FACE, this->poIsCull);
+                            setCullFace(this->poTypeCulling);
+                            setPolygonMode(GL_FRONT_AND_BACK, this->poTypePolygonMode);
+
+							//Shader
+							this->poStatePipelineGraphics->BindShader();
+							this->poStatePipelineGraphics->BindBufferUniforms();
+							this->poStatePipelineGraphics->BindTextures();
 
                             //Texture
-                            if (this->poTexture != nullptr)
-                                this->poTexture->BindTexture();
-
-                            //Shader
-                            this->poShaderProgram->BindProgram();
+                            // if (this->poTexture != nullptr)
+                            //     this->poTexture->BindTexture();
 
                             //Draw
                             Util_EnableAttributeDescriptions(this->poTypeVertex, true);
                             if (this->pBufferVertex != nullptr)
                             {
                                 this->pBufferVertex->BindVertexArray();
-                                draw(this->cfg_glPrimitiveTopology, 0, this->poVertexCount);
+                                drawInstance(this->poTypePrimitive, 0, this->poVertexCount, 1);
                             }
                             else if (this->pBufferVertexIndex != nullptr)
                             {   
                                 this->pBufferVertexIndex->BindVertexArray();
-                                drawIndexed(this->cfg_glPrimitiveTopology, this->poIndexCount, GL_UNSIGNED_INT, 0);
+                                drawIndexedInstance(this->poTypePrimitive, this->poIndexCount, GL_UNSIGNED_INT, 0, 1);
                             }
+							else
+							{	
+								F_Assert(false && "MetaOpenGLWindowlWindow::drawMeshDefault")
+							}
                         }
                         void OpenGLWindow::drawMeshTerrain()
                         {
@@ -4369,19 +4636,55 @@ namespace LostPeterOpenGL
                     {
                         glPolygonMode(face, mode);
                     }
+					void OpenGLWindow::setDepthFunc(GLenum func)
+					{
+						glDepthFunc(func);
+					}
+					void OpenGLWindow::setStencilFunc(GLenum func, GLint ref, GLuint mask)
+					{
+						glStencilFunc(func, ref, mask);
+					}
+					void OpenGLWindow::setStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
+					{
+						glStencilOp(fail, zfail, zpass);
+					}
+					void OpenGLWindow::setStencilMask(GLuint mask)
+					{
+						glStencilMask(mask);
+					}
                     void OpenGLWindow::setBlendFunc(GLenum sfactor, GLenum dfactor)
                     {
                         glBlendFunc(sfactor, dfactor);
                     }
+					void OpenGLWindow::setBlendFunci(GLuint buf, GLenum src, GLenum dst)
+					{
+						glBlendFunci(buf, src, dst);
+					}
+					void OpenGLWindow::setBlendEquation(GLenum mode)
+					{
+						glBlendEquation(mode);
+					}
+					void OpenGLWindow::setColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
+					{
+						glColorMask(red, green, blue, alpha);
+					}
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
                     {
                         glDrawArrays(mode, first, count);
                     }
+					void OpenGLWindow::drawInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount)
+					{
+						glDrawArraysInstanced(mode, first, count, instancecount);
+					}
                     void OpenGLWindow::drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices)
                     {
                         glDrawElements(mode, count, type, indices);
                     }
+					void OpenGLWindow::drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount)
+					{
+						glDrawElementsInstanced(mode, count, type, indices, instancecount);
+					}
 
                 void OpenGLWindow::endRenderPass(GLRenderPass* pRenderPass)
                 {
@@ -4545,9 +4848,9 @@ namespace LostPeterOpenGL
 
 
                 //2> Pipelines
-                F_DELETE(this->poShaderProgram)
                 F_DELETE(this->poShaderVertex)
                 F_DELETE(this->poShaderFragment)
+				F_DELETE(this->poStatePipelineGraphics)
 
             }
             void OpenGLWindow::cleanupSwapChain_Editor()

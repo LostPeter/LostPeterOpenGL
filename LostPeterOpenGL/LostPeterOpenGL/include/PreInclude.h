@@ -34,6 +34,8 @@
 #include "GLShader.h"
 #include "GLShaderInclude.h"
 #include "GLShaderProgram.h"
+#include "GLStatePipelineCompute.h"
+#include "GLStatePipelineGraphics.h"
 #include "GLTexture.h"
 
 #include "Base.h"

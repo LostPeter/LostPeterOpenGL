@@ -81,10 +81,15 @@ layout (std140) uniform PassConstants
 
 
 ///////////////////////////////// ObjectConstants ///////////////////////////////
+struct ObjectConstant
+{
+	mat4 g_MatWorld;
+};
+
 //ObjectConstants
 layout (std140) uniform ObjectConstants
 {
-    mat4 g_MatWorld;
+    ObjectConstant objs[MAX_OBJECT_COUNT];
 } objectConsts;
 
 //OutlineObjectConstants
@@ -111,11 +116,11 @@ struct CoordinateAxisObjectConstants
 };
 
 //GridObjectConstants
-struct GridObjectConstants
+layout (std140) uniform GridObjectConstants
 {
     mat4 g_MatWorld;
     vec4 color;
-};
+} gridObjectConsts;
 
 //LineFlat2DObjectConstants
 struct LineFlat2DObjectConstants

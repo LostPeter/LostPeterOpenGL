@@ -14,6 +14,7 @@
 #include "../include/GLBufferUniform.h"
 #include "../include/GLShader.h"
 #include "../include/GLShaderProgram.h"
+#include "../include/GLStatePipelineGraphics.h"
 #include "../include/Mesh.h"
 
 namespace LostPeterOpenGL
@@ -26,7 +27,7 @@ namespace LostPeterOpenGL
 
         , pBuffer_CopyBlit(nullptr)
         
-        , pShaderProgram(nullptr)
+        , pStatePipelineGraphics(nullptr)
         , pMeshBlit(nullptr)
     {
 
@@ -45,11 +46,12 @@ namespace LostPeterOpenGL
         void GLPipelineGraphicsCopyBlitToFrame::destroyBufferCopyBlitObject()
         {
             F_DELETE(this->pBuffer_CopyBlit)
+
         }
 
 
     bool GLPipelineGraphicsCopyBlitToFrame::Init(GLShader* pShaderVertex,
-                                                 GLShader* pShaderFrag,
+                                                 GLShader* pShaderFragment,
                                                  Mesh* pMesh,
                                                  const String& descriptorSetLayout,
                                                  StringVector* pDescriptorSetLayoutNames)
@@ -68,20 +70,43 @@ namespace LostPeterOpenGL
             }
         }
 
-        //2> GLShaderProgram
+        //2> GLStatePipelineGraphics
         {
-            String nameShaderProgram = "ShaderProgram-" + GetName();
-            this->pShaderProgram = Base::GetWindowPtr()->createShaderProgram(nameShaderProgram,
-                                                                             pShaderVertex,
-                                                                             nullptr,
-                                                                             nullptr,
-                                                                             nullptr,
-                                                                             pShaderFrag);
-            if (this->pShaderProgram == nullptr)
-            {
-                F_LogError("*********************** GLPipelineGraphicsCopyBlitToFrame::Init: createShaderProgram failed, name: [%s] !", nameShaderProgram.c_str());
-                return false;
-            }
+			OpenGLWindow* pWindow = Base::GetWindowPtr();
+            String nameStatePipelineGraphics = "StatePipelineGraphics-" + GetName();
+			this->pStatePipelineGraphics = pWindow->createStatePipelineGraphics(nameStatePipelineGraphics,
+																				pShaderVertex,
+																				nullptr,
+																				nullptr,
+																				nullptr,
+																				pShaderFragment,
+																				pWindow->HasConfig_DepthStencil(),
+																				GL_LEQUAL,
+																				false,
+																				false,
+																				false,
+																				GL_LEQUAL,
+																				GL_KEEP,
+																				GL_KEEP,
+																				GL_KEEP,
+																				0,
+																				0,
+																				false,
+																				GL_ONE,
+																				GL_ZERO,
+																				GL_FUNC_ADD,
+																				GL_ONE,
+																				GL_ZERO,
+																				GL_FUNC_ADD,
+																				true,
+																				true,
+																				true,
+																				true);
+			if (this->pStatePipelineGraphics == nullptr)
+			{
+				F_LogError("*********************** GLPipelineGraphicsCopyBlitToFrame::Init: StatePipelineGraphics failed, name: [%s] !", nameStatePipelineGraphics.c_str());
+				return false;
+			}
         }
 
         //3> Binding
@@ -107,13 +132,13 @@ namespace LostPeterOpenGL
     void GLPipelineGraphicsCopyBlitToFrame::CleanupSwapChain()
     {
         this->poDescriptorSetLayoutNames = nullptr;
-        F_DELETE(this->pShaderProgram)
+        F_DELETE(this->pStatePipelineGraphics)
     }  
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateDescriptorSets()
     {
         String nameCopyBlit = (*this->poDescriptorSetLayoutNames)[0];
-        this->pShaderProgram->SetUniformBlockBinding(nameCopyBlit, DescriptorSet_ObjectCopyBlit);
+        this->pStatePipelineGraphics->SetUniformBlockBinding(nameCopyBlit, DescriptorSet_ObjectCopyBlit);
     }
 
     void GLPipelineGraphicsCopyBlitToFrame::UpdateBuffer()

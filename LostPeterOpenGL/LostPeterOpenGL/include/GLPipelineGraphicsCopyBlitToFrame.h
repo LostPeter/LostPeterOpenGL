@@ -29,13 +29,13 @@ namespace LostPeterOpenGL
         CopyBlitObjectConstants objectCB_CopyBlit;
         GLBufferUniform* pBuffer_CopyBlit;
 
-        GLShaderProgram* pShaderProgram;
+		GLStatePipelineGraphics* pStatePipelineGraphics;
         Mesh* pMeshBlit;
 
     public:
         void Destroy();
         virtual bool Init(GLShader* pShaderVertex,
-                          GLShader* pShaderFrag,
+                          GLShader* pShaderFragment,
                           Mesh* pMesh,
                           const String& descriptorSetLayout,
                           StringVector* pDescriptorSetLayoutNames);

@@ -13,17 +13,159 @@
 #include "../include/OpenGLWindow.h"
 #include "../include/Mesh.h"
 #include "../include/MeshSub.h"
+#include "../include/GLBufferVertexIndex.h"
+#include "../include/GLStatePipelineGraphics.h"
+#include "../include/GLShader.h"
 
 namespace LostPeterOpenGL
 {
     EditorBase::EditorBase(const String& nameEditor)
         : Base(nameEditor)
+
+		//DescriptorSetLayouts
+        , nameDescriptorSetLayout("")
+
+        //GLStatePipelineGraphics
+        , pPipelineGraphics(nullptr)
     {
 
     }
     EditorBase::~EditorBase()
     {
        
+    }
+
+	GLShader* EditorBase::GetShader(const String& nameShaer)
+	{
+		GLShaderPtrMap::iterator itFind = this->mapShaders.find(nameShaer);
+		if (itFind == this->mapShaders.end())
+			return nullptr;
+		return itFind->second;
+	}
+
+	void EditorBase::Init()
+    {
+        //0> initConfigs
+        initConfigs();
+
+        //1> initMeshes
+        initMeshes();
+
+        //2> initShader
+        initShaders();
+
+        //3> initBufferUniforms
+        initBufferUniforms();
+
+        //4> initDescriptorSetLayout
+        initDescriptorSetLayout();
+
+        //5> initPipelineLayout
+        initPipelineLayout();
+
+        //6> initPipelineGraphics
+        initPipelineGraphics();
+    }
+    void EditorBase::initMeshes()
+    {
+        if (this->aMeshInfos.size() <= 0)
+            return;
+        Base::GetWindowPtr()->CreateMeshes(this->aMeshInfos, this->aMeshes, this->mapMeshes);
+    }
+    void EditorBase::initShaders()
+    {   
+        if (this->aShaderModuleInfos.size() <= 0)
+            return;
+        Base::GetWindowPtr()->CreateShaders(this->aShaderModuleInfos, this->aShaders, this->mapShaders);
+    }
+    void EditorBase::initDescriptorSetLayout()
+    {
+		
+    }
+    void EditorBase::initPipelineLayout()
+    {
+        
+    }
+    void EditorBase::destroyMeshes()
+    {
+        size_t count = this->aMeshes.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            Mesh* pMesh = this->aMeshes[i];
+            F_DELETE(pMesh)
+        }
+        this->aMeshes.clear();
+        this->mapMeshes.clear();
+
+        count = this->aMeshInfos.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            MeshInfo* pMI = this->aMeshInfos[i];
+            F_DELETE(pMI)
+        }
+        this->aMeshInfos.clear();
+    }
+    void EditorBase::destroyShaders()
+    {
+        size_t count = this->aShaders.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            GLShader* pShader = this->aShaders[i];
+			F_DELETE(pShader)
+        }
+        this->aShaders.clear();
+        this->mapShaders.clear();
+    }
+    void EditorBase::destroyPipelineGraphics()
+    {
+        F_DELETE(this->pPipelineGraphics)
+    }
+    void EditorBase::destroyPipelineLayout()
+    {
+        
+    }
+    void EditorBase::destroyDescriptorSetLayout()
+    {
+		
+    }   
+
+    void EditorBase::Draw()
+    {
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		this->pPipelineGraphics->BindShader();
+		BindUniformPass();
+		this->pPipelineGraphics->BindBufferUniforms();
+
+        size_t count_mesh = this->aMeshes.size();
+        for (size_t i = 0; i < count_mesh; i++)
+        {
+            Mesh* pMesh = this->aMeshes[i];
+            size_t count_mesh_sub = pMesh->aMeshSubs.size();
+            for (size_t j = 0; j < count_mesh_sub; j++)
+            {
+                MeshSub* pMeshSub = pMesh->aMeshSubs[j];
+				
+				pMeshSub->pBufferVertexIndex->BindVertexArray();
+				pWindow->drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
+            }
+        }
+    }   
+
+    void EditorBase::CleanupSwapChain()
+    {
+        destroyPipelineGraphics();
+        destroyPipelineLayout();
+        destroyDescriptorSetLayout();
+        destroyShaders();
+        destroyBufferUniforms();
+    }
+    void EditorBase::RecreateSwapChain()
+    {
+        initShaders();
+        initBufferUniforms();
+        initDescriptorSetLayout();
+        initPipelineLayout();
+        initPipelineGraphics();
     }
 
 }; //LostPeterOpenGL

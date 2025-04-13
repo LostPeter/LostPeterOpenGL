@@ -413,6 +413,8 @@ namespace LostPeterOpenGL
     class GLShader;
     class GLShaderInclude;
     class GLShaderProgram;
+	class GLStatePipelineCompute;
+	class GLStatePipelineGraphics;
     class GLTexture;
 
     typedef std::map<uint32, uint32> UintID2UintTypeMap;
@@ -424,6 +426,7 @@ namespace LostPeterOpenGL
     typedef std::map<String, GLBufferStorage*> GLBufferStoragePtrMap;
     typedef std::vector<GLBufferUniform*> GLBufferUniformPtrVector;
     typedef std::map<String, GLBufferUniform*> GLBufferUniformPtrMap;
+	typedef std::map<uint32, GLBufferUniform*> GLBufferUniformPtrIDMap;
     typedef std::vector<GLBufferVertex*> GLBufferVertexPtrVector;
     typedef std::map<String, GLBufferVertex*> GLBufferVertexPtrMap;
     typedef std::vector<GLBufferVertexIndex*> GLBufferVertexIndexPtrVector;
@@ -445,9 +448,15 @@ namespace LostPeterOpenGL
     typedef std::map<String, GLShaderProgram*> GLShaderProgramPtrMap;
     typedef std::map<int32, GLShaderProgram*> GLShaderProgramPtrIDMap;
 
+	typedef std::vector<GLStatePipelineCompute*> GLStatePipelineComputePtrVector;
+    typedef std::map<String, GLStatePipelineCompute*> GLStatePipelineComputePtrMap;
+	typedef std::vector<GLStatePipelineGraphics*> GLStatePipelineGraphicsPtrVector;
+    typedef std::map<String, GLStatePipelineGraphics*> GLStatePipelineGraphicsPtrMap;
+
     typedef std::vector<GLTexture*> GLTexturePtrVector;
     typedef std::map<String, GLTexture*> GLTexturePtrMap;
-
+	typedef std::map<uint32, GLTexture*> GLTexturePtrIDMap;
+	
 
     class Base;
     class EditorBase;

@@ -134,6 +134,17 @@ namespace LostPeterOpenGL
         
     ///////////////////////// Internal /////////////////////////
 
+	public:
+		//Mesh
+		virtual Mesh* CreateMesh(const MeshInfo* pMI);
+		virtual void CreateMeshes(const MeshInfoPtrVector& aMIs, MeshPtrVector& aMeshes, MeshPtrMap& mapMeshes);
+
+		//Shader
+		virtual GLShader* CreateShader(const ShaderModuleInfo& si);
+		virtual void CreateShaders(const ShaderModuleInfoVector& aSIs, GLShaderPtrVector& aShaders, GLShaderPtrMap& mapShaders);
+
+
+
 
     public:
         static const String c_strShaderProgram;
@@ -173,17 +184,48 @@ namespace LostPeterOpenGL
         GLBufferVertexIndex* pBufferVertexIndex;
         FMatrix4 poMatWorld;
 
-        FMeshVertexType poTypeVertex;
+		GLenum poTypePrimitive;
+        bool poIsCull;
+        GLenum poTypeFrontFace;
+        GLenum poTypeCulling;
+        GLenum poTypePolygonMode;
+
+		bool poDepthEnabled;
+		GLenum poDepthFuncCompare;
+		bool poDepthTestEnabled;
+		bool poDepthWriteEnabled;
+
+		bool poStencilEnabled;
+		GLenum poStencil_CompareFunction;
+		GLenum poStencil_StencilFailureOp;
+		GLenum poStencil_DepthFailureOp;
+		GLenum poStencil_DepthStencilPassOp;
+		uint32_t poStencil_ReadMask;
+		uint32_t poStencil_WriteMask;
+
+		bool poBlendEnabled;
+		GLenum poBlendColorFactorSrc; 
+		GLenum poBlendColorFactorDst;
+		GLenum poBlendColorOp;
+		GLenum poBlendAlphaFactorSrc; 
+		GLenum poBlendAlphaFactorDst;
+		GLenum poBlendAlphaOp;
+
+		GLboolean poColorWriteMask_Red;
+		GLboolean poColorWriteMask_Green;
+		GLboolean poColorWriteMask_Blue;
+		GLboolean poColorWriteMask_Alpha;
+
+		GLStatePipelineGraphics* poStatePipelineGraphics;
+        FMeshVertexType poTypeVertex;	
         GLShader* poShaderVertex;
         GLShader* poShaderFragment;
-        GLShaderProgram* poShaderProgram;
 
         String poDescriptorSetLayoutName;
         DescriptorSetLayout* pDescriptorSetLayout;
 
         GLTexture* poTexture;
 
-		
 
         //Config
         FVector4 cfg_colorBackground;
@@ -195,13 +237,7 @@ namespace LostPeterOpenGL
         bool cfg_isImgui;
         bool cfg_isWireFrame;
         bool cfg_isRotate;
-        
-        GLenum cfg_glPrimitiveTopology;
-        bool cfg_isCull;
-        GLenum cfg_glFrontFace;
-        GLenum cfg_glCulling;
-        GLenum cfg_glPolygonMode;
-
+		
 
         FVector3 cfg_cameraPos;
         FVector3 cfg_cameraLookTarget;
@@ -643,7 +679,8 @@ namespace LostPeterOpenGL
                     virtual void createInstanceCB();
                         virtual void buildInstanceCB();
                     virtual void createCustomCB();
-
+				
+				virtual GLShader* createShader(const String& nameShader, const String& pathFile, const String& nameShaderType);
                 virtual GLShader* createShader(const String& nameShader, const String& pathFile, FShaderType typeShader);
                 virtual String getShaderPathRelative(const String& nameShader);
                 virtual String getShaderPathRelative(const String& nameShader, ShaderSortType type);
@@ -720,6 +757,60 @@ namespace LostPeterOpenGL
                 virtual void createGraphicsPipeline();
                     virtual void createGraphicsPipeline_Default();
                     virtual void createGraphicsPipeline_Custom();    
+					
+					virtual GLStatePipelineGraphics* createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																				 GLShaderProgram* pShaderProgram,
+																				 bool deleteShaderProgram,
+																				 bool depthEnabled,
+																				 GLenum depthFuncCompare,
+																				 bool depthTestEnabled,
+																				 bool depthWriteEnabled,
+																				 bool stencilEnabled,
+																				 GLenum stencil_CompareFunction,
+																				 GLenum stencil_StencilFailureOp,
+																				 GLenum stencil_DepthFailureOp,
+																				 GLenum stencil_DepthStencilPassOp,
+																				 uint32_t stencil_ReadMask,
+																				 uint32_t stencil_WriteMask,
+																				 bool blendEnabled,
+																				 GLenum blendColorFactorSrc, 
+																				 GLenum blendColorFactorDst,
+																				 GLenum blendColorOp,
+																				 GLenum blendAlphaFactorSrc, 
+																				 GLenum blendAlphaFactorDst,
+																				 GLenum blendAlphaOp,
+																				 GLboolean colorWriteMask_Red,
+																				 GLboolean colorWriteMask_Green,
+																				 GLboolean colorWriteMask_Blue,
+																				 GLboolean colorWriteMask_Alpha);
+					virtual GLStatePipelineGraphics* createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																				 GLShader* pShaderVertex,
+																				 GLShader* pShaderTessellationControl,
+																				 GLShader* pShaderTessellationEvaluation,
+																				 GLShader* pShaderGeometry,
+																				 GLShader* pShaderFragment,
+																				 bool depthEnabled,
+																				 GLenum depthFuncCompare,
+																				 bool depthTestEnabled,
+																				 bool depthWriteEnabled,
+																				 bool stencilEnabled,
+																				 GLenum stencil_CompareFunction,
+																				 GLenum stencil_StencilFailureOp,
+																				 GLenum stencil_DepthFailureOp,
+																				 GLenum stencil_DepthStencilPassOp,
+																				 uint32_t stencil_ReadMask,
+																				 uint32_t stencil_WriteMask,
+																				 bool blendEnabled,
+																				 GLenum blendColorFactorSrc, 
+																				 GLenum blendColorFactorDst,
+																				 GLenum blendColorOp,
+																				 GLenum blendAlphaFactorSrc, 
+																				 GLenum blendAlphaFactorDst,
+																				 GLenum blendAlphaOp,
+																				 GLboolean colorWriteMask_Red,
+																				 GLboolean colorWriteMask_Green,
+																				 GLboolean colorWriteMask_Blue,
+																				 GLboolean colorWriteMask_Alpha);
 
 
                 virtual void createComputePipeline();
@@ -731,7 +822,7 @@ namespace LostPeterOpenGL
                     virtual void createDescriptorSets_Default();
                     virtual void createDescriptorSets_Terrain();
                     virtual void createDescriptorSets_Custom();
-                        virtual void updateDescriptorSets(DescriptorSetLayout* pDSL, GLShaderProgram* pSP); 
+                        virtual void updateDescriptorSets(DescriptorSetLayout* pDSL, GLStatePipelineGraphics* pStatePipelineGraphics); 
 
 
 
@@ -842,10 +933,19 @@ namespace LostPeterOpenGL
                         virtual void setFrontFace(GLenum mode);
                         virtual void setCullFace(GLenum mode);
                         virtual void setPolygonMode(GLenum face, GLenum mode);
+						virtual void setDepthFunc(GLenum func);
+						virtual void setStencilFunc(GLenum func, GLint ref, GLuint mask);
+						virtual void setStencilOp(GLenum fail, GLenum zfail, GLenum zpass);
+						virtual void setStencilMask(GLuint mask);
                         virtual void setBlendFunc(GLenum sfactor, GLenum dfactor);
+						virtual void setBlendFunci(GLuint buf, GLenum src, GLenum dst);
+						virtual void setBlendEquation(GLenum mode);
+						virtual void setColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
                     
                         virtual void draw(GLenum mode, GLint first, GLsizei count);
+						virtual void drawInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
+						virtual void drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount);
 
                     virtual void endRenderPass(GLRenderPass* pRenderPass);
 

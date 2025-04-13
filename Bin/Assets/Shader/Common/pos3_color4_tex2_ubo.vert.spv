@@ -22,7 +22,11 @@ out vec2 fragTexCoord;
 
 void main()
 {
-    gl_Position = passConsts.g_Transforms[0].mat4Proj * passConsts.g_Transforms[0].mat4View * objectConsts.g_MatWorld * vec4(inPosition, 1.0);
+	int viewIndex = 0;
+	TransformConstants trans = passConsts.g_Transforms[viewIndex];
+	ObjectConstant obj = objectConsts.objs[gl_InstanceID];
+
+    gl_Position = trans.mat4Proj * trans.mat4View * obj.g_MatWorld * vec4(inPosition, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 }
