@@ -132,6 +132,7 @@ namespace LostPeterOpenGL
     void EditorBase::Draw()
     {
 		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		this->pPipelineGraphics->BindState();
 		this->pPipelineGraphics->BindShader();
 		BindUniformPass();
 		this->pPipelineGraphics->BindBufferUniforms();
@@ -149,6 +150,7 @@ namespace LostPeterOpenGL
 				pWindow->drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
             }
         }
+		this->pPipelineGraphics->UnBindState();
     }   
 
     void EditorBase::CleanupSwapChain()

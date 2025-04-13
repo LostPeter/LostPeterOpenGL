@@ -13,16 +13,192 @@
 #include "../include/OpenGLWindow.h"
 #include "../include/Mesh.h"
 #include "../include/MeshSub.h"
+#include "../include/GLBufferUniform.h"
+#include "../include/GLStatePipelineGraphics.h"
+#include "../include/GLShader.h"
 
 namespace LostPeterOpenGL
 {
+	const String EditorGrid::s_strNameShader_Grid_Vert = "vert_editor_grid";
+    const String EditorGrid::s_strNameShader_Grid_Frag = "frag_editor_grid";
     EditorGrid::EditorGrid()
         : EditorBase("EditorGrid")
+
+		, pBufferUniform(nullptr)
+        , isNeedUpdate(true)
+
     {
 
     }
     EditorGrid::~EditorGrid()
     {
+		Destroy();
+    }
+	void EditorGrid::Destroy()
+    {
+        CleanupSwapChain();
+        destroyMeshes();
+    }
+    void EditorGrid::Init()
+    {
+        EditorBase::Init();
+    }
+    void EditorGrid::UpdateCBs()
+    {
+        if (!IsNeedUpdate())
+            return;
+        SetIsNeedUpdate(false);
+
+		this->pBufferUniform->UpdateBuffer(sizeof(GridObjectConstants), 
+										   (uint8*)(&this->gridObjectCB),
+										   GL_WRITE_ONLY);
+    }
+	void EditorGrid::BindUniformPass()
+	{
+		
+	}
+    void EditorGrid::initConfigs()
+    {
+        //1> Mesh
+        {
+            MeshInfo* pMI = new MeshInfo("EditorGrid",
+                                         "",
+                                         F_Mesh_Geometry,
+                                         F_MeshVertex_Pos3Color4Tex2,
+                                         F_MeshGeometry_EntityGrid,
+                                         nullptr,
+                                         false,
+                                         true,
+                                         FMath::RotateX(90.0f));
+            this->aMeshInfos.push_back(pMI);
+        }
+        //2> Shader
+        {
+            //Vert
+            ShaderModuleInfo siVert;
+            siVert.nameShader = s_strNameShader_Grid_Vert;
+            siVert.nameShaderType = "vert";
+            siVert.pathShader = Base::GetWindowPtr()->getShaderPathRelative("editor_grid.vert.spv", ShaderSort_Common);
+            this->aShaderModuleInfos.push_back(siVert);
+            //Frag
+            ShaderModuleInfo siFrag;
+            siFrag.nameShader = s_strNameShader_Grid_Frag;
+            siFrag.nameShaderType = "frag";
+            siFrag.pathShader = Base::GetWindowPtr()->getShaderPathRelative("editor_grid.frag.spv", ShaderSort_Common);
+            this->aShaderModuleInfos.push_back(siFrag);
+        }
+        //3> BufferUniform
+        {
+            this->gridObjectCB.g_MatWorld = FMath::FromTRS(FVector3(0.0f, 0.0f, 0.0f),
+                                                           FVector3(0.0f, 0.0f, 0.0f),
+                                                           FVector3(1024.0f, 1024.0f, 1024.0f));
+        }
+        //4> DescriptorSetLayout
+        {
+            this->nameDescriptorSetLayout = "PassConstants-ObjectGrid";
+            this->aNameDescriptorSetLayouts = FUtilString::Split(this->nameDescriptorSetLayout, "-");
+        }
+    }
+    void EditorGrid::initBufferUniforms()
+    {
+		this->pBufferUniform = Base::GetWindowPtr()->createBufferUniform("EditorGrid-GridObjectConstants",
+																		 DescriptorSet_ObjectGrid,
+																		 GL_DYNAMIC_DRAW,
+																		 sizeof(GridObjectConstants),
+																		 (uint8*)(&this->gridObjectCB),
+																		 false);
+        SetIsNeedUpdate(true);
+    }
+    void EditorGrid::initPipelineGraphics()
+    {
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+
+        String namePipelineGraphics = "PipelineGraphics-" + GetName();
+		GLShader* pShaderVertex = GetShader(s_strNameShader_Grid_Vert); 
+		F_Assert("EditorGrid::initPipelineGraphics: Shader Vetex" && pShaderVertex)
+		GLShader* pShaderFragment = GetShader(s_strNameShader_Grid_Frag);
+		F_Assert("EditorGrid::initPipelineGraphics: Shader Fragment" && pShaderFragment)
+		this->pPipelineGraphics = pWindow->createStatePipelineGraphics(namePipelineGraphics,
+																	   pShaderVertex,
+																	   nullptr,
+																	   nullptr,
+																	   nullptr,
+																	   pShaderFragment,
+																	   pWindow->HasConfig_DepthStencil(),
+																	   GL_LEQUAL,
+																	   false,
+																	   false,
+																	   false,
+																	   GL_LEQUAL,
+																	   GL_KEEP,
+																	   GL_KEEP,
+																	   GL_KEEP,
+																	   0,
+																	   0,
+																	   true,
+																	   GL_SRC_ALPHA,
+																	   GL_ONE_MINUS_SRC_ALPHA,
+																	   GL_FUNC_ADD,
+																	   GL_ONE,
+																	   GL_ZERO,
+																	   GL_FUNC_ADD,
+																	   true,
+																	   true,
+																	   true,
+																	   true);
+		if (this->pPipelineGraphics == nullptr)
+		{
+			String msg = "*********************** EditorGrid::initPipelineGraphics: Failed to create pipeline graphics for [EditorGrid] !";
+			F_LogError(msg.c_str());
+			throw std::runtime_error(msg.c_str());
+		}			
+		F_LogInfo("EditorGrid::initPipelineGraphics: [EditorGrid] Create pipeline graphics success !");
+
+		updateDescriptorSets_Graphics();
+    }
+    void EditorGrid::updateDescriptorSets_Graphics()
+    {   
+		uint32_t count_names = (uint32_t)this->aNameDescriptorSetLayouts.size();
+		for (uint32_t i = 0; i < count_names; i++)
+		{
+			const String& nameDescriptorSet = this->aNameDescriptorSetLayouts[i];
+			
+			if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
+			{
+				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
+				this->pPipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
+			}
+			else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectGrid)) //ObjectGrid
+			{
+				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
+				this->pBufferUniform->BindBufferUniformBlockIndex(nUniformBlockIndex);
+				this->pPipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
+			}
+			else
+			{
+				String msg = "*********************** EditorGrid::updateDescriptorSets_Graphics: Graphics: Wrong DescriptorSetLayout type: " + nameDescriptorSet;
+				F_LogError(msg.c_str());
+				throw std::runtime_error(msg.c_str());
+			}
+		}
+    }
+    void EditorGrid::destroyBufferUniforms()
+    {
+		F_DELETE(this->pBufferUniform)
+    }
+    void EditorGrid::destroyPipelineGraphics()
+    {
+        EditorBase::destroyPipelineGraphics();
+    }
+
+    void EditorGrid::CleanupSwapChain()
+    {   
+        EditorBase::CleanupSwapChain();
+
+    }
+    void EditorGrid::RecreateSwapChain()
+    {
+        EditorBase::RecreateSwapChain();
 
     }
 

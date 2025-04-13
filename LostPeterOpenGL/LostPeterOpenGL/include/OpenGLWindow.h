@@ -933,6 +933,7 @@ namespace LostPeterOpenGL
                         virtual void setFrontFace(GLenum mode);
                         virtual void setCullFace(GLenum mode);
                         virtual void setPolygonMode(GLenum face, GLenum mode);
+						virtual void setDepthWrite(GLboolean flag);
 						virtual void setDepthFunc(GLenum func);
 						virtual void setStencilFunc(GLenum func, GLint ref, GLuint mask);
 						virtual void setStencilOp(GLenum fail, GLenum zfail, GLenum zpass);

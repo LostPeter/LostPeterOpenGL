@@ -235,10 +235,54 @@ namespace LostPeterOpenGL
 		this->mapTextureFragment[nBindingIndex] = pTexture;
 	}
 
-	void GLStatePipelineGraphics::BindShader()
+	void GLStatePipelineGraphics::BindState()
 	{
+		bindStateDepth(this->poDepthEnabled);
+		bindStateStencil(this->poStencilEnabled);
+		bindStateBlend(this->poBlendEnabled);
+	}
+	void GLStatePipelineGraphics::UnBindState()
+	{
+		bindStateDepth(false);
+		bindStateStencil(false);
+		bindStateBlend(false);
+	}
+	void GLStatePipelineGraphics::bindStateDepth(bool depthEnable)
+	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		pWindow->setEnable(GL_DEPTH_TEST, depthEnable);
+		if (depthEnable)
+		{
+			pWindow->setDepthFunc(this->poDepthFuncCompare);
+			pWindow->setDepthWrite(this->poDepthWriteEnabled);
+		}
+	}
+	void GLStatePipelineGraphics::bindStateStencil(bool stencilEnable)
+	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		pWindow->setEnable(GL_STENCIL_TEST, stencilEnable);
+		if (stencilEnable)
+		{
+			pWindow->setStencilFunc(this->poStencil_CompareFunction, this->poStencil_WriteMask, this->poStencil_ReadMask);
+			pWindow->setStencilOp(this->poStencil_StencilFailureOp, this->poStencil_DepthFailureOp, this->poStencil_DepthStencilPassOp);
+			pWindow->setStencilMask(this->poStencil_WriteMask);
+		}
+	}
+	void GLStatePipelineGraphics::bindStateBlend(bool blendEnable)
+	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		pWindow->setEnable(GL_BLEND, blendEnable);
+		if (blendEnable)
+		{
+			pWindow->setBlendFunc(this->poBlendColorFactorSrc, this->poBlendColorFactorDst);
+		}
+	}
+
+	void GLStatePipelineGraphics::BindShader()
+	{	
 		this->poShaderProgram->BindProgram();
 	}
+
 	void GLStatePipelineGraphics::BindBufferUniforms()
 	{
 

@@ -23,10 +23,10 @@ out vec2 fragTexCoord;
 
 void main()
 {
-	uint viewIndex = 0;
+	int viewIndex = 0;
 	TransformConstants trans = passConsts.g_Transforms[viewIndex];
 
-	vec4 outWorldPos = gridObjectConsts.g_MatWorld * vec4(input.inPosition, 1.0);
+	vec4 outWorldPos = gridObjectConsts.g_MatWorld * vec4(inPosition, 1.0);
     gl_Position = trans.mat4Proj * trans.mat4View * outWorldPos;
 	fragWorldPos.xyz = outWorldPos.xyz / outWorldPos.w;
     fragColor = inColor;

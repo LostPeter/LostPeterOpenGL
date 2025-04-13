@@ -828,6 +828,7 @@ namespace LostPeterOpenGL
         if (pFrameBuffer == nullptr)
             return;
 
+		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindState();
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindShader();
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
         pTexture->BindTexture();
@@ -836,6 +837,7 @@ namespace LostPeterOpenGL
         MeshSub* pMeshSub = pMesh->aMeshSubs[0];
         pMeshSub->pBufferVertexIndex->BindVertexArray();
         drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
+		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->UnBindState();
     }
 
         void OpenGLWindow::createPipelineGraphics_DepthShadowMap()
@@ -3761,23 +3763,26 @@ namespace LostPeterOpenGL
                         for (uint32 i = 0; i < count_ds; i++)
                         {
                             const String& nameDS = pDSL->aLayouts[i];
-                            uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
 
                             if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
                             {
+								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
                                 for (uint32 j = 0; j < count_fb; j++)
                                 {
                                     GLBufferUniform* pUBO_Pass = this->poBuffers_PassCB[j];
                                     pUBO_Pass->BindBufferUniformBlockIndex(nUniformBlockIndex);
                                 }
+								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                             }
                             else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)) //ObjectConstants
                             {
+								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
                                 for (uint32 j = 0; j < count_fb; j++)
                                 {
                                     GLBufferUniform* pUBO_Object = this->poBuffers_ObjectCB[j];
                                     pUBO_Object->BindBufferUniformBlockIndex(nUniformBlockIndex);
                                 }
+								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                             }
 							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Material)) //Material
 							{
@@ -3801,7 +3806,6 @@ namespace LostPeterOpenGL
                                 F_LogError(msg.c_str());
                                 throw std::runtime_error(msg.c_str());
                             }
-                            pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                         }
                     }
 
@@ -3845,11 +3849,31 @@ namespace LostPeterOpenGL
 
         void OpenGLWindow::createEditor()
         {
+			F_LogInfo("**********<2-3> OpenGLWindow::createEditor start **********");
+			{
+				//1> createEditor_Grid
+				createEditor_Grid();
+				
+				//2> createEditor_CameraAxis
+				createEditor_CameraAxis();
 
+				//3> createEditor_CoordinateAxis
+				createEditor_CoordinateAxis();
+
+				//4> createEditor_LineFlat2DCollector
+				createEditor_LineFlat2DCollector();
+
+				//5> createEditor_LineFlat3DCollector
+				createEditor_LineFlat3DCollector();
+			}
+			F_LogInfo("**********<2-3> OpenGLWindow::createEditor finish **********");
         }
             void OpenGLWindow::createEditor_Grid()
             {
+				this->pEditorGrid = new EditorGrid();
+				this->pEditorGrid->Init();
 
+				F_LogInfo("<2-3-1> OpenGLWindow::createEditor_Grid finish !");
             }
             void OpenGLWindow::createEditor_CameraAxis()
             {
@@ -3869,7 +3893,11 @@ namespace LostPeterOpenGL
             }
         void OpenGLWindow::destroyEditor()
         {
-
+			F_DELETE(this->pEditorGrid)
+			F_DELETE(this->pEditorCameraAxis)
+			F_DELETE(this->pEditorCoordinateAxis)
+			F_DELETE(this->pEditorLineFlat2DCollector)
+			F_DELETE(this->pEditorLineFlat3DCollector)
         }
 
 
@@ -4158,7 +4186,7 @@ namespace LostPeterOpenGL
                                     {
                                         if (ImGui::ColorEdit4("EditorGrid Color", (float*)&this->cfg_editorGrid_Color))
                                         {
-                                            //this->pEditorGrid->SetColor(this->cfg_editorGrid_Color);
+                                            this->pEditorGrid->SetColor(this->cfg_editorGrid_Color);
                                         }
                                     }
                                 }
@@ -4429,7 +4457,18 @@ namespace LostPeterOpenGL
                 }
             void OpenGLWindow::updateCBs_Editor()
             {
-
+				if (this->pEditorGrid != nullptr)
+                {
+                    this->pEditorGrid->UpdateCBs();
+                }
+                // if (this->pEditorCameraAxis != nullptr)
+                // {
+                //     this->pEditorCameraAxis->UpdateCBs();
+                // }
+                // if (this->pEditorCoordinateAxis != nullptr)
+                // {
+                //     this->pEditorCoordinateAxis->UpdateCBs();
+                // }
             }
             void OpenGLWindow::updateCBs_Custom()
             {
@@ -4501,6 +4540,7 @@ namespace LostPeterOpenGL
                             setPolygonMode(GL_FRONT_AND_BACK, this->poTypePolygonMode);
 
 							//Shader
+							this->poStatePipelineGraphics->BindState();
 							this->poStatePipelineGraphics->BindShader();
 							this->poStatePipelineGraphics->BindBufferUniforms();
 							this->poStatePipelineGraphics->BindTextures();
@@ -4525,6 +4565,7 @@ namespace LostPeterOpenGL
 							{	
 								F_Assert(false && "MetaOpenGLWindowlWindow::drawMeshDefault")
 							}
+							this->poStatePipelineGraphics->UnBindState();
                         }
                         void OpenGLWindow::drawMeshTerrain()
                         {
@@ -4536,7 +4577,35 @@ namespace LostPeterOpenGL
                         }
                         void OpenGLWindow::drawMeshDefault_Editor()
                         {
-
+							if (this->pEditorGrid != nullptr)
+                            {
+                                if (this->cfg_isEditorGridShow)
+                                {
+                                    this->pEditorGrid->Draw();
+                                }
+                            }
+                            // if (this->pEditorCameraAxis != nullptr)
+                            // {
+                            //     if (this->cfg_isEditorCameraAxisShow)
+                            //     {
+                            //         this->pEditorCameraAxis->DrawQuad();
+                            //     }
+                            // }
+                            // if (this->pEditorCoordinateAxis != nullptr)
+                            // {
+                            //     if (this->cfg_isEditorCoordinateAxisShow)
+                            //     {
+                            //         this->pEditorCoordinateAxis->Draw();
+                            //     }
+                            // }
+                            // if (this->pEditorLineFlat2DCollector != nullptr)
+                            // {
+                            //     this->pEditorLineFlat2DCollector->Draw();
+                            // }
+                            // if (this->pEditorLineFlat3DCollector != nullptr)
+                            // {
+                            //     this->pEditorLineFlat3DCollector->Draw();
+                            // }
                         }
                         void OpenGLWindow::drawMeshDefault_CustomBeforeImgui()
                         {
@@ -4636,6 +4705,10 @@ namespace LostPeterOpenGL
                     {
                         glPolygonMode(face, mode);
                     }
+					void OpenGLWindow::setDepthWrite(GLboolean flag)
+					{
+						glDepthMask(flag);
+					}
 					void OpenGLWindow::setDepthFunc(GLenum func)
 					{
 						glDepthFunc(func);
@@ -4855,7 +4928,26 @@ namespace LostPeterOpenGL
             }
             void OpenGLWindow::cleanupSwapChain_Editor()
             {
-
+				if (this->pEditorGrid != nullptr)
+                {
+                    this->pEditorGrid->CleanupSwapChain();
+                }
+                // if (this->pEditorCameraAxis != nullptr)
+                // {
+                //     this->pEditorCameraAxis->CleanupSwapChain();
+                // }
+                // if (this->pEditorCoordinateAxis != nullptr)
+                // {
+                //     this->pEditorCoordinateAxis->CleanupSwapChain();
+                // }
+                // if (this->pEditorLineFlat2DCollector != nullptr)
+                // {
+                //     this->pEditorLineFlat2DCollector->CleanupSwapChain();
+                // }
+                // if (this->pEditorLineFlat3DCollector != nullptr)
+                // {
+                //     this->pEditorLineFlat3DCollector->CleanupSwapChain();
+                // }
             }
             void OpenGLWindow::cleanupSwapChain_Custom()
             {
@@ -4914,7 +5006,26 @@ namespace LostPeterOpenGL
         }
             void OpenGLWindow::recreateSwapChain_Editor()
             {
-
+				if (this->pEditorGrid != nullptr)
+				{
+					this->pEditorGrid->RecreateSwapChain();
+				}
+				// if (this->pEditorCameraAxis != nullptr)
+				// {
+				// 	this->pEditorCameraAxis->RecreateSwapChain();
+				// }
+				// if (this->pEditorCoordinateAxis != nullptr)
+				// {
+				// 	this->pEditorCoordinateAxis->RecreateSwapChain();
+				// }
+				// if (this->pEditorLineFlat2DCollector != nullptr)
+				// {
+				// 	this->pEditorLineFlat2DCollector->RecreateSwapChain();
+				// }
+				// if (this->pEditorLineFlat3DCollector != nullptr)
+				// {
+				// 	this->pEditorLineFlat3DCollector->RecreateSwapChain();
+				// }
             }
             void OpenGLWindow::recreateSwapChain_Custom()
             {

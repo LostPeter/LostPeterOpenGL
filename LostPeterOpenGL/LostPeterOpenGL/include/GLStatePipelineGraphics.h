@@ -132,9 +132,16 @@ namespace LostPeterOpenGL
 		void BindTextureFragment(GLTexture* pTexture, uint32 nBindingIndex);
 
     public:
+		void BindState();
+		void UnBindState();
 		void BindShader();
 		void BindBufferUniforms();
 		void BindTextures();
+
+	protected:
+		void bindStateDepth(bool depthEnable);
+		void bindStateStencil(bool stencilEnable);
+		void bindStateBlend(bool blendEnable);
         
     };
 

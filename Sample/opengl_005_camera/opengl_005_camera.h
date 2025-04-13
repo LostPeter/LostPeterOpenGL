@@ -21,20 +21,27 @@ public:
     OpenGL_005_Camera(int width, int height, String name);
 
 public:
-    std::vector<FVertex_Pos2Color4Tex2> vertices;
+	std::vector<FVertex_Pos3Color4Tex2> vertices;
+	std::vector<uint32_t> indices;
 
 protected:
     //Create Pipeline
 
     //Load Assets
         //Geometry
-            virtual void loadModel_Custom();
+		virtual void loadModel_Default();
+
+        virtual void buildObjectCB();
 
     //Render/Update
         virtual bool beginRenderImgui();
+            virtual void modelConfig();
+            
         virtual void endRenderImgui();
 
-public:
+private:
+    void resetSetting(int index);
+    void changeModel(int index);
 
 };
 
