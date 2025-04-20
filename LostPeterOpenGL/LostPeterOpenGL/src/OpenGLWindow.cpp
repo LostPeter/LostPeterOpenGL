@@ -2447,7 +2447,7 @@ namespace LostPeterOpenGL
                     glBindBuffer(GL_ARRAY_BUFFER, nVBO);
                     glBufferData(GL_ARRAY_BUFFER, bufSize, pBuf, GL_STATIC_DRAW);
 
-                    Util_CreateAttributeDescriptions(type);
+                    Util_BindAttributeDescriptions(type);
 
                     glBindBuffer(GL_ARRAY_BUFFER, 0); 
                     glBindVertexArray(0); 
@@ -2509,7 +2509,7 @@ namespace LostPeterOpenGL
                     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, nVEO);
                     glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufSize_Index, pBuf_Index, GL_STATIC_DRAW);
 
-                    Util_CreateAttributeDescriptions(type);
+                    Util_BindAttributeDescriptions(type);
 
                     glBindBuffer(GL_ARRAY_BUFFER, 0); 
                     glBindVertexArray(0); 
@@ -3535,6 +3535,7 @@ namespace LostPeterOpenGL
 																				nullptr,
 																				nullptr,
 																				this->poShaderFragment,
+																				this->poTypeVertex,
 																				this->poDepthEnabled,
 																				this->poDepthFuncCompare,
 																				this->poDepthTestEnabled,
@@ -3573,6 +3574,7 @@ namespace LostPeterOpenGL
 				 	GLStatePipelineGraphics* OpenGLWindow::createStatePipelineGraphics(const String& nameStatePipelineGraphics,
 																					   GLShaderProgram* pShaderProgram,
 																					   bool deleteShaderProgram,
+																					   FMeshVertexType typeVertex,
 																					   bool depthEnabled,
 																					   GLenum depthFuncCompare,
 																					   bool depthTestEnabled,
@@ -3599,6 +3601,7 @@ namespace LostPeterOpenGL
 						GLStatePipelineGraphics* pStatePipelineGraphics = new GLStatePipelineGraphics(nameStatePipelineGraphics);
 						if (!pStatePipelineGraphics->Init(pShaderProgram,
 														  deleteShaderProgram,
+														  typeVertex,
 														  depthEnabled,
 														  depthFuncCompare,
 														  depthTestEnabled,
@@ -3633,6 +3636,7 @@ namespace LostPeterOpenGL
 																					   GLShader* pShaderTessellationEvaluation,
 																					   GLShader* pShaderGeometry,
 																					   GLShader* pShaderFragment,
+																					   FMeshVertexType typeVertex,
 																					   bool depthEnabled,
 																					   GLenum depthFuncCompare,
 																					   bool depthTestEnabled,
@@ -3662,6 +3666,7 @@ namespace LostPeterOpenGL
 													   	  pShaderTessellationEvaluation,
 														  pShaderGeometry,
 														  pShaderFragment,
+														  typeVertex,
 														  depthEnabled,
 														  depthFuncCompare,
 														  depthTestEnabled,
@@ -4545,12 +4550,7 @@ namespace LostPeterOpenGL
 							this->poStatePipelineGraphics->BindBufferUniforms();
 							this->poStatePipelineGraphics->BindTextures();
 
-                            //Texture
-                            // if (this->poTexture != nullptr)
-                            //     this->poTexture->BindTexture();
-
                             //Draw
-                            Util_EnableAttributeDescriptions(this->poTypeVertex, true);
                             if (this->pBufferVertex != nullptr)
                             {
                                 this->pBufferVertex->BindVertexArray();

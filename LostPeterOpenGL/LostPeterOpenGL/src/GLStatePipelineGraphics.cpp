@@ -23,6 +23,8 @@ namespace LostPeterOpenGL
 		, nameDescriptorSetLayout("")
         , poDescriptorSetLayoutNames(nullptr)
 
+		, poTypeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
+
 		, poDepthEnabled(false)
 		, poDepthFuncCompare(GL_LEQUAL)
 		, poDepthTestEnabled(false)
@@ -67,6 +69,7 @@ namespace LostPeterOpenGL
 
 	bool GLStatePipelineGraphics::Init(GLShaderProgram* pShaderProgram,
 									   bool deleteShaderProgram,
+									   FMeshVertexType typeVertex,
 									   bool depthEnabled,
 									   GLenum depthFuncCompare,
 									   bool depthTestEnabled,
@@ -92,6 +95,8 @@ namespace LostPeterOpenGL
 	{
 		this->poShaderProgram = pShaderProgram;
 		this->isDeleteShaderProgram = deleteShaderProgram;
+
+		this->poTypeVertex = typeVertex;
 
 		this->poDepthEnabled = depthEnabled;
 		this->poDepthFuncCompare = depthFuncCompare;
@@ -127,6 +132,7 @@ namespace LostPeterOpenGL
 									   GLShader* pShaderTessellationEvaluation,
 									   GLShader* pShaderGeometry,
 									   GLShader* pShaderFragment,
+									   FMeshVertexType typeVertex,
 									   bool depthEnabled,
 									   GLenum depthFuncCompare,
 									   bool depthTestEnabled,
@@ -165,6 +171,7 @@ namespace LostPeterOpenGL
 
 		return Init(pShaderProgram,
 					true,
+					typeVertex,
 					depthEnabled,
 					depthFuncCompare,
 					depthTestEnabled,

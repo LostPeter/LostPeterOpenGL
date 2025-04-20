@@ -25,6 +25,8 @@ namespace LostPeterOpenGL
     public:
 		String nameDescriptorSetLayout;
 		StringVector* poDescriptorSetLayoutNames;
+
+		FMeshVertexType poTypeVertex;
 		
 		bool poDepthEnabled;
 		GLenum poDepthFuncCompare;
@@ -66,6 +68,7 @@ namespace LostPeterOpenGL
         void Destroy();
 		bool Init(GLShaderProgram* pShaderProgram,
 				  bool deleteShaderProgram,
+				  FMeshVertexType typeVertex,
 				  bool depthEnabled,
 				  GLenum depthFuncCompare,
 				  bool depthTestEnabled,
@@ -93,6 +96,7 @@ namespace LostPeterOpenGL
 				  GLShader* pShaderTessellationEvaluation,
 				  GLShader* pShaderGeometry,
 				  GLShader* pShaderFragment,
+				  FMeshVertexType typeVertex,
 				  bool depthEnabled,
 				  GLenum depthFuncCompare,
 				  bool depthTestEnabled,

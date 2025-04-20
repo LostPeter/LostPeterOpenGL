@@ -163,62 +163,62 @@ namespace LostPeterOpenGL
 
 
 ////////////////////////////// OpenGL //////////////////////////////   
-    void Util_CreateAttributeDescriptions(FMeshVertexType type)
+    void Util_BindAttributeDescriptions(FMeshVertexType type)
     {
         switch ((int)type)
         {
             case F_MeshVertex_Pos2Color4: 
                 {
-                    Vertex_Pos2Color4::createAttributeDescriptions(); 
+                    Vertex_Pos2Color4::bindAttributeDescriptions(); 
                     return;
                 }
             case F_MeshVertex_Pos3Color4:
                 {
-                    Vertex_Pos3Color4::createAttributeDescriptions();
+                    Vertex_Pos3Color4::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Normal3:
                 {
-                    Vertex_Pos3Normal3::createAttributeDescriptions();
+                    Vertex_Pos3Normal3::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Normal3Tex2:
                 {
-                    Vertex_Pos3Normal3Tex2::createAttributeDescriptions();
+                    Vertex_Pos3Normal3Tex2::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos2Color4Tex2:
                 {
-                    Vertex_Pos2Color4Tex2::createAttributeDescriptions();
+                    Vertex_Pos2Color4Tex2::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Color4Tex2:
                 {
-                    Vertex_Pos3Color4Tex2::createAttributeDescriptions();
+                    Vertex_Pos3Color4Tex2::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Color4Normal3Tex2:
                 {
-                    Vertex_Pos3Color4Normal3Tex2::createAttributeDescriptions();
+                    Vertex_Pos3Color4Normal3Tex2::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Color4Normal3Tex4:
                 {
-                    Vertex_Pos3Color4Normal3Tex4::createAttributeDescriptions();
+                    Vertex_Pos3Color4Normal3Tex4::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Color4Normal3Tangent3Tex2:
                 {
-                    Vertex_Pos3Color4Normal3Tangent3Tex2::createAttributeDescriptions();
+                    Vertex_Pos3Color4Normal3Tangent3Tex2::bindAttributeDescriptions();
                     return;
                 }
             case F_MeshVertex_Pos3Color4Normal3Tangent3Tex4:
                 {
-                    Vertex_Pos3Color4Normal3Tangent3Tex4::createAttributeDescriptions();
+                    Vertex_Pos3Color4Normal3Tangent3Tex4::bindAttributeDescriptions();
                     return;
                 }
         }
-        F_Assert(false && "Util_CreateAttributeDescriptions: Wrong type !")
+        F_Assert(false && "Util_BindAttributeDescriptions: Wrong type !")
     }
     void Util_EnableAttributeDescriptions(FMeshVertexType type, bool enable)
     {

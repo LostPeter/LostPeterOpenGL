@@ -80,6 +80,7 @@ namespace LostPeterOpenGL
 																				nullptr,
 																				nullptr,
 																				pShaderFragment,
+																				F_MeshVertex_Pos2Color4Tex2,
 																				pWindow->HasConfig_DepthStencil(),
 																				GL_LEQUAL,
 																				false,

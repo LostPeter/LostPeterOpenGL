@@ -313,7 +313,7 @@ namespace LostPeterOpenGL
 
 ////////////////////////////// OpenGL //////////////////////////////
 
-    openglExport void Util_CreateAttributeDescriptions(FMeshVertexType type);
+    openglExport void Util_BindAttributeDescriptions(FMeshVertexType type);
     openglExport void Util_EnableAttributeDescriptions(FMeshVertexType type, bool enable);
 
     openglExport GLenum Util_Transform2GLShaderType(FShaderType type);
@@ -456,7 +456,7 @@ namespace LostPeterOpenGL
     typedef std::vector<GLTexture*> GLTexturePtrVector;
     typedef std::map<String, GLTexture*> GLTexturePtrMap;
 	typedef std::map<uint32, GLTexture*> GLTexturePtrIDMap;
-	
+
 
     class Base;
     class EditorBase;
