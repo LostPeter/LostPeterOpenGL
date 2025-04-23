@@ -541,13 +541,13 @@ namespace LostPeterOpenGL
         "CopyBlitObjectConstants-TextureFrameColor",
         "CopyBlitObjectConstants-TextureFrameDepth",
         "Cull-BufferRWArgsCB",
-        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
-        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
-        "Cull-ObjectCull-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-BufferRWClipCB-TextureCSR",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-BufferRWClipCB-TextureCSR",
         "HizDepth-TextureFS",
         "HizDepth-TextureCSRWSrc-TextureCSRWDst",
         "TextureCopy-TextureCSR-TextureCSRW",
-        "PassConstants-ObjectTerrain-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
+        "PassConstants-TerrainObjectConstants-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
     };
     void OpenGLWindow::destroyDescriptorSetLayouts_Internal()
     {

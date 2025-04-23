@@ -95,14 +95,14 @@ namespace LostPeterOpenGL
         }
         //4> DescriptorSetLayout
         {
-            this->nameDescriptorSetLayout = "PassConstants-ObjectGrid";
+            this->nameDescriptorSetLayout = "PassConstants-GridObjectConstants";
             this->aNameDescriptorSetLayouts = FUtilString::Split(this->nameDescriptorSetLayout, "-");
         }
     }
     void EditorGrid::initBufferUniforms()
     {
 		this->pBufferUniform = Base::GetWindowPtr()->createBufferUniform("EditorGrid-GridObjectConstants",
-																		 DescriptorSet_ObjectGrid,
+																		 DescriptorSet_GridObjectConstants,
 																		 GL_DYNAMIC_DRAW,
 																		 sizeof(GridObjectConstants),
 																		 (uint8*)(&this->gridObjectCB),
@@ -169,7 +169,7 @@ namespace LostPeterOpenGL
 				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
 				this->pPipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
 			}
-			else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectGrid)) //ObjectGrid
+			else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_GridObjectConstants)) //GridObjectConstants
 			{
 				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
 				this->pBufferUniform->BindBufferUniformBlockIndex(nUniformBlockIndex);

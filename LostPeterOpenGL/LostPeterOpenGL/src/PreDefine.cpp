@@ -103,14 +103,14 @@ namespace LostPeterOpenGL
     {
         "PassConstants",                    //0:   PassConstants
         "ObjectConstants",                  //1:   ObjectConstants
-        "ObjectTerrain",                    //2:   ObjectTerrain
-        "ObjectGrid",                       //3:   ObjectGrid
-        "ObjectCameraAxis",                 //4:   ObjectCameraAxis
-        "ObjectCoordinateAxis",             //5:   ObjectCoordinateAxis
-        "ObjectLineFlat2D",                 //6:   ObjectLineFlat2D
-        "ObjectLineFlat3D",                 //7:   ObjectLineFlat3D
-        "ObjectCopyBlit",                   //8:   ObjectCopyBlit
-        "ObjectCull",                       //9:   ObjectCull
+        "TerrainObjectConstants",           //2:   TerrainObjectConstants
+        "GridObjectConstants",              //3:   GridObjectConstants
+        "CameraAxisObjectConstants",        //4:   CameraAxisObjectConstants
+        "CoordinateAxisObjectConstants",    //5:   CoordinateAxisObjectConstants
+        "LineFlat2DObjectConstants",        //6:   LineFlat2DObjectConstants
+        "LineFlat3DObjectConstants",        //7:   LineFlat3DObjectConstants
+        "CopyBlitObjectConstants",          //8:   CopyBlitObjectConstants
+        "CullObjectConstants",              //9:   CullObjectConstants
         "Material",                         //10:  Material
         "Instance",                         //11:  Instance
         "TextureCopy",                      //12:  TextureCopy

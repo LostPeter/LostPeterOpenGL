@@ -265,14 +265,14 @@ namespace LostPeterOpenGL
     {
         DescriptorSet_PassConstants = 0,             //0:  PassConstants
         DescriptorSet_ObjectConstants,               //1:  ObjectConstants
-        DescriptorSet_ObjectTerrain,                 //2:  ObjectTerrain
-        DescriptorSet_ObjectGrid,                    //3:  ObjectGrid
-        DescriptorSet_ObjectCameraAxis,              //4:  ObjectCameraAxis
-        DescriptorSet_ObjectCoordinateAxis,          //5:  ObjectCoordinateAxis
-        DescriptorSet_ObjectLineFlat2D,              //6:  ObjectLineFlat2D
-        DescriptorSet_ObjectLineFlat3D,              //7:  ObjectLineFlat3D
-        DescriptorSet_ObjectCopyBlit,                //8:  ObjectCopyBlit
-        DescriptorSet_ObjectCull,                    //9:  ObjectCull
+        DescriptorSet_TerrainObjectConstants,        //2:  TerrainObjectConstants
+        DescriptorSet_GridObjectConstants,           //3:  GridObjectConstants
+        DescriptorSet_CameraAxisObjectConstants,     //4:  CameraAxisObjectConstants
+        DescriptorSet_CoordinateAxisObjectConstants, //5:  CoordinateAxisObjectConstants
+        DescriptorSet_LineFlat2DObjectConstants,     //6:  LineFlat2DObjectConstants
+        DescriptorSet_LineFlat3DObjectConstants,     //7:  LineFlat3DObjectConstants
+        DescriptorSet_CopyBlitObjectConstants,       //8:  CopyBlitObjectConstants
+        DescriptorSet_CullObjectConstants,           //9:  CullObjectConstants
         DescriptorSet_Material,                      //10: Material
         DescriptorSet_Instance,                      //11: Instance
         DescriptorSet_TextureCopy,                   //12: TextureCopy
