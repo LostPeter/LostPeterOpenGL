@@ -61,6 +61,10 @@ namespace LostPeterOpenGL
 
 		, poBufferUniform_PassCB(nullptr)
 		, poBufferUniform_ObjectCB(nullptr)
+	#if F_PLATFORM == F_PLATFORM_MAC
+		, poBufferUniform_ObjectCB_Last(nullptr)
+		, nUniformBlockIndex_CameraAxisObject(0)
+	#endif
 
 		, poRenderBufferDepthStencil(nullptr)
 		, poFrameBufferCameraAxis(nullptr)
@@ -113,6 +117,11 @@ namespace LostPeterOpenGL
 			poBufferUniform_ObjectCB->UpdateBuffer(sizeof(CameraAxisObjectConstants) * this->cameraAxisObjectCBs.size(),
 												   (uint8*)(&this->cameraAxisObjectCBs[0]),
 												   GL_WRITE_ONLY);
+		#if F_PLATFORM == F_PLATFORM_MAC
+			poBufferUniform_ObjectCB_Last->UpdateBuffer(sizeof(CameraAxisObjectConstants),
+													    (uint8*)(&this->cameraAxisObjectCB_Last),
+														GL_WRITE_ONLY);
+		#endif
         }
         //Quad Blit
         {
@@ -141,6 +150,10 @@ namespace LostPeterOpenGL
 				
 				pMeshSub->pBufferVertexIndex->BindVertexArray();
 			#if F_PLATFORM == F_PLATFORM_MAC
+				if (i > 0)
+				{
+					poBufferUniform_ObjectCB_Last->BindBufferUniformBlockIndex(this->nUniformBlockIndex_CameraAxisObject);
+				}
 				pWindow->drawIndexedInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount);
 			#else
 				pWindow->drawIndexedInstancedBaseInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount, instanceStart);
@@ -347,6 +360,10 @@ namespace LostPeterOpenGL
                 constsAABB.color = FColor(0.5f, 0.5f, 0.5f, 1.0f);
                 this->cameraAxisObjectCBs.push_back(constsAABB);
                 indexConst++;
+
+			#if F_PLATFORM == F_PLATFORM_MAC
+				this->cameraAxisObjectCB_Last = constsAABB;
+			#endif
             }
 			this->poBufferUniform_ObjectCB = pWindow->createBufferUniform("EditorCameraAxis-CameraAxisObjectConstants", 
 																		  DescriptorSet_CameraAxisObjectConstants,
@@ -354,6 +371,14 @@ namespace LostPeterOpenGL
 																		  sizeof(CameraAxisObjectConstants) * this->cameraAxisObjectCBs.size(), 
 																		  (uint8*)(&this->cameraAxisObjectCBs[0]),
 																		  false);
+			#if F_PLATFORM == F_PLATFORM_MAC
+				this->poBufferUniform_ObjectCB_Last = pWindow->createBufferUniform("EditorCameraAxis-CameraAxisObjectConstants", 
+																				   DescriptorSet_CameraAxisObjectConstants,
+																				   GL_DYNAMIC_DRAW,
+																				   sizeof(CameraAxisObjectConstants), 
+																				   (uint8*)(&this->cameraAxisObjectCB_Last),
+																				   false);
+			#endif
 
             Mesh* pMesh = this->aMeshes[s_nMeshConeIndex]; //Cone
             MeshSub* pMeshSub = pMesh->aMeshSubs[0];
@@ -586,6 +611,10 @@ namespace LostPeterOpenGL
 					uint32 nBindingIndex = (uint32)DescriptorSet_CameraAxisObjectConstants;
 					this->pPipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 					this->pPipelineGraphics->BindBufferUniform(this->poBufferUniform_ObjectCB, nBindingIndex);
+				
+				#if F_PLATFORM == F_PLATFORM_MAC
+					this->nUniformBlockIndex_CameraAxisObject = nUniformBlockIndex;
+				#endif
 				}
 				else
 				{
@@ -608,7 +637,7 @@ namespace LostPeterOpenGL
 				if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_CopyBlitObjectConstants)) //CopyBlitObjectConstants
 				{
 					uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-					uint32 nBindingIndex = (uint32)DescriptorSet_PassConstants;
+					uint32 nBindingIndex = (uint32)DescriptorSet_CopyBlitObjectConstants;
 					this->pPipelineGraphics_CopyBlit->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 					this->pPipelineGraphics_CopyBlit->BindBufferUniform(this->poBufferUniform_CopyBlitObjectCB, nBindingIndex);
 				}
@@ -636,6 +665,9 @@ namespace LostPeterOpenGL
         {
 			F_DELETE(this->poBufferUniform_ObjectCB)
             this->cameraAxisObjectCBs.clear();
+		#if F_PLATFORM == F_PLATFORM_MAC
+			F_DELETE(this->poBufferUniform_ObjectCB_Last)
+		#endif
         }
         //Quad Blit
         {

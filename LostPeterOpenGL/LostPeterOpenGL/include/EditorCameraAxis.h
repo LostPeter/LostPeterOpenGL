@@ -61,6 +61,11 @@ namespace LostPeterOpenGL
 
 		std::vector<CameraAxisObjectConstants> cameraAxisObjectCBs;
 		GLBufferUniform* poBufferUniform_ObjectCB;
+	#if F_PLATFORM == F_PLATFORM_MAC
+		CameraAxisObjectConstants cameraAxisObjectCB_Last;
+		GLBufferUniform* poBufferUniform_ObjectCB_Last;
+		uint32 nUniformBlockIndex_CameraAxisObject;
+	#endif
 
 		GLTexturePtrVector poTextureColors;
 		GLRenderBuffer* poRenderBufferDepthStencil;
