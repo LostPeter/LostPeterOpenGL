@@ -121,7 +121,7 @@ namespace LostPeterOpenGL
             this->objectCB_CopyBlit.offsetY = 0.0f;
             this->objectCB_CopyBlit.scaleX = 2.0f;
             this->objectCB_CopyBlit.scaleY = 2.0f;
-            this->pBuffer_CopyBlit = Base::GetWindowPtr()->createBufferUniform("BufferUniform-CopyBlitObjectConstants-" + this->name, 
+            this->pBuffer_CopyBlit = Base::GetWindowPtr()->createBufferUniform("CopyBlitObjectConstants-" + this->name, 
 																			   DescriptorSet_CopyBlitObjectConstants,
 																			   GL_DYNAMIC_DRAW,
 																			   sizeof(CopyBlitObjectConstants), 
@@ -139,7 +139,8 @@ namespace LostPeterOpenGL
     void GLPipelineGraphicsCopyBlitToFrame::UpdateDescriptorSets()
     {
         String nameCopyBlit = (*this->poDescriptorSetLayoutNames)[0];
-        this->pStatePipelineGraphics->SetUniformBlockBinding(nameCopyBlit, DescriptorSet_CopyBlitObjectConstants);
+		uint32 nUniformBlockIndex = this->pStatePipelineGraphics->GetUniformBlockIndex(nameCopyBlit);
+        this->pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, DescriptorSet_CopyBlitObjectConstants);
 		this->pStatePipelineGraphics->BindBufferUniform(this->pBuffer_CopyBlit, this->pBuffer_CopyBlit->GetBindingIndex());
     }
 

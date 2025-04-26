@@ -216,14 +216,9 @@ namespace LostPeterOpenGL
 	{
 		return this->poShaderProgram->GetUniformBlockIndex(name);
 	}
-	void GLStatePipelineGraphics::SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding)
-	{
-		this->poShaderProgram->SetUniformBlockBinding(name, nUniformBlockBinding);
-	}
-	void GLStatePipelineGraphics::SetUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding)
+	void GLStatePipelineGraphics::BindUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding)
 	{
 		this->mapBindIndex2UniformBlockIndex[nUniformBlockBinding] = nUniformBlockIndex;
-		this->poShaderProgram->SetUniformBlockBinding(nUniformBlockIndex, nUniformBlockBinding);
 	}
 
 	void GLStatePipelineGraphics::BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex)
@@ -297,6 +292,7 @@ namespace LostPeterOpenGL
 				GLBufferUniformPtrIDMap::iterator itFind = this->mapBufferUniform.find(nBindIndex);
 				if (itFind != this->mapBufferUniform.end())
 				{
+					this->poShaderProgram->SetUniformBlockBinding(nUniformBlockIndex, nBindIndex);
 					itFind->second->BindBufferUniformBlockIndex(nUniformBlockIndex);
 				}
 			}

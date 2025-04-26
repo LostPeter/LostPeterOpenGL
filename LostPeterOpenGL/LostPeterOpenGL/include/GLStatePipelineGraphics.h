@@ -57,7 +57,7 @@ namespace LostPeterOpenGL
 
 		GLShaderProgram* poShaderProgram;
 		bool isDeleteShaderProgram;
-		
+
 		Uint2UintMap mapBindIndex2UniformBlockIndex;
 		GLBufferUniformPtrIDMap mapBufferUniform;
 		GLTexturePtrIDMap mapTexture;
@@ -125,8 +125,7 @@ namespace LostPeterOpenGL
 		GLShaderProgram* GetShaderProgram() const { return this->poShaderProgram; }
 
 		uint32 GetUniformBlockIndex(const String& name);
-        void SetUniformBlockBinding(const String& name, uint32 nUniformBlockBinding);
-        void SetUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
+        void BindUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
 			
 	public:
 		void BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex);

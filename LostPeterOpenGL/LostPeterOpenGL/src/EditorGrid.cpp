@@ -102,7 +102,7 @@ namespace LostPeterOpenGL
     }
     void EditorGrid::initBufferUniforms()
     {
-		this->pBufferUniform = Base::GetWindowPtr()->createBufferUniform("BufferUniform-EditorGrid-GridObjectConstants",
+		this->pBufferUniform = Base::GetWindowPtr()->createBufferUniform("EditorGrid-GridObjectConstants",
 																		 DescriptorSet_GridObjectConstants,
 																		 GL_DYNAMIC_DRAW,
 																		 sizeof(GridObjectConstants),
@@ -168,13 +168,15 @@ namespace LostPeterOpenGL
 			if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
 			{
 				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-				this->pPipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
+				uint32 nBindingIndex = (uint32)DescriptorSet_PassConstants;
+				this->pPipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 			}
 			else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_GridObjectConstants)) //GridObjectConstants
 			{
 				uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-				this->pPipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
-				this->pPipelineGraphics->BindBufferUniform(this->pBufferUniform, i);
+				uint32 nBindingIndex = (uint32)DescriptorSet_GridObjectConstants;
+				this->pPipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
+				this->pPipelineGraphics->BindBufferUniform(this->pBufferUniform, nBindingIndex);
 			}
 			else
 			{

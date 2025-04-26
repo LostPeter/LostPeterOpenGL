@@ -691,7 +691,7 @@ namespace LostPeterOpenGL
             this->poBuffers_PassCB.resize(count);
             for (size_t i = 0; i < count; i++) 
             {
-                String nameBuffer = "BufferUniform-PassConstants-" + FUtilString::SaveSizeT(i);
+                String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
                 GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
                                                                       DescriptorSet_PassConstants,
                                                                       GL_DYNAMIC_DRAW,
@@ -2560,7 +2560,7 @@ namespace LostPeterOpenGL
                         F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, GL error: [%u] !", glGetError());
                     }
 
-                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "BufferUniform-" + nameBuffer);
+                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "" + nameBuffer);
                     return true;
                 }
                 void OpenGLWindow::updateGLBufferUniform(size_t offset,
@@ -3039,7 +3039,7 @@ namespace LostPeterOpenGL
                     this->poBuffers_ObjectCB.resize(count);
                     for (size_t i = 0; i < count; i++) 
                     {
-                        String nameBuffer = "BufferUniform-Object-" + FUtilString::SaveSizeT(i);
+                        String nameBuffer = "Object-" + FUtilString::SaveSizeT(i);
                         GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
                                                                               DescriptorSet_ObjectConstants,
                                                                               GL_DYNAMIC_DRAW,
@@ -3777,12 +3777,14 @@ namespace LostPeterOpenGL
                             if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
                             {
 								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
-								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
+								uint32 nBindingIndex = (uint32)DescriptorSet_PassConstants;
+								pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
                             }
                             else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)) //ObjectConstants
                             {
 								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
-								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
+								uint32 nBindingIndex = (uint32)DescriptorSet_ObjectConstants;
+								pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
                             }
 							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Material)) //Material
 							{
@@ -4649,7 +4651,10 @@ namespace LostPeterOpenGL
                     }   
 
                     setClearColorDepthStencil(clBg, depth, stencil);
-                    clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+					if (HasConfig_DepthStencil())
+						clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+					else
+						clear(GL_COLOR_BUFFER_BIT);
                 }
 
                     void OpenGLWindow::setEnable(GLenum cap, bool enable)
@@ -4676,17 +4681,23 @@ namespace LostPeterOpenGL
                     }
                     void OpenGLWindow::setClearDepth(float depth)
                     {
-                        glClearDepth(depth);
+						if (HasConfig_DepthStencil())
+						{
+							glClearDepth(depth);
+						}
                     }
                     void OpenGLWindow::setClearStencil(int stencil)
                     {
-                        glClearStencil(stencil);
+						if (HasConfig_DepthStencil())
+						{
+							glClearStencil(stencil);
+						}
                     }
                     void OpenGLWindow::setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil)
                     {
                         setClearColor(r, g, b, a);
-                        setClearDepth(depth);
-                        setClearStencil(stencil);
+						setClearDepth(depth);
+						setClearStencil(stencil);
                     }
                     void OpenGLWindow::setClearColorDepthStencil(const FVector4& color, float depth, int stencil)
                     {
