@@ -140,7 +140,11 @@ namespace LostPeterOpenGL
                 MeshSub* pMeshSub = pMesh->aMeshSubs[j];
 				
 				pMeshSub->pBufferVertexIndex->BindVertexArray();
-				pWindow->drawIndexedInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, instanceStart);
+			#if F_PLATFORM == F_PLATFORM_MAC
+				pWindow->drawIndexedInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount);
+			#else
+				pWindow->drawIndexedInstancedBaseInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount, instanceStart);
+			#endif
 				
                 instanceStart += pMeshSub->instanceCount;
             }

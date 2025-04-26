@@ -964,6 +964,7 @@ namespace LostPeterOpenGL
 						virtual void drawInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
 						virtual void drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount);
+						virtual void drawIndexedInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance);
 
                     virtual void endRenderPass(GLRenderPass* pRenderPass);
 

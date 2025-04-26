@@ -4851,6 +4851,10 @@ namespace LostPeterOpenGL
 					{
 						glDrawElementsInstanced(mode, count, type, indices, instancecount);
 					}
+					void OpenGLWindow::drawIndexedInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance)
+					{
+						glDrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
+					}
 
                 void OpenGLWindow::endRenderPass(GLRenderPass* pRenderPass)
                 {
