@@ -417,6 +417,7 @@ namespace LostPeterOpenGL
 	class GLStatePipelineGraphics;
     class GLTexture;
 
+	typedef std::map<uint32, uint32> Uint2UintMap;
     typedef std::map<uint32, uint32> UintID2UintTypeMap;
     typedef std::map<uint32, uint32> UintType2UintIDMap;
 

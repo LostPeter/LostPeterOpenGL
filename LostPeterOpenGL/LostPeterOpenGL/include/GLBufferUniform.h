@@ -49,6 +49,9 @@ namespace LostPeterOpenGL
                                   uint8* pBuf,
                                   GLenum access);
 
+	public:
+		uint32 GetBindingIndex() const { return this->nBindingIndex; }
+
     public:
         void BindBufferUniform();
         void BindBufferUniformBlockIndex(uint32 nUniformBlockIndex);

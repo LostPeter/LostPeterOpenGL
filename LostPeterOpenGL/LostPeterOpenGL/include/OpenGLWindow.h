@@ -54,6 +54,8 @@ namespace LostPeterOpenGL
         GLShaderPtrVector m_aShaders_Internal;
         GLShaderPtrMap m_mapShaders_Internal;
 
+	public:
+		virtual GLBufferUniform* GetUniform_PassCB();
 
     public:
         //Mesh

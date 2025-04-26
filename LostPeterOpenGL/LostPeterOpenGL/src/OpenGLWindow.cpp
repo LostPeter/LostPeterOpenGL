@@ -691,7 +691,7 @@ namespace LostPeterOpenGL
             this->poBuffers_PassCB.resize(count);
             for (size_t i = 0; i < count; i++) 
             {
-                String nameBuffer = "PassConstants-" + FUtilString::SaveSizeT(i);
+                String nameBuffer = "BufferUniform-PassConstants-" + FUtilString::SaveSizeT(i);
                 GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
                                                                       DescriptorSet_PassConstants,
                                                                       GL_DYNAMIC_DRAW,
@@ -709,6 +709,10 @@ namespace LostPeterOpenGL
 
             F_LogInfo("OpenGLWindow::createUniform_PassCB: Create Uniform Pass constant buffer success !");
         }
+		GLBufferUniform* OpenGLWindow::GetUniform_PassCB()
+	{
+		return this->poBuffers_PassCB[this->poCurrentFrame];
+	}
 
     //PipelineCompute
     void OpenGLWindow::destroyPipelineCompute_Internal()
@@ -830,6 +834,7 @@ namespace LostPeterOpenGL
 
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindState();
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindShader();
+		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindBufferUniforms();
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
         pTexture->BindTexture();
         
@@ -2547,8 +2552,8 @@ namespace LostPeterOpenGL
                     glGenBuffers(1, &nBufferUniformID);
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, usage);
-                    glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+					glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
 
                     if (GL_NO_ERROR != glGetError())
                     {
@@ -3034,7 +3039,7 @@ namespace LostPeterOpenGL
                     this->poBuffers_ObjectCB.resize(count);
                     for (size_t i = 0; i < count; i++) 
                     {
-                        String nameBuffer = "Object-" + FUtilString::SaveSizeT(i);
+                        String nameBuffer = "BufferUniform-Object-" + FUtilString::SaveSizeT(i);
                         GLBufferUniform* pBufferUniform = createBufferUniform(nameBuffer,
                                                                               DescriptorSet_ObjectConstants,
                                                                               GL_DYNAMIC_DRAW,
@@ -3743,7 +3748,7 @@ namespace LostPeterOpenGL
                     {
 						if (this->poTexture != nullptr)
 						{
-							this->poStatePipelineGraphics->BindTextureFragment(this->poTexture, 0);
+							this->poStatePipelineGraphics->BindTexture(this->poTexture, 0);
 						}
 						return;
 					}
@@ -3772,21 +3777,11 @@ namespace LostPeterOpenGL
                             if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
                             {
 								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
-                                for (uint32 j = 0; j < count_fb; j++)
-                                {
-                                    GLBufferUniform* pUBO_Pass = this->poBuffers_PassCB[j];
-                                    pUBO_Pass->BindBufferUniformBlockIndex(nUniformBlockIndex);
-                                }
 								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                             }
                             else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)) //ObjectConstants
                             {
 								uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDS);
-                                for (uint32 j = 0; j < count_fb; j++)
-                                {
-                                    GLBufferUniform* pUBO_Object = this->poBuffers_ObjectCB[j];
-                                    pUBO_Object->BindBufferUniformBlockIndex(nUniformBlockIndex);
-                                }
 								pStatePipelineGraphics->SetUniformBlockBinding(nUniformBlockIndex, i);
                             }
 							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Material)) //Material
@@ -3801,7 +3796,7 @@ namespace LostPeterOpenGL
 							{
 								if (this->poTexture != nullptr)
 								{
-									pStatePipelineGraphics->BindTextureFragment(this->poTexture, nBindingTextureFragementIndex);
+									pStatePipelineGraphics->BindTexture(this->poTexture, nBindingTextureFragementIndex);
 									nBindingTextureFragementIndex ++;
 								}
 							}
@@ -4034,6 +4029,10 @@ namespace LostPeterOpenGL
                     pBufferUniform->UpdateBuffer(sizeof(PassConstants),
                                                  (uint8*)(&this->passCB),
                                                  GL_WRITE_ONLY);
+					if (this->poStatePipelineGraphics != nullptr)
+					{
+						this->poStatePipelineGraphics->BindBufferUniform(pBufferUniform, pBufferUniform->GetBindingIndex());
+					}
                 }
                     void OpenGLWindow::updateCBs_PassTransformAndCamera(PassConstants& pass, FCamera* pCam, int nIndex)
                     {
@@ -4071,6 +4070,10 @@ namespace LostPeterOpenGL
                     pBufferUniform->Update(0, 
                                            sizeof(ObjectConstants) * count,
                                            (uint8*)this->objectCBs.data());
+					if (this->poStatePipelineGraphics != nullptr)
+					{
+						this->poStatePipelineGraphics->BindBufferUniform(pBufferUniform, pBufferUniform->GetBindingIndex());
+					}
                 }
                     void OpenGLWindow::updateCBs_ObjectsContent()
                     {

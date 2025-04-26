@@ -13,6 +13,7 @@
 #include "../include/OpenGLWindow.h"
 #include "../include/GLShaderProgram.h"
 #include "../include/GLShader.h"
+#include "../include/GLBufferUniform.h"
 #include "../include/GLTexture.h"
 
 namespace LostPeterOpenGL
@@ -206,10 +207,9 @@ namespace LostPeterOpenGL
 		}
 		this->poShaderProgram = nullptr;
 
-		this->mapBufferUniformVertex.clear();
-		this->mapBufferUniformFragment.clear();
-		this->mapTextureVertex.clear();
-		this->mapTextureFragment.clear();
+		this->mapBindIndex2UniformBlockIndex.clear();
+		this->mapBufferUniform.clear();
+		this->mapTexture.clear();
 	}
 
 	uint32 GLStatePipelineGraphics::GetUniformBlockIndex(const String& name)
@@ -222,24 +222,17 @@ namespace LostPeterOpenGL
 	}
 	void GLStatePipelineGraphics::SetUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding)
 	{
+		this->mapBindIndex2UniformBlockIndex[nUniformBlockBinding] = nUniformBlockIndex;
 		this->poShaderProgram->SetUniformBlockBinding(nUniformBlockIndex, nUniformBlockBinding);
 	}
 
-	void GLStatePipelineGraphics::BindBufferUniformVertex(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex)
+	void GLStatePipelineGraphics::BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex)
 	{
-
+		this->mapBufferUniform[nBindingIndex] = pBufferUnifom;
 	}
-	void GLStatePipelineGraphics::BindBufferUniformFragment(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex)
+	void GLStatePipelineGraphics::BindTexture(GLTexture* pTexture, uint32 nBindingIndex)
 	{
-		
-	}
-	void GLStatePipelineGraphics::BindTextureVertex(GLTexture* pTexture, uint32 nBindingIndex)
-	{
-		this->mapTextureVertex[nBindingIndex] = pTexture;
-	}
-	void GLStatePipelineGraphics::BindTextureFragment(GLTexture* pTexture, uint32 nBindingIndex)
-	{
-		this->mapTextureFragment[nBindingIndex] = pTexture;
+		this->mapTexture[nBindingIndex] = pTexture;
 	}
 
 	void GLStatePipelineGraphics::BindState()
@@ -292,34 +285,32 @@ namespace LostPeterOpenGL
 
 	void GLStatePipelineGraphics::BindBufferUniforms()
 	{
-
-	}
-	void GLStatePipelineGraphics::BindTextures()
-	{
-		size_t count = 0;
-
-		//Vertex
+		size_t count = this->mapBindIndex2UniformBlockIndex.size();
+		if (count > 0)
 		{
-			count = this->mapTextureVertex.size();
-			if (count > 0)
+			for (Uint2UintMap::iterator it = this->mapBindIndex2UniformBlockIndex.begin();
+				 it != this->mapBindIndex2UniformBlockIndex.end(); ++it)
 			{
-				for (GLTexturePtrIDMap::iterator it = this->mapTextureVertex.begin();
-					 it != this->mapTextureVertex.end(); ++it)
+				uint32 nBindIndex = it->first;
+				uint32 nUniformBlockIndex = it->second;
+				
+				GLBufferUniformPtrIDMap::iterator itFind = this->mapBufferUniform.find(nBindIndex);
+				if (itFind != this->mapBufferUniform.end())
 				{
-					it->second->BindTexture();
+					itFind->second->BindBufferUniformBlockIndex(nUniformBlockIndex);
 				}
 			}
 		}
-		//Fragment
+	}
+	void GLStatePipelineGraphics::BindTextures()
+	{
+		size_t count = this->mapTexture.size();
+		if (count > 0)
 		{
-			count = this->mapTextureFragment.size();
-			if (count > 0)
+			for (GLTexturePtrIDMap::iterator it = this->mapTexture.begin();
+					it != this->mapTexture.end(); ++it)
 			{
-				for (GLTexturePtrIDMap::iterator it = this->mapTextureFragment.begin();
-					 it != this->mapTextureFragment.end(); ++it)
-				{
-					it->second->BindTexture();
-				}
+				it->second->BindTexture();
 			}
 		}
 	}
