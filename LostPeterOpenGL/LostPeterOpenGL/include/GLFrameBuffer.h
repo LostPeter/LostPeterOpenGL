@@ -45,6 +45,9 @@ namespace LostPeterOpenGL
                   bool isDeleteColors = false,
                   bool isDeleteDepthStencil = false);
 
+	public:
+		bool HasDepthStencil() const { return this->pRenderBufferDepthStencil != nullptr; }
+
     public:
         void BindFrameBuffer();
 

@@ -81,12 +81,11 @@ layout (std140) uniform PassConstants
 
 
 ///////////////////////////////// ObjectConstants ///////////////////////////////
+//ObjectConstants
 struct ObjectConstant
 {
 	mat4 g_MatWorld;
-};
-
-//ObjectConstants
+};	
 layout (std140) uniform ObjectConstants
 {
     ObjectConstant objs[MAX_OBJECT_COUNT];
@@ -102,11 +101,15 @@ struct OutlineObjectConstants
 };
 
 //CameraAxisObjectConstants
-struct CameraAxisObjectConstants
+struct CameraAxisObjectConstant
 {
-    mat4 g_MatWorld;
+	mat4 g_MatWorld;
     vec4 color;
 };
+layout (std140) uniform CameraAxisObjectConstants
+{
+    CameraAxisObjectConstant objs[MAX_OBJECT_CAMERAAXIS_COUNT];
+} cameraAxisObjectConsts;
 
 //CoordinateAxisObjectConstants
 struct CoordinateAxisObjectConstants

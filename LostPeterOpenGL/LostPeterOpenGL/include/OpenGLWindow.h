@@ -403,6 +403,10 @@ namespace LostPeterOpenGL
             virtual void createSwapChainObjects();
                 virtual void createSwapChain();
                     virtual void createViewport();
+					virtual void createViewport(uint32_t width,
+												uint32_t height,
+												FRectI& poViewport, 
+												FRectI& poScissor);
                 virtual void createSwapChainImageViews();
                     virtual void createColorResources();
                     virtual void createDepthStencilResources();
@@ -422,7 +426,9 @@ namespace LostPeterOpenGL
                         virtual GLRenderPass* createRenderPass_DefaultCustom();
                         virtual GLRenderPass* createRenderPass_KhrDepth(int formatSwapChain, int formatDepth);
                         virtual GLRenderPass* createRenderPass_ColorDepthMSAA(int formatColor, int formatDepth, int formatSwapChain, int samples);
-
+						
+						virtual GLRenderPass* createRenderPass(String nameRenderPass,
+															   GLFrameBuffer* pFrameBuffer);
 
 
                 virtual void createFramebuffers();
@@ -904,6 +910,8 @@ namespace LostPeterOpenGL
                 virtual void updateRenderCommandBuffers_CustomBeforeDefault();
                 virtual void updateRenderCommandBuffers_Default();
 
+					virtual void updateRenderPass_EditorCameraAxis();
+
                     virtual void updateRenderPass_CustomBeforeDefault();
                     virtual void updateRenderPass_Default();
                         virtual void updateMeshDefault_Before();
@@ -915,7 +923,8 @@ namespace LostPeterOpenGL
                             virtual void drawMeshDefault_Imgui();
                         virtual void updateMeshDefault_After();
                     virtual void updateRenderPass_CustomAfterDefault();
-
+					
+					virtual void updateRenderPass_BlitFromFrame();
 
                     virtual void beginRenderPass(const String& nameRenderPass,
                                                  GLRenderPass* pRenderPass,
@@ -946,7 +955,11 @@ namespace LostPeterOpenGL
 						virtual void setBlendFunci(GLuint buf, GLenum src, GLenum dst);
 						virtual void setBlendEquation(GLenum mode);
 						virtual void setColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-                    
+						
+						virtual void setViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+						virtual void setScissorRect(GLint x, GLint y, GLsizei width, GLsizei height);
+						virtual void setViewportScissorRect(const FRectI& poViewport, const FRectI& poScissor);
+
                         virtual void draw(GLenum mode, GLint first, GLsizei count);
 						virtual void drawInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount);
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);

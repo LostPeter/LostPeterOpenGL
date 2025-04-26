@@ -1800,6 +1800,21 @@ namespace LostPeterOpenGL
 					this->width, this->height,
 					this->poFramebufferSize.x, this->poFramebufferSize.y);
             }
+			void OpenGLWindow::createViewport(uint32_t width,
+											  uint32_t height,
+											  FRectI& poViewport, 
+											  FRectI& poScissor)
+			{
+				poViewport.left = 0;
+                poViewport.top = 0;
+                poViewport.right = (int)width;
+                poViewport.bottom = (int)height;
+
+				poScissor.left = 0;
+                poScissor.top = 0;
+                poScissor.right = (int)width;
+                poScissor.bottom = (int)height;
+			}
         void OpenGLWindow::createSwapChainImageViews()
         {
             int count_swapchain = s_maxFramesInFight;
@@ -2005,6 +2020,20 @@ namespace LostPeterOpenGL
 
                     return pRenderPass;
                 }
+
+				GLRenderPass* OpenGLWindow::createRenderPass(String nameRenderPass,
+															 GLFrameBuffer* pFrameBuffer)
+				{
+					GLRenderPass* pRenderPass = new GLRenderPass(nameRenderPass);
+                    if (!pRenderPass->Init())
+                    {
+                        F_LogError("*********************** OpenGLWindow::createRenderPass: Failed to create RenderPass, name: [%s] !", nameRenderPass.c_str());
+                        return nullptr;
+                    }
+					pRenderPass->SetFrameBuffer(pFrameBuffer);
+
+                    return pRenderPass;
+				}
 
 
         void OpenGLWindow::createFramebuffers()
@@ -3881,7 +3910,10 @@ namespace LostPeterOpenGL
             }
             void OpenGLWindow::createEditor_CameraAxis()
             {
+				this->pEditorCameraAxis = new EditorCameraAxis();
+				this->pEditorCameraAxis->Init();
 
+				F_LogInfo("<2-3-2> OpenGLWindow::createEditor_CameraAxis finish !");
             }
             void OpenGLWindow::createEditor_CoordinateAxis()    
             {
@@ -3961,6 +3993,9 @@ namespace LostPeterOpenGL
                 updateRenderCommandBuffers_Default();
             }
             updateRenderCommandBuffers_CustomAfterDefault();
+
+			//7> BlitToFrame
+			updateRenderPass_BlitFromFrame();
         }
             void OpenGLWindow::updateCBs_Default()
             {
@@ -4473,10 +4508,10 @@ namespace LostPeterOpenGL
                 {
                     this->pEditorGrid->UpdateCBs();
                 }
-                // if (this->pEditorCameraAxis != nullptr)
-                // {
-                //     this->pEditorCameraAxis->UpdateCBs();
-                // }
+                if (this->pEditorCameraAxis != nullptr)
+                {
+                    this->pEditorCameraAxis->UpdateCBs();
+                }
                 // if (this->pEditorCoordinateAxis != nullptr)
                 // {
                 //     this->pEditorCoordinateAxis->UpdateCBs();
@@ -4494,6 +4529,8 @@ namespace LostPeterOpenGL
             void OpenGLWindow::updateRenderCommandBuffers_Default()
             {
 
+				updateRenderPass_EditorCameraAxis();
+
                 {
                     updateRenderPass_CustomBeforeDefault();
                     {
@@ -4503,6 +4540,35 @@ namespace LostPeterOpenGL
                 }
 
             }
+				void OpenGLWindow::updateRenderPass_EditorCameraAxis()
+				{
+					if (this->pEditorCameraAxis == nullptr ||
+						!this->cfg_isEditorCameraAxisShow)
+					{
+						return;
+					}
+
+					GLRenderPass* pRenderPass = this->pEditorCameraAxis->poRenderPassCameraAxis;
+					if (pRenderPass == nullptr)
+						return;
+
+					beginRenderPass("[RenderPass-EditorCameraAxis]",
+									pRenderPass,
+									this->pEditorCameraAxis->poOffset,
+									this->pEditorCameraAxis->poExtent,
+									this->pEditorCameraAxis->poColorBackground,
+									1.0f,
+									0);
+					{
+						//1> Viewport
+						setViewportScissorRect(this->pEditorCameraAxis->poViewport, this->pEditorCameraAxis->poScissor);
+
+						//2> Render CameraAxis
+						this->pEditorCameraAxis->Draw();
+					}
+					endRenderPass(pRenderPass);
+				}
+
                 void OpenGLWindow::updateRenderPass_CustomBeforeDefault()
                 {
 
@@ -4520,7 +4586,7 @@ namespace LostPeterOpenGL
                                         0);
                         {
                             //1> Viewport
-                            
+                            setViewportScissorRect(this->poViewport, this->poScissor);
 
                             //2> Default
                             drawMeshDefault();
@@ -4591,13 +4657,13 @@ namespace LostPeterOpenGL
                                     this->pEditorGrid->Draw();
                                 }
                             }
-                            // if (this->pEditorCameraAxis != nullptr)
-                            // {
-                            //     if (this->cfg_isEditorCameraAxisShow)
-                            //     {
-                            //         this->pEditorCameraAxis->DrawQuad();
-                            //     }
-                            // }
+                            if (this->pEditorCameraAxis != nullptr)
+                            {
+                                if (this->cfg_isEditorCameraAxisShow)
+                                {
+                                    this->pEditorCameraAxis->DrawQuad();
+                                }
+                            }
                             // if (this->pEditorCoordinateAxis != nullptr)
                             // {
                             //     if (this->cfg_isEditorCoordinateAxisShow)
@@ -4634,7 +4700,10 @@ namespace LostPeterOpenGL
 
                 }
 
-
+				void OpenGLWindow::updateRenderPass_BlitFromFrame()
+				{
+					Draw_Graphics_CopyBlitToFrame(this->poRenderPass->pFrameBuffer);
+				}
 
                 void OpenGLWindow::beginRenderPass(const String& nameRenderPass,
                                                    GLRenderPass* pRenderPass,
@@ -4645,18 +4714,18 @@ namespace LostPeterOpenGL
                                                    int stencil)
                 {
                     this->poDebug->BeginRegion(nameRenderPass.c_str(), GL_DEBUG_SOURCE_APPLICATION);
-
-                    if (pRenderPass != nullptr &&
-                        pRenderPass->pFrameBuffer != nullptr)
-                    {   
-                        pRenderPass->pFrameBuffer->BindFrameBuffer();
-                    }   
-
-                    setClearColorDepthStencil(clBg, depth, stencil);
-					if (HasConfig_DepthStencil())
+					
+                    pRenderPass->pFrameBuffer->BindFrameBuffer();
+					if (pRenderPass->pFrameBuffer->HasDepthStencil())
+					{
+						setClearColorDepthStencil(clBg, depth, stencil);
 						clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+					}
 					else
+					{
+						setClearColor(clBg);
 						clear(GL_COLOR_BUFFER_BIT);
+					}
                 }
 
                     void OpenGLWindow::setEnable(GLenum cap, bool enable)
@@ -4683,17 +4752,11 @@ namespace LostPeterOpenGL
                     }
                     void OpenGLWindow::setClearDepth(float depth)
                     {
-						if (HasConfig_DepthStencil())
-						{
-							glClearDepth(depth);
-						}
+						glClearDepth(depth);
                     }
                     void OpenGLWindow::setClearStencil(int stencil)
                     {
-						if (HasConfig_DepthStencil())
-						{
-							glClearStencil(stencil);
-						}
+						glClearStencil(stencil);	
                     }
                     void OpenGLWindow::setClearColorDepthStencil(float r, float g, float b, float a, float depth, int stencil)
                     {
@@ -4758,6 +4821,20 @@ namespace LostPeterOpenGL
 						glColorMask(red, green, blue, alpha);
 					}
 
+					void OpenGLWindow::setViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+					{
+						glViewport(x, y, width, height);
+					}
+					void OpenGLWindow::setScissorRect(GLint x, GLint y, GLsizei width, GLsizei height)
+					{
+						glScissor(x, y, width, height);
+					}
+					void OpenGLWindow::setViewportScissorRect(const FRectI& poViewport, const FRectI& poScissor)
+					{
+						setViewport(poViewport.left, poViewport.top, poViewport.Width(), poViewport.Height());
+						setScissorRect(poScissor.left, poScissor.top, poScissor.Width(), poScissor.Height());
+					}
+
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
                     {
                         glDrawArrays(mode, first, count);
@@ -4777,18 +4854,12 @@ namespace LostPeterOpenGL
 
                 void OpenGLWindow::endRenderPass(GLRenderPass* pRenderPass)
                 {
-                    if (pRenderPass != nullptr &&
-                        pRenderPass->pFrameBuffer != nullptr)
-                    {   
-                        bindGLFrameBuffer(0);
-                        
-                        setEnableDepthTest(false);
-                        setPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        setClearColor(this->cfg_colorBackground);
-                        clear(GL_COLOR_BUFFER_BIT);
-
-                        Draw_Graphics_CopyBlitToFrame(pRenderPass->pFrameBuffer);
-                    }   
+					bindGLFrameBuffer(0);
+					
+					setEnableDepthTest(false);
+					setPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+					setClearColor(this->cfg_colorBackground);
+					clear(GL_COLOR_BUFFER_BIT);
 
                     this->poDebug->EndRegion(); 
                 }
@@ -4948,10 +5019,10 @@ namespace LostPeterOpenGL
                 {
                     this->pEditorGrid->CleanupSwapChain();
                 }
-                // if (this->pEditorCameraAxis != nullptr)
-                // {
-                //     this->pEditorCameraAxis->CleanupSwapChain();
-                // }
+                if (this->pEditorCameraAxis != nullptr)
+                {
+                    this->pEditorCameraAxis->CleanupSwapChain();
+                }
                 // if (this->pEditorCoordinateAxis != nullptr)
                 // {
                 //     this->pEditorCoordinateAxis->CleanupSwapChain();
@@ -5026,10 +5097,10 @@ namespace LostPeterOpenGL
 				{
 					this->pEditorGrid->RecreateSwapChain();
 				}
-				// if (this->pEditorCameraAxis != nullptr)
-				// {
-				// 	this->pEditorCameraAxis->RecreateSwapChain();
-				// }
+				if (this->pEditorCameraAxis != nullptr)
+				{
+					this->pEditorCameraAxis->RecreateSwapChain();
+				}
 				// if (this->pEditorCoordinateAxis != nullptr)
 				// {
 				// 	this->pEditorCoordinateAxis->RecreateSwapChain();
