@@ -2576,11 +2576,13 @@ namespace LostPeterOpenGL
                 {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID); 
                 }
-                void OpenGLWindow::bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex)
+                void OpenGLWindow::bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex, uint32 bindingIndex, size_t offset, size_t bufSize)
                 {
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBindBufferBase(GL_UNIFORM_BUFFER, nUniformBlockIndex, nBufferUniformID);
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+					glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, offset, bufSize);
                 }
                 void OpenGLWindow::destroyGLBufferUniform(uint32 nBufferUniformID)
                 {
