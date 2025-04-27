@@ -565,7 +565,7 @@ namespace LostPeterOpenGL
                                                        uint8* pBuf,
                                                        uint32 nBufferUniformID);
                     virtual void bindGLBufferUniform(uint32 nBufferUniformID);
-                    virtual void bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 nUniformBlockIndex, uint32 bindingIndex, size_t offset, size_t bufSize);
+                    virtual void bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 bindingIndex, size_t offset, size_t bufSize);
                     virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
 
                     virtual void* mapGLBuffer(uint32 nBufferID, GLenum target, GLenum access);

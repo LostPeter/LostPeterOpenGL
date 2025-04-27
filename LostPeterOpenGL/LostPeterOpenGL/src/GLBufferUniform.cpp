@@ -108,9 +108,9 @@ namespace LostPeterOpenGL
     {
         Base::GetWindowPtr()->bindGLBufferUniform(this->nBufferUniformID);
     }
-    void GLBufferUniform::BindBufferUniformBlockIndex(uint32 nUniformBlockIndex)
+    void GLBufferUniform::BindBufferUniformBlockIndex()
     {
-        Base::GetWindowPtr()->bindGLBufferUniformBlockIndex(this->nBufferUniformID, nUniformBlockIndex, this->nBindingIndex, 0, this->nBufferSize);
+        Base::GetWindowPtr()->bindGLBufferUniformBlockIndex(this->nBufferUniformID, this->nBindingIndex, 0, this->nBufferSize);
     }
 
 }; //LostPeterOpenGL

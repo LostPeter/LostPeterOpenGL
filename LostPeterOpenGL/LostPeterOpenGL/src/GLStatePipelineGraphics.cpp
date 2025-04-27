@@ -288,12 +288,10 @@ namespace LostPeterOpenGL
 				 it != this->mapBindIndex2UniformBlockIndex.end(); ++it)
 			{
 				uint32 nBindIndex = it->first;
-				uint32 nUniformBlockIndex = it->second;
-				
 				GLBufferUniformPtrIDMap::iterator itFind = this->mapBufferUniform.find(nBindIndex);
 				if (itFind != this->mapBufferUniform.end())
 				{
-					itFind->second->BindBufferUniformBlockIndex(nUniformBlockIndex);
+					itFind->second->BindBufferUniformBlockIndex();
 				}
 			}
 		}

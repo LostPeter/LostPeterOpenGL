@@ -54,7 +54,7 @@ namespace LostPeterOpenGL
 
     public:
         void BindBufferUniform();
-        void BindBufferUniformBlockIndex(uint32 nUniformBlockIndex);
+        void BindBufferUniformBlockIndex();
 
     protected:
         virtual void destroyBuffer();

@@ -63,7 +63,6 @@ namespace LostPeterOpenGL
 		, poBufferUniform_ObjectCB(nullptr)
 	#if F_PLATFORM == F_PLATFORM_MAC
 		, poBufferUniform_ObjectCB_Last(nullptr)
-		, nUniformBlockIndex_CameraAxisObject(0)
 	#endif
 
 		, poRenderBufferDepthStencil(nullptr)
@@ -152,7 +151,7 @@ namespace LostPeterOpenGL
 			#if F_PLATFORM == F_PLATFORM_MAC
 				if (i > 0)
 				{
-					poBufferUniform_ObjectCB_Last->BindBufferUniformBlockIndex(this->nUniformBlockIndex_CameraAxisObject);
+					poBufferUniform_ObjectCB_Last->BindBufferUniformBlockIndex();
 				}
 				pWindow->drawIndexedInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount);
 			#else
@@ -611,10 +610,6 @@ namespace LostPeterOpenGL
 					uint32 nBindingIndex = (uint32)DescriptorSet_CameraAxisObjectConstants;
 					this->pPipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 					this->pPipelineGraphics->BindBufferUniform(this->poBufferUniform_ObjectCB, nBindingIndex);
-				
-				#if F_PLATFORM == F_PLATFORM_MAC
-					this->nUniformBlockIndex_CameraAxisObject = nUniformBlockIndex;
-				#endif
 				}
 				else
 				{
@@ -636,7 +631,7 @@ namespace LostPeterOpenGL
 
 				if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_CopyBlitObjectConstants)) //CopyBlitObjectConstants
 				{
-					uint32 nUniformBlockIndex = this->pPipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
+					uint32 nUniformBlockIndex = this->pPipelineGraphics_CopyBlit->GetUniformBlockIndex(nameDescriptorSet);
 					uint32 nBindingIndex = (uint32)DescriptorSet_CopyBlitObjectConstants;
 					this->pPipelineGraphics_CopyBlit->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 					this->pPipelineGraphics_CopyBlit->BindBufferUniform(this->poBufferUniform_CopyBlitObjectCB, nBindingIndex);
