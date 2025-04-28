@@ -17,6 +17,8 @@ layout (location = 0) in vec3 inPosition;
 layout (location = 1) in vec4 inColor;
 layout (location = 2) in vec2 inTexCoord;
 
+uniform int uBaseInstance;
+
 out vec4 fragWorldPos;
 out vec4 fragColor;
 out vec2 fragTexCoord;
@@ -25,12 +27,13 @@ void main()
 {
 	int viewIndex = 0;
 	TransformConstants trans = passConsts.g_Transforms[viewIndex];
-	CameraAxisObjectConstant obj = cameraAxisObjectConsts.objs[gl_InstanceID];
+	int instanceIndex = int(gl_InstanceID) + uBaseInstance;
+	CameraAxisObjectConstant obj = cameraAxisObjectConsts.objs[instanceIndex];
 
 	vec4 outWorldPos = obj.g_MatWorld * vec4(inPosition, 1.0);
     gl_Position = trans.mat4Proj * trans.mat4View * outWorldPos;
 	fragWorldPos.xyz = outWorldPos.xyz / outWorldPos.w;
-	fragWorldPos.w = gl_InstanceID;
+	fragWorldPos.w = instanceIndex;
     fragColor = inColor;
     fragTexCoord = inTexCoord;
 }

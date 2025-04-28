@@ -15,6 +15,7 @@
 #include "../include/MeshSub.h"
 #include "../include/GLBufferVertexIndex.h"
 #include "../include/GLBufferUniform.h"
+#include "../include/GLShaderProgram.h"
 #include "../include/GLStatePipelineGraphics.h"
 #include "../include/GLShader.h"
 #include "../include/GLTexture.h"
@@ -138,6 +139,7 @@ namespace LostPeterOpenGL
 		this->pPipelineGraphics->BindTextures();
 
         uint32_t instanceStart = 0;
+        this->pPipelineGraphics->poShaderProgram->SetInt("uBaseInstance", 0);
         size_t count_mesh = s_nMeshCameraAxisCount;
         for (size_t i = 0; i < count_mesh; i++)
         {
@@ -155,6 +157,10 @@ namespace LostPeterOpenGL
 				}
 				pWindow->drawIndexedInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount);
 			#else
+                if (i > 0)
+                {
+                    this->pPipelineGraphics->poShaderProgram->SetInt("uBaseInstance", (int)instanceStart);
+                }
 				pWindow->drawIndexedInstancedBaseInstance(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0, pMeshSub->instanceCount, instanceStart);
 			#endif
 				
