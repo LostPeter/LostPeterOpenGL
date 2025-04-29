@@ -3572,6 +3572,11 @@ namespace LostPeterOpenGL
 																				nullptr,
 																				this->poShaderFragment,
 																				this->poTypeVertex,
+																				this->poTypePrimitive,
+																				this->poIsCull,
+																				this->poTypeFrontFace,
+																				this->poTypeCulling,
+																				this->poTypePolygonMode,
 																				this->poDepthEnabled,
 																				this->poDepthFuncCompare,
 																				this->poDepthTestEnabled,
@@ -3611,6 +3616,11 @@ namespace LostPeterOpenGL
 																					   GLShaderProgram* pShaderProgram,
 																					   bool deleteShaderProgram,
 																					   FMeshVertexType typeVertex,
+																					   GLenum typePrimitive,
+																					   bool isCull,
+																					   GLenum typeFrontFace,
+																					   GLenum typeCulling,
+																					   GLenum typePolygonMode,
 																					   bool depthEnabled,
 																					   GLenum depthFuncCompare,
 																					   bool depthTestEnabled,
@@ -3638,6 +3648,11 @@ namespace LostPeterOpenGL
 						if (!pStatePipelineGraphics->Init(pShaderProgram,
 														  deleteShaderProgram,
 														  typeVertex,
+														  typePrimitive,
+														  isCull,
+														  typeFrontFace,
+														  typeCulling,
+														  typePolygonMode,
 														  depthEnabled,
 														  depthFuncCompare,
 														  depthTestEnabled,
@@ -3673,6 +3688,11 @@ namespace LostPeterOpenGL
 																					   GLShader* pShaderGeometry,
 																					   GLShader* pShaderFragment,
 																					   FMeshVertexType typeVertex,
+																					   GLenum typePrimitive,
+																					   bool isCull,
+																					   GLenum typeFrontFace,
+																					   GLenum typeCulling,
+																					   GLenum typePolygonMode,
 																					   bool depthEnabled,
 																					   GLenum depthFuncCompare,
 																					   bool depthTestEnabled,
@@ -3703,6 +3723,11 @@ namespace LostPeterOpenGL
 														  pShaderGeometry,
 														  pShaderFragment,
 														  typeVertex,
+														  typePrimitive,
+														  isCull,
+														  typeFrontFace,
+														  typeCulling,
+														  typePolygonMode,
 														  depthEnabled,
 														  depthFuncCompare,
 														  depthTestEnabled,
@@ -4611,13 +4636,10 @@ namespace LostPeterOpenGL
                             if (this->poStatePipelineGraphics == nullptr)
                                 return;
 
-                            //State
-                            setFrontFace(this->poTypeFrontFace);
-                            setEnable(GL_CULL_FACE, this->poIsCull);
-                            setCullFace(this->poTypeCulling);
-                            setPolygonMode(GL_FRONT_AND_BACK, this->poTypePolygonMode);
+							setPolygonMode(GL_FRONT_AND_BACK, this->poTypePolygonMode);
 
-							//Shader
+                            //State/Shader/BufferUniform/Texture
+							this->poStatePipelineGraphics->poTypePolygonMode = this->poTypePolygonMode;
 							this->poStatePipelineGraphics->BindState();
 							this->poStatePipelineGraphics->BindShader();
 							this->poStatePipelineGraphics->BindBufferUniforms();
@@ -4627,12 +4649,12 @@ namespace LostPeterOpenGL
                             if (this->pBufferVertex != nullptr)
                             {
                                 this->pBufferVertex->BindVertexArray();
-                                drawInstance(this->poTypePrimitive, 0, this->poVertexCount, 1);
+                                drawInstance(this->poStatePipelineGraphics->poTypePrimitive, 0, this->poVertexCount, 1);
                             }
                             else if (this->pBufferVertexIndex != nullptr)
                             {   
                                 this->pBufferVertexIndex->BindVertexArray();
-                                drawIndexedInstance(this->poTypePrimitive, this->poIndexCount, GL_UNSIGNED_INT, 0, 1);
+                                drawIndexedInstance(this->poStatePipelineGraphics->poTypePrimitive, this->poIndexCount, GL_UNSIGNED_INT, 0, 1);
                             }
 							else
 							{	

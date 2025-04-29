@@ -26,6 +26,12 @@ namespace LostPeterOpenGL
 
 		, poTypeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
 
+		, poTypePrimitive(GL_TRIANGLES)
+		, poIsCull(true)
+        , poTypeFrontFace(GL_CW)
+        , poTypeCulling(GL_BACK)
+        , poTypePolygonMode(GL_FILL)
+
 		, poDepthEnabled(false)
 		, poDepthFuncCompare(GL_LEQUAL)
 		, poDepthTestEnabled(false)
@@ -71,6 +77,11 @@ namespace LostPeterOpenGL
 	bool GLStatePipelineGraphics::Init(GLShaderProgram* pShaderProgram,
 									   bool deleteShaderProgram,
 									   FMeshVertexType typeVertex,
+									   GLenum typePrimitive,
+									   bool isCull,
+									   GLenum typeFrontFace,
+									   GLenum typeCulling,
+									   GLenum typePolygonMode,
 									   bool depthEnabled,
 									   GLenum depthFuncCompare,
 									   bool depthTestEnabled,
@@ -98,6 +109,12 @@ namespace LostPeterOpenGL
 		this->isDeleteShaderProgram = deleteShaderProgram;
 
 		this->poTypeVertex = typeVertex;
+		
+		this->poTypePrimitive = typePrimitive;
+        this->poIsCull = isCull;
+        this->poTypeFrontFace = typeFrontFace;
+        this->poTypeCulling = typeCulling;
+        this->poTypePolygonMode = typePolygonMode;
 
 		this->poDepthEnabled = depthEnabled;
 		this->poDepthFuncCompare = depthFuncCompare;
@@ -134,6 +151,11 @@ namespace LostPeterOpenGL
 									   GLShader* pShaderGeometry,
 									   GLShader* pShaderFragment,
 									   FMeshVertexType typeVertex,
+									   GLenum typePrimitive,
+									   bool isCull,
+									   GLenum typeFrontFace,
+									   GLenum typeCulling,
+									   GLenum typePolygonMode,
 									   bool depthEnabled,
 									   GLenum depthFuncCompare,
 									   bool depthTestEnabled,
@@ -173,6 +195,11 @@ namespace LostPeterOpenGL
 		return Init(pShaderProgram,
 					true,
 					typeVertex,
+					typePrimitive,
+					isCull,
+					typeFrontFace,
+					typeCulling,
+					typePolygonMode,
 					depthEnabled,
 					depthFuncCompare,
 					depthTestEnabled,
@@ -233,6 +260,12 @@ namespace LostPeterOpenGL
 
 	void GLStatePipelineGraphics::BindState()
 	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		pWindow->setFrontFace(this->poTypeFrontFace);
+		pWindow->setEnable(GL_CULL_FACE, this->poIsCull);
+		pWindow->setCullFace(this->poTypeCulling);
+		pWindow->setPolygonMode(GL_FRONT_AND_BACK, this->poTypePolygonMode);
+
 		bindStateDepth(this->poDepthEnabled);
 		bindStateStencil(this->poStencilEnabled);
 		bindStateBlend(this->poBlendEnabled);

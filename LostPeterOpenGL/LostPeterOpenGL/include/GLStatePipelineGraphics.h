@@ -27,6 +27,12 @@ namespace LostPeterOpenGL
 		StringVector* poDescriptorSetLayoutNames;
 
 		FMeshVertexType poTypeVertex;
+
+		GLenum poTypePrimitive;
+        bool poIsCull;
+        GLenum poTypeFrontFace;
+        GLenum poTypeCulling;
+        GLenum poTypePolygonMode;
 		
 		bool poDepthEnabled;
 		GLenum poDepthFuncCompare;
@@ -68,6 +74,11 @@ namespace LostPeterOpenGL
 		bool Init(GLShaderProgram* pShaderProgram,
 				  bool deleteShaderProgram,
 				  FMeshVertexType typeVertex,
+				  GLenum typePrimitive,
+				  bool isCull,
+				  GLenum typeFrontFace,
+				  GLenum typeCulling,
+				  GLenum typePolygonMode,
 				  bool depthEnabled,
 				  GLenum depthFuncCompare,
 				  bool depthTestEnabled,
@@ -96,6 +107,11 @@ namespace LostPeterOpenGL
 				  GLShader* pShaderGeometry,
 				  GLShader* pShaderFragment,
 				  FMeshVertexType typeVertex,
+				  GLenum typePrimitive,
+				  bool isCull,
+				  GLenum typeFrontFace,
+				  GLenum typeCulling,
+				  GLenum typePolygonMode,
 				  bool depthEnabled,
 				  GLenum depthFuncCompare,
 				  bool depthTestEnabled,
