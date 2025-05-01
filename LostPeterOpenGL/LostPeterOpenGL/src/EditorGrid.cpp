@@ -131,7 +131,7 @@ namespace LostPeterOpenGL
 																	   GL_CW,
 																	   GL_BACK,
 																	   GL_FILL,
-																	   pWindow->HasConfig_DepthStencil(),
+																	   false,
 																	   GL_LEQUAL,
 																	   false,
 																	   false,

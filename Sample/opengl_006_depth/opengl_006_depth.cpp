@@ -450,7 +450,7 @@ void OpenGL_006_Depth::modelConfig()
 {
     if (ImGui::CollapsingHeader("Model Settings"))
     {
-        int count = this->m_aModelObjects.size();
+        int count = (int)this->m_aModelObjects.size();
         for (int i = 0; i < count; i++)
         {
             ModelObject* pModelObject = this->m_aModelObjects[i];
