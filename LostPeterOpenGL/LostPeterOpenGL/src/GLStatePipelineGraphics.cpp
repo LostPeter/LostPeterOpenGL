@@ -282,7 +282,10 @@ namespace LostPeterOpenGL
 		pWindow->setEnable(GL_DEPTH_TEST, depthEnable);
 		if (depthEnable)
 		{
-			pWindow->setDepthFunc(this->poDepthFuncCompare);
+			if (!this->poDepthTestEnabled)
+				pWindow->setDepthFunc(GL_ALWAYS);
+			else
+				pWindow->setDepthFunc(this->poDepthFuncCompare);
 			pWindow->setDepthWrite(this->poDepthWriteEnabled);
 		}
 	}

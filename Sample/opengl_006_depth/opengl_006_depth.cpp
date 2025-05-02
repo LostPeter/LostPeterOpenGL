@@ -261,7 +261,7 @@ void OpenGL_006_Depth::createCustomCB()
 
 		String nameBuffer = "ObjectConstants-" + FUtilString::SaveInt((int)i);
 		pModelObject->poBufferUniform = createBufferUniform(nameBuffer,
-															DescriptorSet_PassConstants,
+															DescriptorSet_ObjectConstants,
                                                             GL_DYNAMIC_DRAW,
 															sizeof(ObjectConstants) * pModelObject->objectCBs.size(),
 															(uint8*)(pModelObject->objectCBs.data()),
