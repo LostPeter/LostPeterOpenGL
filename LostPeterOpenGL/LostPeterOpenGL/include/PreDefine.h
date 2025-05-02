@@ -274,8 +274,8 @@ namespace LostPeterOpenGL
         DescriptorSet_CopyBlitObjectConstants,       //8:  CopyBlitObjectConstants
 		DescriptorSet_TerrainObjectConstants,        //9:  TerrainObjectConstants
         DescriptorSet_CullObjectConstants,           //10: CullObjectConstants
-        DescriptorSet_Material,                      //11: Material
-        DescriptorSet_Instance,                      //12: Instance
+        DescriptorSet_MaterialConstants,             //11: MaterialConstants
+        DescriptorSet_InstanceConstants,             //12: InstanceConstants
         DescriptorSet_TextureCopy,                   //13: TextureCopy
         DescriptorSet_Tessellation,                  //14: Tessellation
         DescriptorSet_Geometry,                      //15: Geometry

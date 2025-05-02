@@ -173,7 +173,7 @@ struct TextureConstants
 };
 
 //MaterialConstants
-struct MaterialConstants
+struct MaterialConstant
 {
     vec4 factorAmbient;
     vec4 factorDiffuse;
@@ -190,17 +190,25 @@ struct MaterialConstants
 
     TextureConstants aTexLayers[MAX_TEXTURE_COUNT];
 };
+layout (std140) uniform MaterialConstants
+{
+	MaterialConstant mats[MAX_MATERIAL_COUNT];
+} materialConsts;
 
 
 ///////////////////////////////// InstanceConstants /////////////////////////////
 //InstanceConstants
-struct InstanceConstants
+struct InstanceConstant
 {
     int offsetObject;
     int indexObject;
     int offsetMaterial;
     int indexMaterial;
 };
+layout (std140) uniform InstanceConstants
+{
+	InstanceConstant ins[MAX_INSTANCE_COUNT];
+} instanceConstants;
 
 
 ///////////////////////////////// ComputeConstants //////////////////////////////

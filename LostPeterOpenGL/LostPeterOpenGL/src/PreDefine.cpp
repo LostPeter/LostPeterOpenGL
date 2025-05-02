@@ -112,8 +112,8 @@ namespace LostPeterOpenGL
         "CopyBlitObjectConstants",          //8:   CopyBlitObjectConstants
 		"TerrainObjectConstants",           //9:   TerrainObjectConstants
         "CullObjectConstants",              //10:  CullObjectConstants
-        "Material",                         //11:  Material
-        "Instance",                         //12:  Instance
+        "MaterialConstants",                //11:  MaterialConstants
+        "InstanceConstants",                //12:  InstanceConstants
         "TextureCopy",                      //13:  TextureCopy
         "Tessellation",                     //14:  Tessellation
         "Geometry",                         //15:  Geometry

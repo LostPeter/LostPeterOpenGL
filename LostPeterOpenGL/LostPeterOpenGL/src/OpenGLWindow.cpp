@@ -3842,11 +3842,11 @@ namespace LostPeterOpenGL
 								uint32 nBindingIndex = (uint32)DescriptorSet_ObjectConstants;
 								pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
                             }
-							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Material)) //Material
+							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_MaterialConstants)) //MaterialConstants
 							{
 
 							}
-							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_Instance)) //Instance
+							else if (nameDS == Util_GetDescriptorSetTypeName(DescriptorSet_InstanceConstants)) //InstanceConstants
 							{
 
 							}
