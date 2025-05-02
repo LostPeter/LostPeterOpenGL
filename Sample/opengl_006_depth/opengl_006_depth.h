@@ -75,8 +75,8 @@ public:
 			, poStencil_StencilFailureOp(GL_KEEP)
 			, poStencil_DepthFailureOp(GL_KEEP)
 			, poStencil_DepthStencilPassOp(GL_KEEP)
-			, poStencil_ReadMask(0)
-			, poStencil_WriteMask(0)
+			, poStencil_Ref(0)
+			, poStencil_Mask(0)
 			
 			, poBlendEnabled(false)
 			, poBlendColorFactorSrc(GL_ONE)
@@ -163,8 +163,8 @@ public:
 		GLenum poStencil_StencilFailureOp;
 		GLenum poStencil_DepthFailureOp;
 		GLenum poStencil_DepthStencilPassOp;
-		uint32_t poStencil_ReadMask;
-		uint32_t poStencil_WriteMask;
+		uint32_t poStencil_Ref;
+		uint32_t poStencil_Mask;
 
 		bool poBlendEnabled;
 		GLenum poBlendColorFactorSrc; 

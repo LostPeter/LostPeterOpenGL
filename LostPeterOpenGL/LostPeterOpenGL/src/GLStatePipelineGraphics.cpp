@@ -42,8 +42,8 @@ namespace LostPeterOpenGL
 		, poStencil_StencilFailureOp(GL_KEEP)
 		, poStencil_DepthFailureOp(GL_KEEP)
 		, poStencil_DepthStencilPassOp(GL_KEEP)
-		, poStencil_ReadMask(0)
-		, poStencil_WriteMask(0)
+		, poStencil_Ref(0)
+		, poStencil_Mask(0)
 		
 		, poBlendEnabled(false)
 		, poBlendColorFactorSrc(GL_ONE)
@@ -91,8 +91,8 @@ namespace LostPeterOpenGL
 									   GLenum stencil_StencilFailureOp,
 									   GLenum stencil_DepthFailureOp,
 									   GLenum stencil_DepthStencilPassOp,
-									   uint32_t stencil_ReadMask,
-									   uint32_t stencil_WriteMask,
+									   uint32_t stencil_Ref,
+									   uint32_t stencil_Mask,
 									   bool blendEnabled,
 									   GLenum blendColorFactorSrc, 
 									   GLenum blendColorFactorDst,
@@ -126,8 +126,8 @@ namespace LostPeterOpenGL
 		this->poStencil_StencilFailureOp = stencil_StencilFailureOp;
 		this->poStencil_DepthFailureOp = stencil_DepthFailureOp;
 		this->poStencil_DepthStencilPassOp = stencil_DepthStencilPassOp;
-		this->poStencil_ReadMask = stencil_ReadMask;
-		this->poStencil_WriteMask = stencil_WriteMask;
+		this->poStencil_Ref = stencil_Ref;
+		this->poStencil_Mask = stencil_Mask;
 
 		this->poBlendEnabled = blendEnabled;
 		this->poBlendColorFactorSrc = blendColorFactorSrc; 
@@ -165,8 +165,8 @@ namespace LostPeterOpenGL
 									   GLenum stencil_StencilFailureOp,
 									   GLenum stencil_DepthFailureOp,
 									   GLenum stencil_DepthStencilPassOp,
-									   uint32_t stencil_ReadMask,
-									   uint32_t stencil_WriteMask,
+									   uint32_t stencil_Ref,
+									   uint32_t stencil_Mask,
 									   bool blendEnabled,
 									   GLenum blendColorFactorSrc, 
 									   GLenum blendColorFactorDst,
@@ -209,8 +209,8 @@ namespace LostPeterOpenGL
 					stencil_StencilFailureOp,
 					stencil_DepthFailureOp,
 					stencil_DepthStencilPassOp,
-					stencil_ReadMask,
-					stencil_WriteMask,
+					stencil_Ref,
+					stencil_Mask,
 					blendEnabled,
 					blendColorFactorSrc, 
 					blendColorFactorDst,
@@ -295,9 +295,9 @@ namespace LostPeterOpenGL
 		pWindow->setEnable(GL_STENCIL_TEST, stencilEnable);
 		if (stencilEnable)
 		{
-			pWindow->setStencilFunc(this->poStencil_CompareFunction, this->poStencil_WriteMask, this->poStencil_ReadMask);
+			pWindow->setStencilFunc(this->poStencil_CompareFunction, this->poStencil_Ref, this->poStencil_Mask);
 			pWindow->setStencilOp(this->poStencil_StencilFailureOp, this->poStencil_DepthFailureOp, this->poStencil_DepthStencilPassOp);
-			pWindow->setStencilMask(this->poStencil_WriteMask);
+			pWindow->setStencilMask(this->poStencil_Mask);
 		}
 	}
 	void GLStatePipelineGraphics::bindStateBlend(bool blendEnable)

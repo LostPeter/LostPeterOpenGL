@@ -80,7 +80,6 @@ OpenGL_006_Depth::OpenGL_006_Depth(int width, int height, String name)
     this->cfg_isEditorCameraAxisShow = true;
     this->cfg_isEditorCoordinateAxisShow = false;
 
-	this->poTypeVertex = F_MeshVertex_Pos3Color4Tex2;
     this->shaderVertex_Path = getShaderPathRelative("pos3_color4_tex2_ubo.vert.spv", ShaderSort_Common);
     this->shaderFragment_Path = getShaderPathRelative("pos3_color4_tex2_ubo.frag.spv", ShaderSort_Common);
 
@@ -314,7 +313,7 @@ void OpenGL_006_Depth::createGraphicsPipeline_Custom()
 																			nullptr,
 																			nullptr,
 																			this->pShaderFragment,
-																			this->poTypeVertex,
+																			this->typeVertex,
 																			pModelObject->poTypePrimitive,
 																			pModelObject->poIsCull,
 																			pModelObject->poTypeFrontFace,
@@ -329,8 +328,8 @@ void OpenGL_006_Depth::createGraphicsPipeline_Custom()
 																			pModelObject->poStencil_StencilFailureOp,
 																			pModelObject->poStencil_DepthFailureOp,
 																			pModelObject->poStencil_DepthStencilPassOp,
-																			pModelObject->poStencil_ReadMask,
-																			pModelObject->poStencil_WriteMask,
+																			pModelObject->poStencil_Ref,
+																			pModelObject->poStencil_Mask,
 																			pModelObject->poBlendEnabled,
 																			pModelObject->poBlendColorFactorSrc,
 																			pModelObject->poBlendColorFactorDst,

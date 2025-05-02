@@ -44,8 +44,8 @@ namespace LostPeterOpenGL
 		GLenum poStencil_StencilFailureOp;
 		GLenum poStencil_DepthFailureOp;
 		GLenum poStencil_DepthStencilPassOp;
-		uint32_t poStencil_ReadMask;
-		uint32_t poStencil_WriteMask;
+		uint32_t poStencil_Ref;
+		uint32_t poStencil_Mask;
 
 		bool poBlendEnabled;
 		GLenum poBlendColorFactorSrc; 
@@ -88,8 +88,8 @@ namespace LostPeterOpenGL
 				  GLenum stencil_StencilFailureOp,
 				  GLenum stencil_DepthFailureOp,
 				  GLenum stencil_DepthStencilPassOp,
-				  uint32_t stencil_ReadMask,
-				  uint32_t stencil_WriteMask,
+				  uint32_t stencil_Ref,
+				  uint32_t stencil_Mask,
 				  bool blendEnabled,
 				  GLenum blendColorFactorSrc, 
 				  GLenum blendColorFactorDst,
@@ -121,8 +121,8 @@ namespace LostPeterOpenGL
 				  GLenum stencil_StencilFailureOp,
 				  GLenum stencil_DepthFailureOp,
 				  GLenum stencil_DepthStencilPassOp,
-				  uint32_t stencil_ReadMask,
-				  uint32_t stencil_WriteMask,
+				  uint32_t stencil_Ref,
+				  uint32_t stencil_Mask,
 				  bool blendEnabled,
 				  GLenum blendColorFactorSrc, 
 				  GLenum blendColorFactorDst,

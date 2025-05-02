@@ -92,13 +92,16 @@ layout (std140) uniform ObjectConstants
 } objectConsts;
 
 //OutlineObjectConstants
-struct OutlineObjectConstants
+struct OutlineObjectConstant
 {
-    mat4 g_MatWorld;
-
+	mat4 g_MatWorld;
     vec4 outlineColor;
     float outlineWidth;
 };
+layout (std140) uniform OutlineObjectConstants
+{
+    OutlineObjectConstant objs[MAX_OBJECT_COUNT/2];
+} outlineObjectConsts;
 
 //CameraAxisObjectConstants
 struct CameraAxisObjectConstant

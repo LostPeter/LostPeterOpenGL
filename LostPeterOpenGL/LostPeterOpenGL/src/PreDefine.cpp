@@ -103,44 +103,45 @@ namespace LostPeterOpenGL
     {
         "PassConstants",                    //0:   PassConstants
         "ObjectConstants",                  //1:   ObjectConstants
-        "TerrainObjectConstants",           //2:   TerrainObjectConstants
+        "OutlineObjectConstants",           //2:   OutlineObjectConstants
         "GridObjectConstants",              //3:   GridObjectConstants
         "CameraAxisObjectConstants",        //4:   CameraAxisObjectConstants
         "CoordinateAxisObjectConstants",    //5:   CoordinateAxisObjectConstants
         "LineFlat2DObjectConstants",        //6:   LineFlat2DObjectConstants
         "LineFlat3DObjectConstants",        //7:   LineFlat3DObjectConstants
         "CopyBlitObjectConstants",          //8:   CopyBlitObjectConstants
-        "CullObjectConstants",              //9:   CullObjectConstants
-        "Material",                         //10:  Material
-        "Instance",                         //11:  Instance
-        "TextureCopy",                      //12:  TextureCopy
-        "Tessellation",                     //13:  Tessellation
-        "Geometry",                         //14:  Geometry
-        "TextureVS",                        //15:  TextureVS
-        "TextureTESC",                      //16:  TextureTESC
-        "TextureTESE",                      //17:  TextureTESE
-        "TextureFS",                        //18:  TextureFS
-        "TextureFrameColor",                //19:  TextureFrameColor
-        "TextureFrameDepth",                //20:  TextureFrameDepth
-        "TextureCSR",                       //21:  TextureCSR
-        "TextureCSRW",                      //22:  TextureCSRW
-        "TextureCSRWSrc",                   //23:  TextureCSRWSrc
-        "TextureCSRWDst",                   //24:  TextureCSRWDst
-        "TextureDepthShadow",               //25:  TextureDepthShadow
-        "InputAttachRed",                   //26:  InputAttachRed
-        "InputAttachGreen",                 //27:  InputAttachGreen
-        "InputAttachBlue",                  //28:  InputAttachBlue
-        "Terrain",                          //29:  Terrain
-        "Cull",                             //30:  Cull
-        "HizDepth",                         //31:  HizDepth
-        "BufferRWArgsCB",                   //32:  BufferRWArgsCB
-        "BufferRWLodCB",                    //33:  BufferRWLodCB
-        "BufferRWResultCB",                 //34:  BufferRWResultCB
-        "BufferRWClipCB",                   //35:  BufferRWClipCB
-        "BufferRWObjectCullInstance",       //36:  BufferRWObjectCullInstance
-        "CullInstance",                     //37:  CullInstance
-        "BufferObjectLineFlat2D",           //38:  BufferObjectLineFlat2D
-        "BufferObjectLineFlat3D",           //39:  BufferObjectLineFlat3D
+		"TerrainObjectConstants",           //9:   TerrainObjectConstants
+        "CullObjectConstants",              //10:  CullObjectConstants
+        "Material",                         //11:  Material
+        "Instance",                         //12:  Instance
+        "TextureCopy",                      //13:  TextureCopy
+        "Tessellation",                     //14:  Tessellation
+        "Geometry",                         //15:  Geometry
+        "TextureVS",                        //16:  TextureVS
+        "TextureTESC",                      //17:  TextureTESC
+        "TextureTESE",                      //18:  TextureTESE
+        "TextureFS",                        //19:  TextureFS
+        "TextureFrameColor",                //20:  TextureFrameColor
+        "TextureFrameDepth",                //21:  TextureFrameDepth
+        "TextureCSR",                       //22:  TextureCSR
+        "TextureCSRW",                      //23:  TextureCSRW
+        "TextureCSRWSrc",                   //24:  TextureCSRWSrc
+        "TextureCSRWDst",                   //25:  TextureCSRWDst
+        "TextureDepthShadow",               //26:  TextureDepthShadow
+        "InputAttachRed",                   //27:  InputAttachRed
+        "InputAttachGreen",                 //28:  InputAttachGreen
+        "InputAttachBlue",                  //29:  InputAttachBlue
+        "Terrain",                          //30:  Terrain
+        "Cull",                             //31:  Cull
+        "HizDepth",                         //32:  HizDepth
+        "BufferRWArgsCB",                   //33:  BufferRWArgsCB
+        "BufferRWLodCB",                    //34:  BufferRWLodCB
+        "BufferRWResultCB",                 //35:  BufferRWResultCB
+        "BufferRWClipCB",                   //36:  BufferRWClipCB
+        "BufferRWObjectCullInstance",       //37:  BufferRWObjectCullInstance
+        "CullInstance",                     //38:  CullInstance
+        "BufferObjectLineFlat2D",           //39:  BufferObjectLineFlat2D
+        "BufferObjectLineFlat3D",           //40:  BufferObjectLineFlat3D
     };
     const String& Util_GetDescriptorSetTypeName(DescriptorSetType type)
     {

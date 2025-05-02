@@ -650,6 +650,20 @@ namespace LostPeterOpenGL
 
         }
     };
+	struct openglExport OutlineObjectConstants
+	{
+		FMatrix4 g_MatWorld;
+		FVector4 g_OutlineColor;
+		float g_OutlineWidth;
+
+		OutlineObjectConstants()
+			: g_MatWorld(FMath::Identity4x4())
+			, g_OutlineColor(1, 1, 1, 1)
+			, g_OutlineWidth(0.02f)
+		{
+
+		}
+	};
     struct openglExport GridObjectConstants
     {
         FMatrix4 g_MatWorld;
