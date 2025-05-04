@@ -4658,7 +4658,7 @@ namespace LostPeterOpenGL
                             }
 							else
 							{	
-								F_Assert(false && "MetaOpenGLWindowlWindow::drawMeshDefault")
+								F_Assert(false && "OpenGLWindow::drawMeshDefault")
 							}
 							this->poStatePipelineGraphics->UnBindState();
                         }
