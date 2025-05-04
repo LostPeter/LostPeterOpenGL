@@ -44,10 +44,10 @@ void main()
     vec3 viewPos = cam.posEyeWorld.xyz;
     vec4 color = gridObjectConsts.color;
 
-	fDivs = divisions / pow(2, round((abs(viewPos.y) - step / subdivisions) / step));
+	fDivs = divisions / pow(2.0, round((abs(viewPos.y) - step / subdivisions) / step));
 	vec4 vGrid1 = Grid(fragTexCoord, fDivs, color) + Grid(fragTexCoord, fDivs / subdivisions, color);
 
-	fDivs = divisions / pow(2, round((abs(viewPos.y + 50) - step / subdivisions) / step));
+	fDivs = divisions / pow(2.0, round((abs(viewPos.y + 50) - step / subdivisions) / step));
 	vec4 vGrid2 = Grid(fragTexCoord, fDivs, color) + Grid(fragTexCoord, fDivs / subdivisions, color);
 
 	float fAlpha = mod(abs(viewPos.y), step);
