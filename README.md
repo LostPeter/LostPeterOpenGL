@@ -95,3 +95,9 @@ License:
 * sample000：Setup a framework, compile all sort of dependencies libraries, show a Window 
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_000_window.png)
+
+### <001> opengl_001_triangle
+[OpenGL学习例子001: opengl_001_triangle 渲染一个三角形](https://zhuanlan.zhihu.com/p/1912889733127868490)
+* sample001：Render a triangle with OpenGL api
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_001_triangle.png)
