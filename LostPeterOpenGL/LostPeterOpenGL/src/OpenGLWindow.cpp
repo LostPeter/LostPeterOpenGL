@@ -3509,7 +3509,7 @@ namespace LostPeterOpenGL
             void OpenGLWindow::getGLShaderProgramCompileErrors(uint32 nShader, std::vector<GLchar>& errorLog)
             {
                 GLint maxLength = 0;
-                glGetShaderiv(nShader, GL_INFO_LOG_LENGTH, &maxLength);
+                glGetProgramiv(nShader, GL_INFO_LOG_LENGTH, &maxLength);
                 errorLog.resize(maxLength);
                 glGetProgramInfoLog(nShader, maxLength, &maxLength, &errorLog[0]);
             }
