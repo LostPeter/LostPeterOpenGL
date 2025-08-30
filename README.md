@@ -101,3 +101,9 @@ License:
 * sample001：Render a triangle with OpenGL api
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_001_triangle.png)
+
+### <002> opengl_002_imgui
+[OpenGL学习例子002: opengl_002_imgui 集成ImGui界面库](https://zhuanlan.zhihu.com/p/1927853936532000927)
+* sample002：Integrate imgui to OpenGL
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_002_imgui.png)

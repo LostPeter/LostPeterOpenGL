@@ -2,16 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug opengl_000_window (MacOS)",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/Bin/MacOS/opengl_000_window_d",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb"
+		"name": "Debug opengl_000_window (MacOS)",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/MacOS/opengl_000_window_d",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"externalConsole": false,
+		"MIMode": "lldb"
     },
 	{
 		"name": "Debug opengl_001_triangle (MacOS)",
@@ -114,26 +114,26 @@
 
 
     {
-      "name": "Debug opengl_000_window (Windows)",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/Bin/Windows/opengl_000_window_d.exe",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "console": "externalTerminal"
+		"name": "Debug opengl_000_window (Windows)",
+		"type": "cppvsdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/Windows/opengl_000_window_d.exe",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"console": "externalTerminal"
     },
 	{
-      "name": "Debug opengl_001_triangle (Windows)",
-      "type": "cppvsdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/Bin/Windows/opengl_001_triangle_d.exe",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${fileDirname}",
-      "environment": [],
-      "console": "externalTerminal"
+		"name": "Debug opengl_001_triangle (Windows)",
+		"type": "cppvsdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/Windows/opengl_001_triangle_d.exe",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"console": "externalTerminal"
     },
 	{
 		"name": "Debug opengl_002_imgui (Windows)",
