@@ -107,3 +107,9 @@ License:
 * sample002：Integrate imgui to OpenGL
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_002_imgui.png)
+
+### <003> opengl_003_texture
+[OpenGL学习例子003: opengl_003_texture 渲染一张纹理](https://zhuanlan.zhihu.com/p/1946606122329966100)
+* sample003：Render a texture with OpenGL api
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_003_texture.png)
