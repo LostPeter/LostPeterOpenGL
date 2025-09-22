@@ -113,3 +113,10 @@ License:
 * sample003：Render a texture with OpenGL api
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_003_texture.png)
+
+### <004> opengl_004_model
+[OpenGL学习例子004: opengl_004_model 渲染3D模型](https://zhuanlan.zhihu.com/p/1950542577230128985)
+* sample004：Load different 3D models and textures and then render them
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_004_model.png)
+
