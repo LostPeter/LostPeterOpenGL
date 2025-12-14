@@ -120,3 +120,8 @@ License:
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_004_model.png)
 
+### <005> opengl_005_camera
+[OpenGL学习例子005: opengl_005_camera 摄像机漫游功能](https://zhuanlan.zhihu.com/p/1955257473901518982)
+* sample005：Realize a camera and use it in the scene
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_005_camera.png)
