@@ -125,3 +125,9 @@ License:
 * sample005：Realize a camera and use it in the scene
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_005_camera.png)
+
+### <006> opengl_006_depth
+[OpenGL学习例子006: opengl_006_depth 深度操作](https://zhuanlan.zhihu.com/p/1990018344666017903)
+* sample006：Depth state test: depthTest and depthWrite 
+
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_006_depth.png)
