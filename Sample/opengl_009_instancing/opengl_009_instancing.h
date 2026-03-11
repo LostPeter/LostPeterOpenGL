@@ -206,8 +206,8 @@ public:
 	ModelObjectPtrVector m_aModelObjects_Render;
 	ModelObjectPtrMap m_mapModelObjects;
 
-	GLShaderPtrVector m_aDXShaderModules;
-    GLShaderPtrMap m_mapDXShaderModules;
+	GLShaderPtrVector m_aGLShaderModules;
+    GLShaderPtrMap m_mapGLShaderModules;
 
 protected:
 	//Create Pipeline

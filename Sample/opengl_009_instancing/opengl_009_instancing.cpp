@@ -437,10 +437,10 @@ void OpenGL_009_Instancing::createGraphicsPipeline_Custom()
 																					pModelObject->poTypeFrontFace,
 																					pModelObject->poTypeCulling,
 																					pModelObject->poTypePolygonMode,
-																					pModelObject->poDepthEnabled,
-																					pModelObject->poDepthFuncCompare,
-																					pModelObject->poDepthTestEnabled,
-																					pModelObject->poDepthWriteEnabled,
+																					poDepthEnabled,
+																					poDepthFuncCompare,
+																					poDepthTestEnabled,
+																					poDepthWriteEnabled,
 																					true,
 																					GL_ALWAYS,
 																					GL_REPLACE,
@@ -448,9 +448,9 @@ void OpenGL_009_Instancing::createGraphicsPipeline_Custom()
 																					GL_REPLACE,
 																					1,
 																					0xFF,
-																					true,
-																					pModelObject->poBlendColorFactorSrc,
-																					pModelObject->poBlendColorFactorDst,
+																					poBlendEnabled,
+																					poBlendColorFactorSrc,
+																					poBlendColorFactorDst,
 																					pModelObject->poBlendColorOp,
 																					pModelObject->poBlendAlphaFactorSrc,
 																					pModelObject->poBlendAlphaFactorDst,
@@ -515,14 +515,14 @@ void OpenGL_009_Instancing::createGraphicsPipeline_Custom()
 
 void OpenGL_009_Instancing::destroyShaderModules()
 {
-    size_t count = this->m_aDXShaderModules.size();
+    size_t count = this->m_aGLShaderModules.size();
     for (size_t i = 0; i < count; i++)
     {
-        GLShader* pDXShader = this->m_aDXShaderModules[i];
+        GLShader* pDXShader = this->m_aGLShaderModules[i];
         F_DELETE(pDXShader)
     }
-    this->m_aDXShaderModules.clear();
-    this->m_mapDXShaderModules.clear();
+    this->m_aGLShaderModules.clear();
+    this->m_mapGLShaderModules.clear();
 }
 void OpenGL_009_Instancing::createShaderModules()
 {
@@ -544,8 +544,8 @@ void OpenGL_009_Instancing::createShaderModules()
             F_LogError(msg.c_str());
             throw std::runtime_error(msg);
         }
-        this->m_aDXShaderModules.push_back(pShaderVertex);
-        this->m_mapDXShaderModules[pathVert] = pShaderVertex;
+        this->m_aGLShaderModules.push_back(pShaderVertex);
+        this->m_mapGLShaderModules[pathVert] = pShaderVertex;
         F_LogInfo("OpenGL_009_Instancing::createShaderModules: create shader [%s] success !", pathVert.c_str());
 
         //frag
@@ -557,15 +557,15 @@ void OpenGL_009_Instancing::createShaderModules()
             F_LogError(msg.c_str());
             throw std::runtime_error(msg);
         }
-        this->m_aDXShaderModules.push_back(pShaderFragment);
-        this->m_mapDXShaderModules[pathFrag] = pShaderFragment;
+        this->m_aGLShaderModules.push_back(pShaderFragment);
+        this->m_mapGLShaderModules[pathFrag] = pShaderFragment;
         F_LogInfo("OpenGL_009_Instancing::createShaderModules: create shader [%s] success !", pathFrag.c_str());
     }
 }
 GLShader* OpenGL_009_Instancing::findShaderModule(const String& pathShaderModule)
 {
-    GLShaderPtrMap::iterator itFind = this->m_mapDXShaderModules.find(pathShaderModule);
-    if (itFind == this->m_mapDXShaderModules.end())
+    GLShaderPtrMap::iterator itFind = this->m_mapGLShaderModules.find(pathShaderModule);
+    if (itFind == this->m_mapGLShaderModules.end())
     {
         return nullptr;
     }
