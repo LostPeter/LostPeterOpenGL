@@ -109,6 +109,18 @@
 		"externalConsole": false,
 		"MIMode": "lldb"
 	},
+	{
+		"name": "Debug opengl_009_instancing (MacOS)",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/MacOS/opengl_009_instancing_d",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"externalConsole": false,
+		"MIMode": "lldb"
+	},
 
 
 
@@ -206,6 +218,17 @@
 		"type": "cppvsdbg",
 		"request": "launch",
 		"program": "${workspaceFolder}/Bin/Windows/opengl_008_blend_d.exe",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"console": "externalTerminal"
+	},
+	{
+		"name": "Debug opengl_009_instancing (Windows)",
+		"type": "cppvsdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/Windows/opengl_009_instancing_d.exe",
 		"args": [],
 		"stopAtEntry": false,
 		"cwd": "${fileDirname}",

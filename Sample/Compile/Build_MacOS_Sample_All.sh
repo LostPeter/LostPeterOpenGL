@@ -21,3 +21,4 @@ rebuild=${2}
 ./Build_MacOS_Sample.sh opengl_006_depth $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_007_stencil $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_008_blend $debug $rebuild
+./Build_MacOS_Sample.sh opengl_009_instancing $debug $rebuild

@@ -21,3 +21,4 @@ call ./Build_Windows_Sample.bat opengl_005_camera %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_006_depth %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_007_stencil %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_008_blend %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_009_instancing %debug% %rebuild%
