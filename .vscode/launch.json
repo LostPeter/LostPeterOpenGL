@@ -121,6 +121,18 @@
 		"externalConsole": false,
 		"MIMode": "lldb"
 	},
+	{
+		"name": "Debug opengl_010_lighting (MacOS)",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/MacOS/opengl_010_lighting_d",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"externalConsole": false,
+		"MIMode": "lldb"
+	},
 
 
 
@@ -229,6 +241,17 @@
 		"type": "cppvsdbg",
 		"request": "launch",
 		"program": "${workspaceFolder}/Bin/Windows/opengl_009_instancing_d.exe",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"console": "externalTerminal"
+	},
+	{
+		"name": "Debug opengl_010_lighting (Windows)",
+		"type": "cppvsdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/Windows/opengl_010_lighting_d.exe",
 		"args": [],
 		"stopAtEntry": false,
 		"cwd": "${fileDirname}",
