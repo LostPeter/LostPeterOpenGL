@@ -233,8 +233,10 @@ namespace LostPeterOpenGL
         FVector4 cfg_colorBackground;
         FVector4Vector cfg_colorValues;
 
+        bool cfg_isRenderPassShadowMap;
         bool cfg_isRenderPassDefaultCustom;
 		bool cfg_isDepthStencil;
+
         bool cfg_isMSAA;
         bool cfg_isImgui;
         bool cfg_isWireFrame;
@@ -280,8 +282,12 @@ namespace LostPeterOpenGL
         FCamera* pCameraRight; //Eye Right
 
         //Light
+        LightConstants mainLight; //common.x == Vulkan_Light_Directional, can not change
+        LightConstants aAdditionalLights[MAX_LIGHT_COUNT];
 
         //Shadow
+        ShadowConstants shadowMainLight; //mainLight's shadow
+        ShadowConstants shadowMainLight_Cfg; //mainLight's shadow cfg
         FCamera* pCameraMainLight; //mainLight's shadow camera
 
         //Mouse
