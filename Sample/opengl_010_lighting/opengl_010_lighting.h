@@ -9,8 +9,8 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#ifndef _OPENGL_009_INSTANCING_H_
-#define _OPENGL_009_INSTANCING_H_
+#ifndef _OPENGL_010_LIGHTING_H_
+#define _OPENGL_010_LIGHTING_H_
 
 #include "OpenGLWindow.h"
 using namespace LostPeterOpenGL; 
