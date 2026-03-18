@@ -27,12 +27,12 @@ void main()
 {
     vec3 color;
 
-    MaterialConstants mat = materialConsts[floor(fragWorldPos.w + 0.5)];
+    MaterialConstant mat = materialConsts.mats[int(round(fragWorldPos.w))];
     vec3 N = normalize(fragWorldNormal);
 
     vec3 colorLight;
     //Main Light
-    uint viewIndex = 0;
+    int viewIndex = 0;
     CameraConstants cam = passConsts.g_Cameras[viewIndex];
     vec3 colorMainLight = calculate_Light(passConsts.g_AmbientLight.rgb,
                                           passConsts.g_MainLight,

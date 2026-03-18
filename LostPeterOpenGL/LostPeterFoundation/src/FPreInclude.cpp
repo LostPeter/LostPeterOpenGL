@@ -18,7 +18,7 @@ namespace LostPeterFoundation
 #if F_PLATFORM == F_PLATFORM_ANDROID
 
 #else
-	#define buffer_len 2048
+	#define buffer_len 4096
 
 	static FLog* s_pLogConsole = nullptr;
 	static FLog* s_pLogFile = nullptr;

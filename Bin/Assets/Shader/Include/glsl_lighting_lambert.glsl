@@ -57,7 +57,7 @@ vec3 calculate_Specular_BlinnPhong(vec3 specularMaterial,
 
 vec3 calculate_Light(vec3 ambientGlobal,
                      LightConstants lightCB,
-                     MaterialConstants matCB,
+                     MaterialConstant matCB,
                      vec3 posWorld,
                      vec3 posEye,
                      vec3 N)
