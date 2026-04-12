@@ -446,8 +446,8 @@ void OpenGL_010_Lighting::destroyShaderModules()
     size_t count = this->m_aGLShaderModules.size();
     for (size_t i = 0; i < count; i++)
     {
-        GLShader* pDXShader = this->m_aGLShaderModules[i];
-        F_DELETE(pDXShader)
+        GLShader* pShader = this->m_aGLShaderModules[i];
+        F_DELETE(pShader)
     }
     this->m_aGLShaderModules.clear();
     this->m_mapGLShaderModules.clear();
