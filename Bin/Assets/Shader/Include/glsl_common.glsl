@@ -328,4 +328,4 @@ struct HizDepthConstants
 
 
 
-#endif /* _GLSL_COMMON_*/
+#endif

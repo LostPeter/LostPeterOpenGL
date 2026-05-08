@@ -53,4 +53,4 @@ const vec3 c_aAggressiveExtentArray[8] = vec3[8](vec3( 1,       1,      1),
 
 
 
-#endif /* _GLSL_CONSTANT_*/
+#endif

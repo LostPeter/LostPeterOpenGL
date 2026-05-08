@@ -25,4 +25,4 @@
 
 
 
-#endif /* _GLSL_TERRAIN_*/
+#endif

@@ -17,4 +17,4 @@
 
 
 
-#endif /* _GLSL_INPUT_*/
+#endif

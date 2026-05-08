@@ -140,4 +140,4 @@ vec3 calculate_Light(vec3 ambientGlobal,
 }
 
 
-#endif /* _GLSL_LIGHTING_LAMBERT_*/
+#endif

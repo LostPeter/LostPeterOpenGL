@@ -17,4 +17,4 @@
 
 
 
-#endif /* _GLSL_FUNCTION_*/
+#endif

@@ -16,4 +16,4 @@
 
 
 
-#endif /* _GLSL_SHADOW_*/
+#endif
