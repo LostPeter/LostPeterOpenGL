@@ -458,6 +458,7 @@ namespace LostPeterOpenGL
     typedef std::vector<GLTexture*> GLTexturePtrVector;
     typedef std::map<String, GLTexture*> GLTexturePtrMap;
 	typedef std::map<uint32, GLTexture*> GLTexturePtrIDMap;
+	typedef std::map<String, GLTexturePtrVector> GLTexturePtrShaderSortMap;
 
 
     class Base;

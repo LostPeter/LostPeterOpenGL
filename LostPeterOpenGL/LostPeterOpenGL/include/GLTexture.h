@@ -75,6 +75,8 @@ namespace LostPeterOpenGL
     public:
         void Destroy();
         virtual bool Init();
+
+		virtual int RandomTextureIndex();
         virtual bool LoadTexture(int width,
                                  int height,
                                  int depth,
@@ -84,6 +86,10 @@ namespace LostPeterOpenGL
 
     public:
         void BindTexture();
+
+	protected:
+        virtual void updateNoiseTextureData();
+        virtual void updateNoiseTexture();
     };
 
 }; //LostPeterOpenGL

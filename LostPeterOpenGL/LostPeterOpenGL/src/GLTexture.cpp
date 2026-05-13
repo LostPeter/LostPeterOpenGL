@@ -90,6 +90,16 @@ namespace LostPeterOpenGL
                            nullptr);
     }
 
+	int GLTexture::RandomTextureIndex()
+    {
+        if (this->typeTexture == F_Texture_2DArray)
+        {
+            int count = (int)this->aPathTexture.size();
+            return FMath::Rand(0, count - 1);
+        }
+        return 0;
+    }
+
     bool GLTexture::LoadTexture(int width,
                                 int height,
                                 int depth,
@@ -204,7 +214,46 @@ namespace LostPeterOpenGL
 
     void GLTexture::UpdateTexture()
     {
+		if (this->typeTexture == F_Texture_3D)
+        {
+            updateNoiseTexture();
+        }
+    }
+	void GLTexture::updateNoiseTextureData()
+    {
+        // Perlin noise
+        noise::module::Perlin modulePerlin;
+        for (int z = 0; z < this->depth; z++)
+        {
+            for (int y = 0; y < this->height; y++)
+            {
+                for (int x = 0; x < this->width; x++)
+                {
+                    float nx = (float)x / (float)this->width;
+                    float ny = (float)y / (float)this->height;
+                    float nz = (float)z / (float)this->depth;
 
+                    float n = 20.0f * (float)(modulePerlin.GetValue(nx, ny, nz));
+                    n = n - floor(n);
+                    uint8 v = static_cast<uint8>(floor(n * 255));
+                    int address = x + y * this->width + z * this->width * this->height;
+                    this->pDataRGBA[address + 0] = v;
+                    if (channel > 1)
+                         this->pDataRGBA[address + 1] = v;
+                    if (channel > 2)
+                         this->pDataRGBA[address + 2] = v;
+                    if (channel > 3)
+                         this->pDataRGBA[address + 3] = v;
+                }
+            }
+        }
+    }
+    void GLTexture::updateNoiseTexture()
+    {
+        //1> updateNoiseTextureData
+        updateNoiseTextureData();
+
+        
     }
 
     void GLTexture::BindTexture()
