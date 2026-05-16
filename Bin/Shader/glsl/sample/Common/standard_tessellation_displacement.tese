@@ -9,14 +9,15 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 330 core
+#version 410 core
+#extension GL_ARB_tessellation_shader : require
 #extension GL_ARB_shading_language_include : enable
 #include "/glsl_common.glsl"
 
 layout(triangles, equal_spacing, ccw) in;
 
 
-layout(binding = 4) uniform sampler2D texDisplacementMap;
+uniform sampler2D texDisplacementMap;
 
 
 in HSOutput {
@@ -27,19 +28,19 @@ in HSOutput {
 } IN[];
 
 
-layout(location = 0) out vec4 outWorldPos;
-layout(location = 1) out vec4 outColor;
-layout(location = 2) out vec3 outWorldNormal;
-layout(location = 3) out vec2 outTexCoord;
+out vec4 outWorldPos;
+out vec4 outColor;
+out vec3 outWorldNormal;
+out vec2 outTexCoord;
 
 
 void main() {
     vec3 uvw = gl_TessCoord.xyz;
 
-    uint viewIndex = 0;
+    int viewIndex = 0;
     TransformConstants trans = passConsts.g_Transforms[viewIndex];
 
-    uint instanceIndex = uint(IN[0].outPosition.w);
+    int instanceIndex = int(round(IN[0].outPosition.w));
 
     vec3 posObject  = uvw.x * IN[0].outPosition.xyz
                     + uvw.y * IN[1].outPosition.xyz
@@ -57,12 +58,12 @@ void main() {
                     + uvw.y * IN[1].outColor
                     + uvw.z * IN[2].outColor;
 
-    TessellationConstants tess = tessellationConsts[instanceIndex];
+    TessellationConstant tess = tessellationConsts.tes[instanceIndex];
     float displacement = texture(texDisplacementMap, texCoord).a;
     displacement = max(displacement, 0.0);
     posObject += normalize(normalObject) * displacement * tess.tessStrength;
 
-    ObjectConstants obj = objectConsts[instanceIndex];
+    ObjectConstant obj = objectConsts.objs[instanceIndex];
     vec4 posWorld = obj.g_MatWorld * vec4(posObject, 1.0);
 
     vec4 posView   = trans.mat4View * posWorld;

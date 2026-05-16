@@ -19,7 +19,7 @@ in vec4 fragColor;
 in vec3 fragWorldNormal;
 in vec2 fragTexCoord;
 
-uniform samplerCube texSampler;
+uniform sampler2D texSampler;
 
 out vec4 outColor;
 

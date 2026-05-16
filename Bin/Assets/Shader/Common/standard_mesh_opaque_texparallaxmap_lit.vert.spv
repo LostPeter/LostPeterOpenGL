@@ -22,7 +22,7 @@ layout (location = 4) in vec2 inTexCoord;
 out vec4 fragWorldPos;
 out vec4 fragColor;
 out vec3 fragWorldNormal;
-out vec3 fragWorldTangent
+out vec3 fragWorldTangent;
 out vec2 fragTexCoord;
 out vec3 fragTSPos;
 out vec3 fragTSEyePos;
@@ -41,12 +41,12 @@ void main()
     fragColor = inColor;
     mat3 matW = transpose(inverse(mat3(obj.g_MatWorld)));
 	fragWorldNormal = normalize(matW * inNormal);
-	fragWorldTangent = normalize(matW, inTangent);
+	fragWorldTangent = normalize(matW * inTangent);
     fragTexCoord = inTexCoord;
 
-	float3 N = normalize(inNormal);
-	float3 T = normalize(inTangent);
-	float3 B = normalize(cross(N, T));
+	vec3 N = normalize(inNormal);
+	vec3 T = normalize(inTangent);
+	vec3 B = normalize(cross(N, T));
 	mat3 TBN = mat3(T, B, N);
     fragTSPos = TBN * fragWorldPos.xyz;
     fragTSEyePos = TBN * cam.posEyeWorld.xyz;

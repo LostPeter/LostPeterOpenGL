@@ -36,13 +36,13 @@ void main()
 {
     if (gl_InvocationID == 0)
     {
-        uint instanceIndex = IN[0].outPosition.w;
-        TessellationConstants tessellationConst = tessellationConsts[instanceIndex];
+        int instanceIndex = int(round(IN[0].outPosition.w));
+        TessellationConstant tess = tessellationConsts.tes[instanceIndex];
 
-        gl_TessLevelOuter[0] = tessellationConst.tessLevelOuter;
-        gl_TessLevelOuter[1] = tessellationConst.tessLevelOuter;
-        gl_TessLevelOuter[2] = tessellationConst.tessLevelOuter;
-        gl_TessLevelInner[0] = tessellationConst.tessLevelInner;
+        gl_TessLevelOuter[0] = tess.tessLevelOuter;
+        gl_TessLevelOuter[1] = tess.tessLevelOuter;
+        gl_TessLevelOuter[2] = tess.tessLevelOuter;
+        gl_TessLevelInner[0] = tess.tessLevelInner;
     }
 
     OUT[gl_InvocationID].outPosition = IN[gl_InvocationID].outPosition;

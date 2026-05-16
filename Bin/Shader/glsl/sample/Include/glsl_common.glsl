@@ -237,13 +237,17 @@ struct GeometryConstants
 
 
 ///////////////////////////////// TessellationConstants /////////////////////////
-struct TessellationConstants
+struct TessellationConstant
 {
     float tessLevelOuter;
     float tessLevelInner;
     float tessAlpha;
     float tessStrength;
 };
+layout (std140) uniform TessellationConstants
+{
+	TessellationConstant tes[MAX_OBJECT_COUNT];
+} tessellationConsts;
 
 
 ///////////////////////////////// GeometryConstants /////////////////////////////

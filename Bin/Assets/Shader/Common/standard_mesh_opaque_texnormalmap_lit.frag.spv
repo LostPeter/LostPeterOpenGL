@@ -67,15 +67,15 @@ void main()
     //Final Color
 	if (normalMapType == 0)
     {
-        outColor = colorTexture;
+        color = colorTexture;
     }
     else if (normalMapType == 1)
     {
-        outColor = N;
+        color = N;
     }
     else
     {
-        outColor = colorLight * colorTexture * colorVertex;
+        color = colorLight * colorTexture * colorVertex;
     }
 
     outColor = vec4(color.xyz, 1.0);

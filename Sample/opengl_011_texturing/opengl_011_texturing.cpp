@@ -373,42 +373,42 @@ static const char* g_ShaderModulePaths[3 * g_ShaderCount] =
     //name                                                     //type              //path
 
     ///////////////////////////////////////// vert /////////////////////////////////////////
-    "vert_standard_mesh_opaque_texsampler_lit",                "vert",             "Assets/Shader/standard_mesh_opaque_texsampler_lit.vert.spv", //standard_mesh_opaque_texsampler_lit vert
-    "vert_standard_mesh_opaque_tex1d_lit",                     "vert",             "Assets/Shader/standard_mesh_opaque_tex1d_lit.vert.spv", //standard_mesh_opaque_tex1d_lit vert
-    "vert_standard_mesh_opaque_tex2d_lit",                     "vert",             "Assets/Shader/standard_mesh_opaque_tex2d_lit.vert.spv", //standard_mesh_opaque_tex2d_lit vert
-    "vert_standard_mesh_opaque_tex2darray_lit",                "vert",             "Assets/Shader/standard_mesh_opaque_tex2darray_lit.vert.spv", //standard_mesh_opaque_tex2darray_lit vert
-    "vert_standard_mesh_opaque_tex3d_lit",                     "vert",             "Assets/Shader/standard_mesh_opaque_tex3d_lit.vert.spv", //standard_mesh_opaque_tex3d_lit vert
-    "vert_standard_mesh_opaque_texcubemap_lit",                "vert",             "Assets/Shader/standard_mesh_opaque_texcubemap_lit.vert.spv", //standard_mesh_opaque_texcubemap_lit vert
-    "vert_standard_mesh_opaque_texanim_scroll_lit",            "vert",             "Assets/Shader/standard_mesh_opaque_texanim_scroll_lit.vert.spv", //standard_mesh_opaque_texanim_scroll_lit vert
-    "vert_standard_mesh_opaque_texanim_chunk_lit",             "vert",             "Assets/Shader/standard_mesh_opaque_texanim_chunk_lit.vert.spv", //standard_mesh_opaque_texanim_chunk_lit vert
+    "vert_standard_mesh_opaque_texsampler_lit",                "vert",             "Assets/Shader/Common/standard_mesh_opaque_texsampler_lit.vert.spv", //standard_mesh_opaque_texsampler_lit vert
+    "vert_standard_mesh_opaque_tex1d_lit",                     "vert",             "Assets/Shader/Common/standard_mesh_opaque_tex1d_lit.vert.spv", //standard_mesh_opaque_tex1d_lit vert
+    "vert_standard_mesh_opaque_tex2d_lit",                     "vert",             "Assets/Shader/Common/standard_mesh_opaque_tex2d_lit.vert.spv", //standard_mesh_opaque_tex2d_lit vert
+    "vert_standard_mesh_opaque_tex2darray_lit",                "vert",             "Assets/Shader/Common/standard_mesh_opaque_tex2darray_lit.vert.spv", //standard_mesh_opaque_tex2darray_lit vert
+    "vert_standard_mesh_opaque_tex3d_lit",                     "vert",             "Assets/Shader/Common/standard_mesh_opaque_tex3d_lit.vert.spv", //standard_mesh_opaque_tex3d_lit vert
+    "vert_standard_mesh_opaque_texcubemap_lit",                "vert",             "Assets/Shader/Common/standard_mesh_opaque_texcubemap_lit.vert.spv", //standard_mesh_opaque_texcubemap_lit vert
+    "vert_standard_mesh_opaque_texanim_scroll_lit",            "vert",             "Assets/Shader/Common/standard_mesh_opaque_texanim_scroll_lit.vert.spv", //standard_mesh_opaque_texanim_scroll_lit vert
+    "vert_standard_mesh_opaque_texanim_chunk_lit",             "vert",             "Assets/Shader/Common/standard_mesh_opaque_texanim_chunk_lit.vert.spv", //standard_mesh_opaque_texanim_chunk_lit vert
 
-    "vert_standard_mesh_opaque_texbumpmap_lit",                "vert",             "Assets/Shader/standard_mesh_opaque_texbumpmap_lit.vert.spv", //standard_mesh_opaque_texbumpmap_lit vert
-    "vert_standard_mesh_opaque_texnormalmap_lit",              "vert",             "Assets/Shader/standard_mesh_opaque_texnormalmap_lit.vert.spv", //standard_mesh_opaque_texnormalmap_lit vert   
-    "vert_standard_mesh_opaque_texparallaxmap_lit",            "vert",             "Assets/Shader/standard_mesh_opaque_texparallaxmap_lit.vert.spv", //standard_mesh_opaque_texparallaxmap_lit vert
-    "vert_standard_mesh_opaque_texdisplacementmap_lit",        "vert",             "Assets/Shader/standard_mesh_opaque_texdisplacementmap_lit.vert.spv", //standard_mesh_opaque_texdisplacementmap_lit vert
+    "vert_standard_mesh_opaque_texbumpmap_lit",                "vert",             "Assets/Shader/Common/standard_mesh_opaque_texbumpmap_lit.vert.spv", //standard_mesh_opaque_texbumpmap_lit vert
+    "vert_standard_mesh_opaque_texnormalmap_lit",              "vert",             "Assets/Shader/Common/standard_mesh_opaque_texnormalmap_lit.vert.spv", //standard_mesh_opaque_texnormalmap_lit vert   
+    "vert_standard_mesh_opaque_texparallaxmap_lit",            "vert",             "Assets/Shader/Common/standard_mesh_opaque_texparallaxmap_lit.vert.spv", //standard_mesh_opaque_texparallaxmap_lit vert
+    "vert_standard_mesh_opaque_texdisplacementmap_lit",        "vert",             "Assets/Shader/Common/standard_mesh_opaque_texdisplacementmap_lit.vert.spv", //standard_mesh_opaque_texdisplacementmap_lit vert
 
     ///////////////////////////////////////// tesc /////////////////////////////////////////
-    "tesc_standard_tessellation_displacement",                 "tesc",              "Assets/Shader/standard_tessellation_displacement.tesc.spv", //standard_tessellation_displacement tesc
+    "tesc_standard_tessellation_displacement",                 "tesc",              "Assets/Shader/Common/standard_tessellation_displacement.tesc.spv", //standard_tessellation_displacement tesc
 
     ///////////////////////////////////////// tese /////////////////////////////////////////
-    "tese_standard_tessellation_displacement",                 "tese",              "Assets/Shader/standard_tessellation_displacement.tese.spv", //standard_tessellation_displacement tese
+    "tese_standard_tessellation_displacement",                 "tese",              "Assets/Shader/Common/standard_tessellation_displacement.tese.spv", //standard_tessellation_displacement tese
 
     ///////////////////////////////////////// geom /////////////////////////////////////////
 
     ///////////////////////////////////////// frag /////////////////////////////////////////
-    "frag_standard_mesh_opaque_texsampler_lit",                "frag",              "Assets/Shader/standard_mesh_opaque_texsampler_lit.frag.spv", //standard_mesh_opaque_texsampler_lit frag
-    "frag_standard_mesh_opaque_tex1d_lit",                     "frag",              "Assets/Shader/standard_mesh_opaque_tex1d_lit.frag.spv", //standard_mesh_opaque_tex1d_lit frag
-    "frag_standard_mesh_opaque_tex2d_lit",                     "frag",              "Assets/Shader/standard_mesh_opaque_tex2d_lit.frag.spv", //standard_mesh_opaque_tex2d_lit frag
-    "frag_standard_mesh_opaque_tex2darray_lit",                "frag",              "Assets/Shader/standard_mesh_opaque_tex2darray_lit.frag.spv", //standard_mesh_opaque_tex2darray_lit frag
-    "frag_standard_mesh_opaque_tex3d_lit",                     "frag",              "Assets/Shader/standard_mesh_opaque_tex3d_lit.frag.spv", //standard_mesh_opaque_tex3d_lit frag
-    "frag_standard_mesh_opaque_texcubemap_lit",                "frag",              "Assets/Shader/standard_mesh_opaque_texcubemap_lit.frag.spv", //standard_mesh_opaque_texcubemap_lit frag
-    "frag_standard_mesh_opaque_texanim_scroll_lit",            "frag",              "Assets/Shader/standard_mesh_opaque_texanim_scroll_lit.frag.spv", //standard_mesh_opaque_texanim_scroll_lit frag
-    "frag_standard_mesh_opaque_texanim_chunk_lit",             "frag",              "Assets/Shader/standard_mesh_opaque_texanim_chunk_lit.frag.spv", //standard_mesh_opaque_texanim_chunk_lit frag
+    "frag_standard_mesh_opaque_texsampler_lit",                "frag",              "Assets/Shader/Common/standard_mesh_opaque_texsampler_lit.frag.spv", //standard_mesh_opaque_texsampler_lit frag
+    "frag_standard_mesh_opaque_tex1d_lit",                     "frag",              "Assets/Shader/Common/standard_mesh_opaque_tex1d_lit.frag.spv", //standard_mesh_opaque_tex1d_lit frag
+    "frag_standard_mesh_opaque_tex2d_lit",                     "frag",              "Assets/Shader/Common/standard_mesh_opaque_tex2d_lit.frag.spv", //standard_mesh_opaque_tex2d_lit frag
+    "frag_standard_mesh_opaque_tex2darray_lit",                "frag",              "Assets/Shader/Common/standard_mesh_opaque_tex2darray_lit.frag.spv", //standard_mesh_opaque_tex2darray_lit frag
+    "frag_standard_mesh_opaque_tex3d_lit",                     "frag",              "Assets/Shader/Common/standard_mesh_opaque_tex3d_lit.frag.spv", //standard_mesh_opaque_tex3d_lit frag
+    "frag_standard_mesh_opaque_texcubemap_lit",                "frag",              "Assets/Shader/Common/standard_mesh_opaque_texcubemap_lit.frag.spv", //standard_mesh_opaque_texcubemap_lit frag
+    "frag_standard_mesh_opaque_texanim_scroll_lit",            "frag",              "Assets/Shader/Common/standard_mesh_opaque_texanim_scroll_lit.frag.spv", //standard_mesh_opaque_texanim_scroll_lit frag
+    "frag_standard_mesh_opaque_texanim_chunk_lit",             "frag",              "Assets/Shader/Common/standard_mesh_opaque_texanim_chunk_lit.frag.spv", //standard_mesh_opaque_texanim_chunk_lit frag
          
-    "frag_standard_mesh_opaque_texbumpmap_lit",                "frag",              "Assets/Shader/standard_mesh_opaque_texbumpmap_lit.frag.spv", //standard_mesh_opaque_texbumpmap_lit frag
-    "frag_standard_mesh_opaque_texnormalmap_lit",              "frag",              "Assets/Shader/standard_mesh_opaque_texnormalmap_lit.frag.spv", //standard_mesh_opaque_texnormalmap_lit frag
-    "frag_standard_mesh_opaque_texparallaxmap_lit",            "frag",              "Assets/Shader/standard_mesh_opaque_texparallaxmap_lit.frag.spv", //standard_mesh_opaque_texparallaxmap_lit frag
-    "frag_standard_mesh_opaque_texdisplacementmap_lit",        "frag",              "Assets/Shader/standard_mesh_opaque_texdisplacementmap_lit.frag.spv", //standard_mesh_opaque_texdisplacementmap_lit frag
+    "frag_standard_mesh_opaque_texbumpmap_lit",                "frag",              "Assets/Shader/Common/standard_mesh_opaque_texbumpmap_lit.frag.spv", //standard_mesh_opaque_texbumpmap_lit frag
+    "frag_standard_mesh_opaque_texnormalmap_lit",              "frag",              "Assets/Shader/Common/standard_mesh_opaque_texnormalmap_lit.frag.spv", //standard_mesh_opaque_texnormalmap_lit frag
+    "frag_standard_mesh_opaque_texparallaxmap_lit",            "frag",              "Assets/Shader/Common/standard_mesh_opaque_texparallaxmap_lit.frag.spv", //standard_mesh_opaque_texparallaxmap_lit frag
+    "frag_standard_mesh_opaque_texdisplacementmap_lit",        "frag",              "Assets/Shader/Common/standard_mesh_opaque_texdisplacementmap_lit.frag.spv", //standard_mesh_opaque_texdisplacementmap_lit frag
 
     ///////////////////////////////////////// comp /////////////////////////////////////////
 
