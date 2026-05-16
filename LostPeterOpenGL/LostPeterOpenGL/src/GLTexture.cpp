@@ -26,8 +26,10 @@ namespace LostPeterOpenGL
                          bool _isUseBorderColor,
                          bool _isAutoMipmap,
                          bool _isCubeMap,
-                         bool _isRenderTarget,
-                         bool _isGraphicsComputeShared)
+                         bool _isGraphicsComputeShared,
+						 bool _isRenderTarget,
+						 bool _isUnOrderedAccess,
+						 const FColor& _rtColor)
         : Base(_nameTexture)
         , aPathTexture(_aPathTexture)
         , typeTexture(_typeTexture)
@@ -39,8 +41,10 @@ namespace LostPeterOpenGL
         , borderColor(_borderColor)
         , isUseBorderColor(_isUseBorderColor)
         , isCubeMap(_isCubeMap)
-        , isRenderTarget(_isRenderTarget)
         , isGraphicsComputeShared(_isGraphicsComputeShared)
+		, isRenderTarget(_isRenderTarget)
+		, isUnOrderedAccess(_isUnOrderedAccess)
+		, rtColor(_rtColor)
         
         , width(0)
         , height(0)
@@ -52,6 +56,7 @@ namespace LostPeterOpenGL
 
         //Texture 3D
         , pDataRGBA(nullptr)
+		, isDeleteRGBA(true)
 
         //Texture Animation
         , texChunkMaxX(0)
@@ -133,6 +138,7 @@ namespace LostPeterOpenGL
                                                            this->borderColor,
                                                            this->isUseBorderColor,
                                                            this->isGraphicsComputeShared,
+														   this->isUnOrderedAccess,
                                                            this->nTextureID))
                 {
                     F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture, name: [%s], path: [%s] !", this->name.c_str(), this->aPathTexture[0].c_str());
@@ -183,6 +189,7 @@ namespace LostPeterOpenGL
                                                                        this->borderColor,
                                                                        this->isUseBorderColor,
                                                                        this->isGraphicsComputeShared,
+																	   this->isUnOrderedAccess,
                                                                        this->nTextureID))
                 {
                     F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTarget2D, name: [%s] !", this->name.c_str());

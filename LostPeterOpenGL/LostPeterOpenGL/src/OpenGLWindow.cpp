@@ -486,8 +486,10 @@ namespace LostPeterOpenGL
                                                 true,
                                                 true,
                                                 false,
-                                                isRenderTarget,
-                                                isGraphicsComputeShared);
+                                                isGraphicsComputeShared,
+												isRenderTarget,
+												false,
+                                            	FMath::ms_clBlack);
             pTexture->texChunkMaxX = 0;
             pTexture->texChunkMaxY = 0; 
             if (pTexture->texChunkMaxX > 0 && 
@@ -1005,6 +1007,11 @@ namespace LostPeterOpenGL
         , cfg_isImgui(false)
         , cfg_isWireFrame(false)
         , cfg_isRotate(false)
+
+
+		, cfg_isUseComputeShaderBeforeRender(false)
+        , cfg_isUseComputeShaderAfterRender(false)
+
 
         , cfg_cameraPos(0.0f, 0.0f, -5.0f)
         , cfg_cameraLookTarget(0.0f, 0.0f, 0.0f)
@@ -1845,8 +1852,10 @@ namespace LostPeterOpenGL
                                                     true,
                                                     true,
                                                     false,
-                                                    true,
-                                                    false);
+                                                    false,
+													true,
+													false,
+													FMath::ms_clBlack);
                 if (pTexture == nullptr)
                 {
                     F_LogError("*********************** OpenGLWindow::createSwapChainImageViews: Failed to create texture, name: [%s] !", nameSwapChain.c_str());
@@ -1879,8 +1888,10 @@ namespace LostPeterOpenGL
 													 true,
 													 true,
 													 false,
+													 false,
 													 true,
-													 false);
+													 false,
+													 FMath::ms_clBlack);
                 if (this->poTextureColor == nullptr)
                 {
                     F_LogError("*********************** OpenGLWindow::createColorResources: Failed to create texture, name: [%s] !", nameColor.c_str());
@@ -2702,7 +2713,9 @@ namespace LostPeterOpenGL
                                                         true,
                                                         false,
                                                         false,
-                                                        false);
+                                                        false,
+														false,
+														FMath::ms_clBlack);
                         if (this->poTexture == nullptr)
                         {
                             F_LogError("*********************** OpenGLWindow::loadTexture_Default: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), this->cfg_texture_Path.c_str());
@@ -2734,8 +2747,10 @@ namespace LostPeterOpenGL
                                                        bool isUseBorderColor,
                                                        bool isAutoMipmap,
                                                        bool isCubeMap,
-                                                       bool isRenderTarget,
-                                                       bool isGraphicsComputeShared)
+                                                       bool isGraphicsComputeShared,
+													   bool isRenderTarget,
+													   bool isUnOrderedAccess,
+                                                       const FColor& rtColor)
                 {
                     GLTexture* pTexture = new GLTexture(nameTexture,
                                                         aPathTexture,
@@ -2749,8 +2764,10 @@ namespace LostPeterOpenGL
                                                         isUseBorderColor,
                                                         isAutoMipmap,
                                                         isCubeMap,
-                                                        isRenderTarget,
-                                                        isGraphicsComputeShared);
+                                                        isGraphicsComputeShared,
+														isRenderTarget,
+														isUnOrderedAccess,
+														rtColor);
                     if (!pTexture->LoadTexture(width, 
                                                height,
                                                depth,
@@ -2779,6 +2796,7 @@ namespace LostPeterOpenGL
                                                    const FColor& borderColor,
                                                    bool isUseBorderColor,
                                                    bool isGraphicsComputeShared,
+												   bool isUnOrderedAccess,
                                                    uint32& nTextureID)
                 {
                     //1> Load Texture From File
@@ -2814,6 +2832,7 @@ namespace LostPeterOpenGL
                                          borderColor,
                                          isUseBorderColor,
                                          isGraphicsComputeShared,
+										 isUnOrderedAccess,
                                          nTextureID))
                     {
                         F_LogError("*********************** OpenGLWindow::createTexture2D: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
@@ -2844,6 +2863,7 @@ namespace LostPeterOpenGL
                                                                const FColor& borderColor,
                                                                bool isUseBorderColor,
                                                                bool isGraphicsComputeShared,
+															   bool isUnOrderedAccess,
                                                                uint32& nTextureID)
                 {
                     int imageSize = width * height * channel;
@@ -2886,6 +2906,7 @@ namespace LostPeterOpenGL
                                                      borderColor,
                                                      isUseBorderColor,
                                                      isGraphicsComputeShared,
+													 isUnOrderedAccess,
                                                      nTextureID))
                     {
                         F_DELETE_T(pData)
@@ -2913,6 +2934,7 @@ namespace LostPeterOpenGL
                                                                const FColor& borderColor,
                                                                bool isUseBorderColor,
                                                                bool isGraphicsComputeShared,
+															   bool isUnOrderedAccess,
                                                                uint32& nTextureID)
                 {
                     if (!createGLTexture(nameTexture,
@@ -2934,6 +2956,7 @@ namespace LostPeterOpenGL
                                          borderColor,
                                          isUseBorderColor,
                                          isGraphicsComputeShared,
+										 isUnOrderedAccess,
                                          nTextureID))
                     {
                         F_LogError("*********************** OpenGLWindow::createTextureRenderTarget2D: Failed to create texture RenderTarget2D, name: [%s] !", nameTexture.c_str());
@@ -2963,6 +2986,7 @@ namespace LostPeterOpenGL
                                                    const FColor& borderColor,
                                                    bool isUseBorderColor,
                                                    bool isGraphicsComputeShared,
+												   bool isUnOrderedAccess,
                                                    uint32& nTextureID)
                 {
                     glGenTextures(1, &nTextureID);

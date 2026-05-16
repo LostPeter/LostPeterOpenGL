@@ -31,8 +31,10 @@ namespace LostPeterOpenGL
                   bool _isUseBorderColor,
                   bool _isAutoMipmap,
                   bool _isCubeMap,
-                  bool _isRenderTarget,
-                  bool _isGraphicsComputeShared);
+                  bool _isGraphicsComputeShared,
+			  	  bool _isRenderTarget,
+                  bool _isUnOrderedAccess,
+                  const FColor& _rtColor);
         virtual ~GLTexture();
 
     public:
@@ -46,8 +48,10 @@ namespace LostPeterOpenGL
         FColor borderColor;
         bool isUseBorderColor;
         bool isCubeMap;
-        bool isRenderTarget;
         bool isGraphicsComputeShared;
+		bool isRenderTarget;
+		bool isUnOrderedAccess;
+        FColor rtColor;
         int width;
         int height;
         int depth;
@@ -58,6 +62,7 @@ namespace LostPeterOpenGL
 
         //Texture 3D
         uint8* pDataRGBA;
+		bool isDeleteRGBA;
 
         //Texture Animation
         int texChunkMaxX;

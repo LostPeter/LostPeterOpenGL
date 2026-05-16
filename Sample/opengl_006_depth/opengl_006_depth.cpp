@@ -234,7 +234,9 @@ bool OpenGL_006_Depth::loadModel_Texture(ModelObject* pModelObject)
 												true,
 												false,
 												false,
-												false);
+												false,
+												false,
+												FMath::ms_clBlack);
 		if (!pModelObject->poTexture->Init())
 		{
 			F_LogError("*********************** OpenGL_006_Depth::loadModel_Texture: Failed to create texture, path: [%s] !", pModelObject->pathTexture.c_str());

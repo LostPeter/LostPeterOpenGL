@@ -600,21 +600,21 @@ static bool g_ObjectIsShows[] =
     true, //textureSampler_Mirror
     true, //textureSampler_Clamp
     true, //textureSampler_Border
-    true, //texture1D
-    true, //texture2D
-    true, //texture2Darray
-    true, //texture3D
-    true, //textureCubeMap_SkyBox
-    true, //textureCubeMap_Sphere
-    true, //textureAnimation_Scroll
-    true, //textureAnimation_Chunk
+    false, //texture1D
+    false, //texture2D
+    false, //texture2Darray
+    false, //texture3D
+    false, //textureCubeMap_SkyBox
+    false, //textureCubeMap_Sphere
+    false, //textureAnimation_Scroll
+    false, //textureAnimation_Chunk
 
 ////High-Level Texture Operation
-    true, //textureOriginal
-    true, //textureBumpMap
-    true, //textureNormalMap
-    true, //textureParallaxMap
-    true, //textureDisplacementMap
+    false, //textureOriginal
+    false, //textureBumpMap
+    false, //textureNormalMap
+    false, //textureParallaxMap
+    false, //textureDisplacementMap
 
 };
 static GLenum g_ObjectTypeCulling[] = 
@@ -862,12 +862,11 @@ OpenGL_011_Texturing::OpenGL_011_Texturing(int width, int height, String name)
     this->cfg_isDepthStencil = true;
     this->cfg_isImgui = true;
     this->imgui_IsEnable = true;
+	this->cfg_isUseComputeShaderBeforeRender = true;
     this->cfg_isEditorCreate = true;
     this->cfg_isEditorGridShow = true;
     this->cfg_isEditorCameraAxisShow = true;
     this->cfg_isEditorCoordinateAxisShow = false;
-
-	this->poTypeVertex = F_MeshVertex_Pos3Color4Normal3Tex2;
 
 	this->mainLight.common.x = 0; //Directional Type
     this->mainLight.common.y = 1.0f; //Enable
@@ -880,6 +879,13 @@ void OpenGL_011_Texturing::createCamera()
     OpenGLWindow::createCamera();
     
     cameraReset();
+}
+void OpenGL_011_Texturing::cameraReset()
+{
+    OpenGLWindow::cameraReset();
+
+    this->pCamera->SetPos(FVector3(-4.0f, 24.0f, 3.6f));
+    this->pCamera->SetEulerAngles(FVector3(80.0f, 0.0f, 0.0f));
 }
 
 void OpenGL_011_Texturing::loadModel_Custom()
@@ -1278,8 +1284,8 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
         }
 
         //poStatePipelineGraphics
-		String namePipelineGraphics_Stencil = "PipelineGraphics-" + pModelObject->nameObject;
-        pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics_Stencil,
+		String namePipelineGraphics = "PipelineGraphics-" + pModelObject->nameObject;
+        pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics,
                                                                             pShaderVertex,
                                                                             pShaderTesc,
                                                                             pShaderTese,
@@ -1295,13 +1301,13 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
                                                                             poDepthFuncCompare,
                                                                             poDepthTestEnabled,
                                                                             poDepthWriteEnabled,
-                                                                            true,
-                                                                            GL_ALWAYS,
-                                                                            GL_REPLACE,
-                                                                            GL_REPLACE,
-                                                                            GL_REPLACE,
-                                                                            1,
-                                                                            0xFF,
+                                                                            pModelObject->poStencilEnabled,
+                                                                            pModelObject->poStencil_CompareFunction,
+                                                                            pModelObject->poStencil_StencilFailureOp,
+                                                                            pModelObject->poStencil_DepthFailureOp,
+                                                                            pModelObject->poStencil_DepthStencilPassOp,
+                                                                            pModelObject->poStencil_Ref,
+                                                                            pModelObject->poStencil_Mask,
                                                                             poBlendEnabled,
                                                                             poBlendColorFactorSrc,
                                                                             poBlendColorFactorDst,
@@ -1320,6 +1326,151 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
             throw std::runtime_error(msg.c_str());
         }
     }
+}
+
+void OpenGL_011_Texturing::createComputePipeline_Custom()
+{
+
+}
+
+void OpenGL_011_Texturing::destroyMeshes()
+{
+    size_t count = this->m_aModelMesh.size();
+    for (size_t i = 0; i < count; i++)
+    {
+        ModelMesh* pMesh = this->m_aModelMesh[i];
+        delete pMesh;
+    }
+    this->m_aModelMesh.clear();
+    this->m_mapModelMesh.clear();
+}
+void OpenGL_011_Texturing::createMeshes()
+{
+    for (int i = 0; i < g_MeshCount; i++)
+    {
+        String nameMesh = g_MeshPaths[5 * i + 0];
+        String nameVertexType = g_MeshPaths[5 * i + 1];
+        String nameMeshType = g_MeshPaths[5 * i + 2];
+        String nameGeometryType = g_MeshPaths[5 * i + 3];
+        String pathMesh = g_MeshPaths[5 * i + 4];
+        
+        FMeshVertexType typeVertex = F_ParseMeshVertexType(nameVertexType); 
+        FMeshType typeMesh = F_ParseMeshType(nameMeshType);
+        FMeshGeometryType typeGeometryType = F_MeshGeometry_EntityTriangle;
+        if (!nameGeometryType.empty())
+        {
+            typeGeometryType = F_ParseMeshGeometryType(nameGeometryType);
+        }
+
+        ModelMesh* pMesh = new ModelMesh(this, 
+                                         nameMesh,
+                                         pathMesh,
+                                         typeMesh,
+                                         typeGeometryType,
+                                         typeVertex);
+        bool isFlipY = g_MeshIsFlipYs[i];
+        bool isTransformLocal = g_MeshIsTranformLocals[i];
+        if (!pMesh->LoadMesh(isFlipY, isTransformLocal, g_MeshTranformLocals[i]))
+        {
+            String msg = "*********************** OpenGL_011_Texturing::createMeshes: create mesh: [" + nameMesh + "] failed !";
+            F_LogError(msg.c_str());
+            throw std::runtime_error(msg);
+        }
+
+        this->m_aModelMesh.push_back(pMesh);
+        this->m_mapModelMesh[nameMesh] = pMesh;
+
+        F_LogInfo("OpenGL_011_Texturing::createMeshes: create mesh: [%s], vertex type: [%s], mesh type: [%s], geometry type: [%s], path: [%s] success !", 
+                  nameMesh.c_str(), nameVertexType.c_str(), nameMeshType.c_str(), nameGeometryType.c_str(), pathMesh.c_str());
+    }
+}
+OpenGL_011_Texturing::ModelMesh* OpenGL_011_Texturing::findMesh(const String& nameMesh)
+{
+    ModelMeshPtrMap::iterator itFind = this->m_mapModelMesh.find(nameMesh);
+    if (itFind == this->m_mapModelMesh.end())
+    {
+        return nullptr;
+    }
+    return itFind->second;
+}
+
+void OpenGL_011_Texturing::destroyTextures()
+{
+    size_t count = this->m_aModelTexture.size();
+    for (size_t i = 0; i < count; i++)
+    {
+        GLTexture* pTexture = this->m_aModelTexture[i];
+        delete pTexture;
+    }
+    this->m_aModelTexture.clear();
+    this->m_mapModelTexture.clear();
+}
+void OpenGL_011_Texturing::createTextures()
+{
+    for (int i = 0; i < g_TextureCount; i++)
+    {
+        String nameTexture = g_TexturePaths[5 * i + 0];
+        String nameType = g_TexturePaths[5 * i + 1];
+        FTextureType typeTexture = F_ParseTextureType(nameType);
+        String nameIsRenderTarget = g_TexturePaths[5 * i + 2];
+        bool isRenderTarget = FUtilString::ParserBool(nameIsRenderTarget);
+        String nameIsGraphicsComputeShared = g_TexturePaths[5 * i + 3];
+        bool isGraphicsComputeShared = FUtilString::ParserBool(nameIsGraphicsComputeShared);
+        String pathTextures = g_TexturePaths[5 * i + 4];
+
+        StringVector aPathTexture = FUtilString::Split(pathTextures, ";");
+        GLTexture* pTexture = new GLTexture(nameTexture,
+											aPathTexture,
+											typeTexture,
+											g_TextureFormats[i],
+											g_TextureAddressings[i],
+											g_TextureFilters[i * 2 + 0],
+											g_TextureFilters[i * 2 + 1],
+											F_MSAASampleCount_1_Bit,
+											g_TextureBorderColors[i],
+											true,
+											true,
+											false,
+											false,
+											isRenderTarget,
+											false,
+											FMath::ms_clBlack);
+        pTexture->texChunkMaxX = (int)g_TextureAnimChunks[i * 2 + 0];
+        pTexture->texChunkMaxY = (int)g_TextureAnimChunks[i * 2 + 1];
+        if (pTexture->texChunkMaxX > 0 && 
+            pTexture->texChunkMaxY > 0)
+        {
+            pTexture->texChunkIndex = FMath::Rand(0, pTexture->texChunkMaxX * pTexture->texChunkMaxY - 1);
+        }
+        pTexture->AddRef();
+
+        int width = g_TextureSizes[3 * i + 0];
+        int height = g_TextureSizes[3 * i + 1];
+        int depth = g_TextureSizes[3 * i + 1];
+        pTexture->LoadTexture(width, 
+                              height,
+                              depth,
+                              g_TextureChannels[i],
+                              nullptr);
+
+        this->m_aModelTexture.push_back(pTexture);
+        this->m_mapModelTexture[nameTexture] = pTexture;
+
+        F_LogInfo("OpenGL_011_Texturing::createTextures: create texture: [%s], type: [%s], isRT: [%s], path: [%s] success !", 
+                  nameTexture.c_str(), 
+                  nameType.c_str(), 
+                  isRenderTarget ? "true" : "false",
+                  pathTextures.c_str());
+    }
+}
+GLTexture* OpenGL_011_Texturing::findTexture(const String& nameTexture)
+{
+    GLTexturePtrMap::iterator itFind = this->m_mapModelTexture.find(nameTexture);
+    if (itFind == this->m_mapModelTexture.end())
+    {
+        return nullptr;
+    }
+    return itFind->second;
 }
 
 void OpenGL_011_Texturing::destroyShaderModules()

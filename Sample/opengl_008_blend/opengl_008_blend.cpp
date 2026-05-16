@@ -253,7 +253,9 @@ bool OpenGL_008_Blend::loadModel_Texture(ModelObject* pModelObject)
 												true,
 												false,
 												false,
-												false);
+												false,
+												false,
+												FMath::ms_clBlack);
 		if (!pModelObject->poTexture->Init())
 		{
 			F_LogError("*********************** OpenGL_008_Blend::loadModel_Texture: Failed to create texture, path: [%s] !", pModelObject->pathTexture.c_str());

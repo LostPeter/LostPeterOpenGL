@@ -505,8 +505,10 @@ namespace LostPeterOpenGL
 															 true,
 															 true,
 															 false,
+															 false,
 															 true,
-															 false);
+															 false,
+															 this->poColorBackground);
                 if (pTexture == nullptr)
                 {
                     F_LogError("*********************** EditorCameraAxis::initPipelineGraphics: Failed to create texture color, name: [%s] !", nameTextureColor.c_str());

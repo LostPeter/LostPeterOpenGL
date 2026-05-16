@@ -241,6 +241,10 @@ namespace LostPeterOpenGL
         bool cfg_isImgui;
         bool cfg_isWireFrame;
         bool cfg_isRotate;
+
+
+		bool cfg_isUseComputeShaderBeforeRender;
+        bool cfg_isUseComputeShaderAfterRender;
 		
 
         FVector3 cfg_cameraPos;
@@ -602,8 +606,10 @@ namespace LostPeterOpenGL
                                                      bool isUseBorderColor,
                                                      bool isAutoMipmap,
                                                      bool isCubeMap,
-                                                     bool isRenderTarget,
-                                                     bool isGraphicsComputeShared);
+                                                     bool isGraphicsComputeShared,
+													 bool isRenderTarget,
+													 bool isUnOrderedAccess,
+                                                     const FColor& rtColor);
 
                     virtual bool createTexture2D(const String& nameTexture,
                                                  const String& pathAsset_Tex,
@@ -619,6 +625,7 @@ namespace LostPeterOpenGL
                                                  const FColor& borderColor,
                                                  bool isUseBorderColor,
                                                  bool isGraphicsComputeShared,
+												 bool isUnOrderedAccess,
                                                  uint32& nTextureID);
 
                     
@@ -640,6 +647,7 @@ namespace LostPeterOpenGL
                                                              const FColor& borderColor,
                                                              bool isUseBorderColor,
                                                              bool isGraphicsComputeShared,
+															 bool isUnOrderedAccess,
                                                              uint32& nTextureID);
                     virtual bool createTextureRenderTarget2D(const String& nameTexture,
                                                              uint8* pData,
@@ -658,6 +666,7 @@ namespace LostPeterOpenGL
                                                              const FColor& borderColor,
                                                              bool isUseBorderColor,
                                                              bool isGraphicsComputeShared,
+															 bool isUnOrderedAccess,
                                                              uint32& nTextureID);
 
 
@@ -680,6 +689,7 @@ namespace LostPeterOpenGL
                                                  const FColor& borderColor,
                                                  bool isUseBorderColor,
                                                  bool isGraphicsComputeShared,
+												 bool isUnOrderedAccess,
                                                  uint32& nTextureID);
                     virtual void bindGLTexture(FTextureType typeTexture, uint32 nTextureID);
                     virtual void destroyGLTexture(uint32 nTextureID);

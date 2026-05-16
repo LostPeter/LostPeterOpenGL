@@ -355,6 +355,7 @@ protected:
 			virtual void updateCBs_Custom();
 
 			virtual bool beginRenderImgui();
+				virtual void cameraReset();
 				virtual void modelConfig();
 				
 			virtual void endRenderImgui();
