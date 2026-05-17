@@ -122,7 +122,26 @@ namespace LostPeterOpenGL
         {
             if (this->typeTexture == F_Texture_1D)
             {
-
+				if (!pWindow->createTexture1D(this->name,
+											  this->aPathTexture[0], 
+											  this->mipMapCount,
+											  this->isAutoMipmap,
+											  this->typeTexture,
+											  this->isCubeMap,
+											  this->typePixelFormat,
+											  this->typeAddressing,
+											  this->typeFilterSizeMin,
+											  this->typeFilterSizeMag,
+											  this->numSamples,
+											  this->borderColor,
+											  this->isUseBorderColor,
+											  this->isGraphicsComputeShared,
+											  this->isUnOrderedAccess,
+											  this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture 1d, name: [%s], path: [%s] !", this->name.c_str(), this->aPathTexture[0].c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_2D)
             {
@@ -143,17 +162,55 @@ namespace LostPeterOpenGL
 											  this->isUnOrderedAccess,
 											  this->nTextureID))
                 {
-                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture, name: [%s], path: [%s] !", this->name.c_str(), this->aPathTexture[0].c_str());
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture 2d, name: [%s], path: [%s] !", this->name.c_str(), this->aPathTexture[0].c_str());
                     return false;
                 }
             }
             else if (this->typeTexture == F_Texture_2DArray)
             {
-
+				if (!pWindow->createTexture2DArray(this->name,
+												   this->aPathTexture, 
+												   this->mipMapCount,
+												   this->isAutoMipmap,
+												   this->typeTexture,
+												   this->isCubeMap,
+												   this->typePixelFormat,
+												   this->typeAddressing,
+												   this->typeFilterSizeMin,
+												   this->typeFilterSizeMag,
+												   this->numSamples,
+												   this->borderColor,
+												   this->isUseBorderColor,
+												   this->isGraphicsComputeShared,
+												   this->isUnOrderedAccess,
+												   this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture 2d array, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_3D)
             {
-
+				if (!pWindow->createTexture3D(this->name,
+											  this->aPathTexture[0], 
+											  this->mipMapCount,
+											  this->isAutoMipmap,
+											  this->typeTexture,
+											  this->isCubeMap,
+											  this->typePixelFormat,
+											  this->typeAddressing,
+											  this->typeFilterSizeMin,
+											  this->typeFilterSizeMag,
+											  this->numSamples,
+											  this->borderColor,
+											  this->isUseBorderColor,
+											  this->isGraphicsComputeShared,
+											  this->isUnOrderedAccess,
+											  this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture 3d, name: [%s], path: [%s] !", this->name.c_str(), this->aPathTexture[0].c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_CubeMap)
             {
@@ -170,7 +227,29 @@ namespace LostPeterOpenGL
         {
             if (this->typeTexture == F_Texture_1D)
             {
-
+				if (!pWindow->createTextureRenderTarget1D(this->name,
+														  pData, 
+														  channel,
+														  width,
+														  height,
+														  this->mipMapCount,
+														  this->isAutoMipmap,
+														  this->typeTexture,
+														  this->isCubeMap,
+														  this->typePixelFormat,
+														  this->typeAddressing,
+														  this->typeFilterSizeMin,
+														  this->typeFilterSizeMag,
+														  this->numSamples,
+														  this->borderColor,
+														  this->isUseBorderColor,
+														  this->isGraphicsComputeShared,
+														  this->isUnOrderedAccess,
+														  this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTarget1D, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_2D)
             {
@@ -200,11 +279,59 @@ namespace LostPeterOpenGL
             }
             else if (this->typeTexture == F_Texture_2DArray)
             {
-
+				if (!pWindow->createTextureRenderTarget2DArray(this->name,
+														   	   pData, 
+															   channel,
+															   width,
+															   height,
+															   depth,
+															   this->mipMapCount,
+															   this->isAutoMipmap,
+															   this->typeTexture,
+															   this->isCubeMap,
+															   this->typePixelFormat,
+															   this->typeAddressing,
+															   this->typeFilterSizeMin,
+															   this->typeFilterSizeMag,
+															   this->numSamples,
+															   this->borderColor,
+															   this->isUseBorderColor,
+															   this->isGraphicsComputeShared,
+															   this->isUnOrderedAccess,
+															   this->rtColorDefault,
+															   this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTarget2D, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_3D)
             {
-
+				if (!pWindow->createTextureRenderTarget3D(this->name,
+														  pData, 
+														  channel,
+														  width,
+														  height,
+														  depth,
+														  this->mipMapCount,
+														  this->isAutoMipmap,
+														  this->typeTexture,
+														  this->isCubeMap,
+														  this->typePixelFormat,
+														  this->typeAddressing,
+														  this->typeFilterSizeMin,
+														  this->typeFilterSizeMag,
+														  this->numSamples,
+														  this->borderColor,
+														  this->isUseBorderColor,
+														  this->isGraphicsComputeShared,
+														  this->isUnOrderedAccess,
+														  this->rtColorDefault,
+														  this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTarget3D, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else if (this->typeTexture == F_Texture_CubeMap)
             {

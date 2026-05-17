@@ -602,8 +602,8 @@ static bool g_ObjectIsShows[] =
     true, //textureSampler_Border
     true, //texture1D
     true, //texture2D
-    false, //texture2Darray
-    false, //texture3D
+    true, //texture2Darray
+    true, //texture3D
     false, //textureCubeMap_SkyBox
     false, //textureCubeMap_Sphere
     true, //textureAnimation_Scroll
