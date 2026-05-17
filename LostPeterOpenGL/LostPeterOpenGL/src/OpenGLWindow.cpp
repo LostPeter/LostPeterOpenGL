@@ -2773,6 +2773,69 @@ namespace LostPeterOpenGL
                     return pTexture;
                 }   
 
+				bool OpenGLWindow::createTexture1D(const String& nameTexture,
+                                                   const String& pathAsset_Tex,
+                                                   int& mipMapCount, 
+                                                   bool isAutoMipmap,
+                                                   FTextureType typeTexture, 
+                                                   bool isCubeMap,
+                                                   FTexturePixelFormatType typePixelFormat,
+                                                   FTextureAddressingType typeAddressing,
+                                                   FTextureFilterType typeFilterSizeMin,
+                                                   FTextureFilterType typeFilterSizeMag,
+                                                   FMSAASampleCountType numSamples, 
+                                                   const FColor& borderColor,
+                                                   bool isUseBorderColor,
+                                                   bool isGraphicsComputeShared,
+												   bool isUnOrderedAccess,
+                                                   uint32& nTextureID)
+                {
+                    //1> Load Texture From File
+                    String pathTexture = GetAssetFullPath(pathAsset_Tex);
+                    int width, height, texChannels;
+                    stbi_uc* pixels = stbi_load(pathTexture.c_str(), &width, &height, &texChannels, 0);
+                    int imageSize = width * height * texChannels;
+                    mipMapCount = static_cast<int>(std::floor(std::log2(std::max(width, height)))) + 1;
+                    if (!pixels) 
+                    {
+                        String msg = "*********************** OpenGLWindow::createTexture1D: Failed to load texture image: " + pathAsset_Tex;
+                        F_LogError(msg.c_str());
+                        throw std::runtime_error(msg);
+                    }
+
+                    //2> Create
+                    if (!createGLTexture(nameTexture,
+                                         pixels,
+                                         texChannels,
+                                         width,
+                                         height,
+                                         0,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         isCubeMap,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+										 isUnOrderedAccess,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTexture1D: Failed to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
+                        stbi_image_free(pixels);
+                        return false;
+                    }
+                    stbi_image_free(pixels);
+
+                    F_LogInfo("OpenGLWindow::createTexture1D: Success to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
+                    return true;
+                }
+
                 bool OpenGLWindow::createTexture2D(const String& nameTexture,
                                                    const String& pathAsset_Tex,
                                                    int& mipMapCount, 
@@ -2833,6 +2896,128 @@ namespace LostPeterOpenGL
                     stbi_image_free(pixels);
 
                     F_LogInfo("OpenGLWindow::createTexture2D: Success to create texture, name: [%s], path: [%s] !", nameTexture.c_str(), pathAsset_Tex.c_str());
+                    return true;
+                }
+
+				bool OpenGLWindow::createTextureRenderTarget1D(const String& nameTexture,
+                                                               const FVector4& clDefault,
+                                                               bool isSetColor,
+                                                               int channel,
+                                                               int width, 
+                                                               int height,
+                                                               int& mipMapCount, 
+                                                               bool isAutoMipmap,
+                                                               FTextureType typeTexture, 
+                                                               bool isCubeMap,
+                                                               FTexturePixelFormatType typePixelFormat,
+                                                               FTextureAddressingType typeAddressing,
+                                                               FTextureFilterType typeFilterSizeMin,
+                                                               FTextureFilterType typeFilterSizeMag,
+                                                               FMSAASampleCountType numSamples, 
+                                                               const FColor& borderColor,
+                                                               bool isUseBorderColor,
+                                                               bool isGraphicsComputeShared,
+															   bool isUnOrderedAccess,
+                                                               uint32& nTextureID)
+                {
+                    int imageSize = width * height * channel;
+                    uint8* pData = nullptr;
+                    if (isSetColor)
+                    {
+                        pData = new uint8[imageSize];
+                        uint8 r = (uint8)(clDefault.x * 255);
+                        uint8 g = (uint8)(clDefault.y * 255);
+                        uint8 b = (uint8)(clDefault.z * 255);
+                        uint8 a = (uint8)(clDefault.w * 255);
+
+                        uint8* pColor = (uint8*)pData;
+                        for (int i = 0; i < width * height; i++)
+                        {
+                            pColor[channel * i + 0] = r;
+                            if (channel > 1)
+                                pColor[channel * i + 1] = g;
+                            if (channel > 2)
+                                pColor[channel * i + 2] = b;
+                            if (channel > 3)
+                                pColor[channel * i + 3] = a;
+                        }
+                    }
+
+                    if (!createTextureRenderTarget1D(nameTexture,
+                                                     pData,
+                                                     channel,
+                                                     width,
+                                                     height,
+                                                     mipMapCount,
+                                                     isAutoMipmap,
+                                                     typeTexture,
+                                                     isCubeMap,
+                                                     typePixelFormat,
+                                                     typeAddressing,
+                                                     typeFilterSizeMin,
+                                                     typeFilterSizeMag,
+                                                     numSamples,
+                                                     borderColor,
+                                                     isUseBorderColor,
+                                                     isGraphicsComputeShared,
+													 isUnOrderedAccess,
+                                                     nTextureID))
+                    {
+                        F_DELETE_T(pData)
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTarget1D: Failed to create texture RenderTarget1D, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+
+                    F_DELETE_T(pData)
+                    return true;
+                }
+                bool OpenGLWindow::createTextureRenderTarget1D(const String& nameTexture,
+                                                               uint8* pData,
+                                                               int channel,
+                                                               int width, 
+                                                               int height,
+                                                               int& mipMapCount, 
+                                                               bool isAutoMipmap,
+                                                               FTextureType typeTexture, 
+                                                               bool isCubeMap,
+                                                               FTexturePixelFormatType typePixelFormat,
+                                                               FTextureAddressingType typeAddressing,
+                                                               FTextureFilterType typeFilterSizeMin,
+                                                               FTextureFilterType typeFilterSizeMag,
+                                                               FMSAASampleCountType numSamples, 
+                                                               const FColor& borderColor,
+                                                               bool isUseBorderColor,
+                                                               bool isGraphicsComputeShared,
+															   bool isUnOrderedAccess,
+                                                               uint32& nTextureID)
+                {
+                    if (!createGLTexture(nameTexture,
+                                         pData,
+                                         channel,
+                                         width,
+                                         height,
+                                         0,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         isCubeMap,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+										 isUnOrderedAccess,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTarget1D: Failed to create texture RenderTarget1D, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+
+                    F_LogInfo("OpenGLWindow::createTextureRenderTarget1D: Success to create texture RenderTarget1D, name: [%s] !", nameTexture.c_str());
                     return true;
                 }
 
@@ -2990,7 +3175,14 @@ namespace LostPeterOpenGL
                     GLenum typeFormat = Util_Transform2GLFormat(typePixelFormat);
                     if (typeTexture == F_Texture_1D)
                     {
-
+						GLenum format;
+                        if (channel == 1)
+                            format = GL_RED;
+                        else if (channel == 3)
+                            format = GL_RGB;
+                        else if (channel == 4)
+                            format = GL_RGBA;
+                        glTexImage1D(type, 0, format, width, 0, format, GL_UNSIGNED_BYTE, pData);
                     }
                     else if (typeTexture == F_Texture_2D)
                     {

@@ -481,7 +481,7 @@ namespace LostPeterOpenGL
 				virtual void createSyncObjects();
                     virtual void createFence();
 
-						
+
         //Load Assets
         virtual void loadAssets();
 
@@ -614,6 +614,23 @@ namespace LostPeterOpenGL
 													 bool isUnOrderedAccess,
                                                      const FColor& rtColor);
 
+					virtual bool createTexture1D(const String& nameTexture,
+                                                 const String& pathAsset_Tex,
+                                                 int& mipMapCount, 
+                                                 bool isAutoMipmap,
+                                                 FTextureType typeTexture, 
+                                                 bool isCubeMap,
+                                                 FTexturePixelFormatType typePixelFormat,
+                                                 FTextureAddressingType typeAddressing,
+                                                 FTextureFilterType typeFilterSizeMin,
+                                                 FTextureFilterType typeFilterSizeMag,
+                                                 FMSAASampleCountType numSamples, 
+                                                 const FColor& borderColor,
+                                                 bool isUseBorderColor,
+                                                 bool isGraphicsComputeShared,
+												 bool isUnOrderedAccess,
+                                                 uint32& nTextureID);
+
                     virtual bool createTexture2D(const String& nameTexture,
                                                  const String& pathAsset_Tex,
                                                  int& mipMapCount, 
@@ -631,6 +648,45 @@ namespace LostPeterOpenGL
 												 bool isUnOrderedAccess,
                                                  uint32& nTextureID);
 
+					virtual bool createTextureRenderTarget1D(const String& nameTexture,
+                                                             const FVector4& clDefault,
+                                                             bool isSetColor,
+                                                             int channel,
+                                                             int width, 
+                                                             int height,
+                                                             int& mipMapCount, 
+                                                             bool isAutoMipmap,
+                                                             FTextureType typeTexture, 
+                                                             bool isCubeMap,
+                                                             FTexturePixelFormatType typePixelFormat,
+                                                             FTextureAddressingType typeAddressing,
+                                                             FTextureFilterType typeFilterSizeMin,
+                                                             FTextureFilterType typeFilterSizeMag,
+                                                             FMSAASampleCountType numSamples, 
+                                                             const FColor& borderColor,
+                                                             bool isUseBorderColor,
+                                                             bool isGraphicsComputeShared,
+															 bool isUnOrderedAccess,
+                                                             uint32& nTextureID);
+                    virtual bool createTextureRenderTarget1D(const String& nameTexture,
+                                                             uint8* pData,
+                                                             int channel,
+                                                             int width, 
+                                                             int height,
+                                                             int& mipMapCount, 
+                                                             bool isAutoMipmap,
+                                                             FTextureType typeTexture, 
+                                                             bool isCubeMap,
+                                                             FTexturePixelFormatType typePixelFormat,
+                                                             FTextureAddressingType typeAddressing,
+                                                             FTextureFilterType typeFilterSizeMin,
+                                                             FTextureFilterType typeFilterSizeMag,
+                                                             FMSAASampleCountType numSamples, 
+                                                             const FColor& borderColor,
+                                                             bool isUseBorderColor,
+                                                             bool isGraphicsComputeShared,
+															 bool isUnOrderedAccess,
+                                                             uint32& nTextureID);
                     
                     virtual bool createTextureRenderTarget2D(const String& nameTexture,
                                                              const FVector4& clDefault,

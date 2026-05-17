@@ -28,10 +28,10 @@ in HSOutput {
 } IN[];
 
 
-out vec4 outWorldPos;
-out vec4 outColor;
-out vec3 outWorldNormal;
-out vec2 outTexCoord;
+out vec4 fragWorldPos;
+out vec4 fragColor;
+out vec3 fragWorldNormal;
+out vec2 fragTexCoord;
 
 
 void main() {
@@ -70,9 +70,9 @@ void main() {
     vec4 posClip   = trans.mat4Proj * posView;
 	
     gl_Position        = posClip;
-    outWorldPos.xyz    = posWorld.xyz / posWorld.w;
-    outWorldPos.w      = float(instanceIndex);
-    outColor           = color;
-    outWorldNormal     = mat3(obj.g_MatWorld) * normalObject;
-    outTexCoord        = texCoord;
+    fragWorldPos.xyz   = posWorld.xyz / posWorld.w;
+    fragWorldPos.w     = float(instanceIndex);
+    fragColor          = color;
+    fragWorldNormal    = mat3(obj.g_MatWorld) * normalObject;
+    fragTexCoord       = texCoord;
 }

@@ -600,20 +600,20 @@ static bool g_ObjectIsShows[] =
     true, //textureSampler_Mirror
     true, //textureSampler_Clamp
     true, //textureSampler_Border
-    false, //texture1D
-    false, //texture2D
+    true, //texture1D
+    true, //texture2D
     false, //texture2Darray
     false, //texture3D
     false, //textureCubeMap_SkyBox
     false, //textureCubeMap_Sphere
-    false, //textureAnimation_Scroll
-    false, //textureAnimation_Chunk
+    true, //textureAnimation_Scroll
+    true, //textureAnimation_Chunk
 
 ////High-Level Texture Operation
-    false, //textureOriginal
-    false, //textureBumpMap
-    false, //textureNormalMap
-    false, //textureParallaxMap
+    true, //textureOriginal
+    true, //textureBumpMap
+    true, //textureNormalMap
+    true, //textureParallaxMap
     false, //textureDisplacementMap
 
 };

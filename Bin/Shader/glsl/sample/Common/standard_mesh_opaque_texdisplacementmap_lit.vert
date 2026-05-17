@@ -18,21 +18,22 @@ layout (location = 1) in vec4 inColor;
 layout (location = 2) in vec3 inNormal;
 layout (location = 3) in vec2 inTexCoord;
 
-out vec4 fragPosition;
-out vec4 fragColor;
-out vec3 fragWorldNormal;
-out vec3 fragTexCoord;
+out VSOutput
+{
+    vec4 outPosition;
+    vec4 outColor;
+    vec3 outNormal;
+    vec2 outTexCoord;
+};
 
 void main()
 {
-	int viewIndex = 0;
-	TransformConstants trans = passConsts.g_Transforms[viewIndex];
-	ObjectConstant obj = objectConsts.objs[gl_InstanceID];
-	MaterialConstant mat = materialConsts.mats[gl_InstanceID];
-		
-    fragPosition = vec4(inPosition, gl_InstanceID);
-    fragColor = inColor;
-	fragWorldNormal = inNormal;
-    fragTexCoord = inPosition;
-	gl_Position = fragPosition;
+	int instanceIndex = gl_InstanceID;
+
+    outPosition = vec4(inPosition, instanceIndex);
+    outColor = inColor;
+    outNormal = inNormal;
+    outTexCoord = inTexCoord;
+
+    gl_Position = outPosition;
 }
