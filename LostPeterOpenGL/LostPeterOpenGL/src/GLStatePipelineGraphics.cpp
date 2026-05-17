@@ -21,8 +21,7 @@ namespace LostPeterOpenGL
     GLStatePipelineGraphics::GLStatePipelineGraphics(const String& nameState)
         : Base(nameState)
 
-		, nameDescriptorSetLayout("")
-        , poDescriptorSetLayoutNames(nullptr)
+        , poDescriptorSetLayout(nullptr)
 
 		, poTypeVertex(F_MeshVertex_Pos3Color4Normal3Tangent3Tex2)
 
@@ -74,7 +73,8 @@ namespace LostPeterOpenGL
 		CleanupSwapChain();
 	}
 
-	bool GLStatePipelineGraphics::Init(GLShaderProgram* pShaderProgram,
+	bool GLStatePipelineGraphics::Init(DescriptorSetLayout* pDescriptorSetLayout,
+									   GLShaderProgram* pShaderProgram,
 									   bool deleteShaderProgram,
 									   FMeshVertexType typeVertex,
 									   GLenum typePrimitive,
@@ -108,6 +108,7 @@ namespace LostPeterOpenGL
 		this->poShaderProgram = pShaderProgram;
 		this->isDeleteShaderProgram = deleteShaderProgram;
 
+		this->poDescriptorSetLayout = pDescriptorSetLayout;
 		this->poTypeVertex = typeVertex;
 		
 		this->poTypePrimitive = typePrimitive;
@@ -145,7 +146,8 @@ namespace LostPeterOpenGL
 		return true;
 	}
 
-	bool GLStatePipelineGraphics::Init(GLShader* pShaderVertex,
+	bool GLStatePipelineGraphics::Init(DescriptorSetLayout* pDescriptorSetLayout,
+									   GLShader* pShaderVertex,
 									   GLShader* pShaderTessellationControl,
 									   GLShader* pShaderTessellationEvaluation,
 									   GLShader* pShaderGeometry,
@@ -192,7 +194,8 @@ namespace LostPeterOpenGL
 			return false;
 		}
 
-		return Init(pShaderProgram,
+		return Init(pDescriptorSetLayout,
+					pShaderProgram,
 					true,
 					typeVertex,
 					typePrimitive,
@@ -226,7 +229,7 @@ namespace LostPeterOpenGL
 
 	void GLStatePipelineGraphics::CleanupSwapChain()
 	{
-		this->poDescriptorSetLayoutNames = nullptr;
+		this->poDescriptorSetLayout = nullptr;
 		
 		if (this->isDeleteShaderProgram)
 		{

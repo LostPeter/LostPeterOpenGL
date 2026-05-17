@@ -192,6 +192,9 @@ public:
 	GLShader* pShaderVertex;
 	GLShader* pShaderFragment;
 
+	String nameDescriptorSetLayoutLocal;
+	DescriptorSetLayout* pDescriptorSetLayoutLocal;
+	
 
 protected:
 	//Create Pipeline

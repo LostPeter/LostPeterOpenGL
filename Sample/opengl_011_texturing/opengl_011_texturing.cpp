@@ -1264,7 +1264,7 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
         GLShader* pShaderTese = findShaderModule(nameShaderTese);
         GLShader* pShaderGeom = findShaderModule(nameShaderGeom);
         GLShader* pShaderFragment = findShaderModule(nameShaderFrag);
-        DescriptorSetLayout* pDS = findDescriptorSetLayout(g_ObjectNameDescriptorSetLayouts[2 * i + 0]);
+        DescriptorSetLayout* pDescriptorSetLayout = findDescriptorSetLayout(g_ObjectNameDescriptorSetLayouts[2 * i + 0]);
 
         bool poDepthEnabled = pModelObject->poDepthEnabled;
 		GLenum poDepthFuncCompare = pModelObject->poDepthFuncCompare;
@@ -1286,6 +1286,7 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
         //poStatePipelineGraphics
 		String namePipelineGraphics = "PipelineGraphics-" + pModelObject->nameObject;
         pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics,
+																			pDescriptorSetLayout,
                                                                             pShaderVertex,
                                                                             pShaderTesc,
                                                                             pShaderTese,
@@ -1562,10 +1563,10 @@ void OpenGL_011_Texturing::createDescriptorSets_Custom()
             int nIndexTextureTESC = 0;
             int nIndexTextureTESE = 0;
             int nIndexTextureFS = 0;
-            int count_ds = (int)pModelObject->poStatePipelineGraphics->poDescriptorSetLayoutNames->size();
+            int count_ds = (int)pModelObject->poStatePipelineGraphics->poDescriptorSetLayout->aLayouts.size();
             for (int j = 0; j < count_ds; j++)
             {
-                const String& nameDescriptorSet = pModelObject->poStatePipelineGraphics->poDescriptorSetLayoutNames->at(j);
+                String& nameDescriptorSet = pModelObject->poStatePipelineGraphics->poDescriptorSetLayout->aLayouts[j];
 				
                 if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
                 {

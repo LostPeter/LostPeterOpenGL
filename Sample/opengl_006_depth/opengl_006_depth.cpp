@@ -83,6 +83,10 @@ OpenGL_006_Depth::OpenGL_006_Depth(int width, int height, String name)
     this->shaderVertex_Path = getShaderPathRelative("pos3_color4_tex2_ubo.vert.spv", ShaderSort_Common);
     this->shaderFragment_Path = getShaderPathRelative("pos3_color4_tex2_ubo.frag.spv", ShaderSort_Common);
 
+	this->nameDescriptorSetLayoutLocal = "PassConstants-ObjectConstants-TextureFS";
+    this->pDescriptorSetLayoutLocal = new DescriptorSetLayout();
+    this->pDescriptorSetLayoutLocal->Init(this->nameDescriptorSetLayoutLocal);
+
     this->cfg_cameraPos = FVector3(-0.65f, 2.5f, -4.0f);
 }
 
@@ -310,6 +314,7 @@ void OpenGL_006_Depth::createGraphicsPipeline_Custom()
         //poStatePipelineGraphics
 		String namePipelineGraphics = "PipelineGraphics-" + pModelObject->nameModel;
         pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics,
+																			this->pDescriptorSetLayoutLocal,
 																			this->pShaderVertex,
 																			nullptr,
 																			nullptr,
@@ -592,6 +597,7 @@ void OpenGL_006_Depth::drawMeshDefault_Custom()
 
 void OpenGL_006_Depth::cleanupCustom()
 {
+	F_DELETE(this->pDescriptorSetLayoutLocal)
 	F_DELETE(this->pShaderVertex)
     F_DELETE(this->pShaderFragment)
 

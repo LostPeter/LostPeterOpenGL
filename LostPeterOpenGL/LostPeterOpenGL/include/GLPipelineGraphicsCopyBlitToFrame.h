@@ -23,8 +23,7 @@ namespace LostPeterOpenGL
         virtual ~GLPipelineGraphicsCopyBlitToFrame();
 
     public:
-        String nameDescriptorSetLayout;
-        StringVector* poDescriptorSetLayoutNames;
+		DescriptorSetLayout* pDescriptorSetLayout;
 
         CopyBlitObjectConstants objectCB_CopyBlit;
         GLBufferUniform* pBuffer_CopyBlit;
@@ -34,11 +33,10 @@ namespace LostPeterOpenGL
 
     public:
         void Destroy();
-        virtual bool Init(GLShader* pShaderVertex,
+        virtual bool Init(DescriptorSetLayout* pDescriptorSetLayout,
+						  GLShader* pShaderVertex,
                           GLShader* pShaderFragment,
-                          Mesh* pMesh,
-                          const String& descriptorSetLayout,
-                          StringVector* pDescriptorSetLayoutNames);
+                          Mesh* pMesh);
 
     protected:
         void destroyBufferCopyBlitObject();

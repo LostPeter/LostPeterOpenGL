@@ -206,6 +206,11 @@ public:
 	ModelObjectPtrVector m_aModelObjects_Render;
 	ModelObjectPtrMap m_mapModelObjects;
 
+	String nameDescriptorSetLayout_Stencil;
+	DescriptorSetLayout* pDescriptorSetLayout_Stencil;
+    String nameDescriptorSetLayout_Outline;
+	DescriptorSetLayout* pDescriptorSetLayout_Outline;
+
 	GLShaderPtrVector m_aGLShaderModules;
     GLShaderPtrMap m_mapGLShaderModules;
 

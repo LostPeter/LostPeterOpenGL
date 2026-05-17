@@ -66,7 +66,6 @@ namespace LostPeterOpenGL
 
         //DescriptorSetLayouts
         virtual DescriptorSetLayout* FindDescriptorSetLayout_Internal(const String& nameDescriptorSetLayout);
-        virtual StringVector* FindDescriptorSetLayoutNames_Internal(const String& nameDescriptorSetLayout);
         
         //Shader
         virtual GLShader* FindShader_Internal(const String& nameShader);
@@ -479,6 +478,10 @@ namespace LostPeterOpenGL
                     virtual void destroyGLFrameBuffer(uint32 nFrameBufferID);
 
 
+				virtual void createSyncObjects();
+                    virtual void createFence();
+
+						
         //Load Assets
         virtual void loadAssets();
 
@@ -783,6 +786,7 @@ namespace LostPeterOpenGL
                     virtual void createGraphicsPipeline_Custom();    
 					
 					virtual GLStatePipelineGraphics* createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																				 DescriptorSetLayout* pDSL,
 																				 GLShaderProgram* pShaderProgram,
 																				 bool deleteShaderProgram,
 																				 FMeshVertexType typeVertex,
@@ -814,6 +818,7 @@ namespace LostPeterOpenGL
 																				 GLboolean colorWriteMask_Blue,
 																				 GLboolean colorWriteMask_Alpha);
 					virtual GLStatePipelineGraphics* createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																				 DescriptorSetLayout* pDSL,
 																				 GLShader* pShaderVertex,
 																				 GLShader* pShaderTessellationControl,
 																				 GLShader* pShaderTessellationEvaluation,

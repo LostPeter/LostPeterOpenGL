@@ -31,26 +31,27 @@ namespace LostPeterOpenGL
     {
         //Mesh
         createMeshes_Internal();
+		//Shader
+        createShaders_Internal();
+		//DescriptorSetLayout
+        createDescriptorSetLayouts_Internal();
         //Texture
         createTextures_Internal();
     }
     void OpenGLWindow::cleanupInternal()
     {
-
-
         //Texture
         destroyTextures_Internal();
+		//DescriptorSetLayout
+        destroyDescriptorSetLayouts_Internal();
+		//Shader
+        destroyShaders_Internal();
         //Mesh
         destroyMeshes_Internal();
     }
 
     void OpenGLWindow::createResourceInternal()
     {   
-        //DescriptorSetLayout
-        createDescriptorSetLayouts_Internal();
-        //Shader
-        createShaders_Internal();
-
         //Uniform ConstantBuffer
         createUniformCB_Internal();
         //PipelineCompute
@@ -66,11 +67,6 @@ namespace LostPeterOpenGL
         destroyPipelineCompute_Internal();
         //PipelineGraphics
         destroyPipelineGraphics_Internal();
-
-        //Shader
-        destroyShaders_Internal();
-        //DescriptorSetLayout
-        destroyDescriptorSetLayouts_Internal();
     }
 
     //Mesh
@@ -398,6 +394,129 @@ namespace LostPeterOpenGL
         return itFind->second;
     }
 
+	//ShaderModule
+    static const int g_ShaderCount_Internal = 4;
+    static const char* g_ShaderModulePaths_Internal[3 * g_ShaderCount_Internal] = 
+    {
+        //name                                                     //type               //path
+        ///////////////////////////////////////// vert /////////////////////////////////////////
+        "vert_standard_copy_blit_from_frame",                     "vert",              "standard_copy_blit_from_frame.vert.spv", //standard_copy_blit_from_frame vert
+        "vert_standard_copy_blit_to_frame",                       "vert",              "standard_copy_blit_to_frame.vert.spv", //standard_copy_blit_to_frame vert
+        
+        ///////////////////////////////////////// tesc /////////////////////////////////////////
+    
+
+        ///////////////////////////////////////// tese /////////////////////////////////////////
+    
+
+        ///////////////////////////////////////// geom /////////////////////////////////////////
+
+
+        ///////////////////////////////////////// frag /////////////////////////////////////////
+        "frag_standard_copy_blit_from_frame",                     "frag",              "standard_copy_blit_from_frame.frag.spv", //standard_copy_blit_from_frame frag
+        "frag_standard_copy_blit_to_frame",                       "frag",              "standard_copy_blit_to_frame.frag.spv", //standard_copy_blit_to_frame frag
+       
+        ///////////////////////////////////////// comp /////////////////////////////////////////
+        
+    };
+    void OpenGLWindow::destroyShaders_Internal()
+    {
+        size_t count = this->m_aShaders_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            GLShader* pShader = this->m_aShaders_Internal[i];
+            F_DELETE(pShader)
+        }
+        this->m_aShaders_Internal.clear();
+        this->m_mapShaders_Internal.clear();
+    }
+    void OpenGLWindow::createShaders_Internal()
+    {
+        for (int i = 0; i < g_ShaderCount_Internal; i++)
+        {
+            String shaderName = g_ShaderModulePaths_Internal[3 * i + 0];
+            String shaderType = g_ShaderModulePaths_Internal[3 * i + 1];
+            String shaderPath = getShaderPathRelative(g_ShaderModulePaths_Internal[3 * i + 2], ShaderSort_Common);
+            FShaderType typeShader = F_ParseShaderType(shaderType);
+
+            GLShader* pShader = createShader(shaderName, shaderPath, typeShader);
+            if (pShader == nullptr)
+            {
+                String msg = "*********************** OpenGLWindow::createShaders_Internal: create shader: [" + shaderName + "] failed !";
+                F_LogError(msg.c_str());
+                throw std::runtime_error(msg);
+            }
+            this->m_aShaders_Internal.push_back(pShader);
+            this->m_mapShaders_Internal[shaderName] = pShader;
+            F_LogInfo("OpenGLWindow::createShaders_Internal: create shader, name: [%s], type: [%s], path: [%s] success !", 
+                      shaderName.c_str(), shaderType.c_str(), shaderPath.c_str());
+        }
+    }
+    GLShader* OpenGLWindow::FindShader_Internal(const String& nameShaderModule)
+    {
+        GLShaderPtrMap::iterator itFind = this->m_mapShaders_Internal.find(nameShaderModule);
+        if (itFind == this->m_mapShaders_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+
+	//DescriptorSetLayouts
+    static const int g_DescriptorSetLayoutCount_Internal = 13;
+    static const char* g_DescriptorSetLayoutNames_Internal[g_DescriptorSetLayoutCount_Internal] =
+    {
+        "PassConstants",
+        "PassConstants-ObjectConstants",
+        "PassConstants-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
+        "CopyBlitObjectConstants-TextureFrameColor",
+        "CopyBlitObjectConstants-TextureFrameDepth",
+        "Cull-BufferRWArgsCB",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
+        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-BufferRWClipCB-TextureCSR",
+        "HizDepth-TextureFS",
+        "HizDepth-TextureCSRWSrc-TextureCSRWDst",
+        "TextureCopy-TextureCSR-TextureCSRW",
+        "PassConstants-TerrainObjectConstants-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
+    };
+    void OpenGLWindow::destroyDescriptorSetLayouts_Internal()
+    {
+        size_t count = this->m_aDescriptorSetLayouts_Internal.size();
+        for (size_t i = 0; i < count; i++)
+        {
+            DescriptorSetLayout* pDes = this->m_aDescriptorSetLayouts_Internal[i];
+            delete pDes;
+        }
+        this->m_aDescriptorSetLayouts_Internal.clear();
+        this->m_mapDescriptorSetLayouts_Internal.clear();
+        this->m_mapName2Layouts_Internal.clear();
+    }   
+    void OpenGLWindow::createDescriptorSetLayouts_Internal()
+    {
+        for (int i = 0; i < g_DescriptorSetLayoutCount_Internal; i++)
+        {
+            String nameLayout(g_DescriptorSetLayoutNames_Internal[i]);
+            DescriptorSetLayout* pDes = new DescriptorSetLayout();
+            pDes->Init(nameLayout);
+
+            this->m_aDescriptorSetLayouts_Internal.push_back(pDes);
+            this->m_mapDescriptorSetLayouts_Internal[nameLayout] = pDes;
+            this->m_mapName2Layouts_Internal[nameLayout] = pDes->aLayouts;
+
+            F_LogInfo("OpenGLWindow::createDescriptorSetLayouts_Internal: create DescriptorSetLayout: [%s] success !", nameLayout.c_str());
+        }
+    }
+    DescriptorSetLayout* OpenGLWindow::FindDescriptorSetLayout_Internal(const String& nameDescriptorSetLayout)
+    {
+        DescriptorSetLayoutPtrMap::iterator itFind = this->m_mapDescriptorSetLayouts_Internal.find(nameDescriptorSetLayout);
+        if (itFind == this->m_mapDescriptorSetLayouts_Internal.end())
+        {
+            return nullptr;
+        }
+        return itFind->second;
+    }
+
     //Texture
     static const int g_TextureCount_Internal = 4;
     static const char* g_TexturePaths_Internal[5 * g_TextureCount_Internal] = 
@@ -533,138 +652,6 @@ namespace LostPeterOpenGL
         return itFind->second;
     }
 
-    //DescriptorSetLayouts
-    static const int g_DescriptorSetLayoutCount_Internal = 13;
-    static const char* g_DescriptorSetLayoutNames_Internal[g_DescriptorSetLayoutCount_Internal] =
-    {
-        "PassConstants",
-        "PassConstants-ObjectConstants",
-        "PassConstants-CullInstance-BufferRWObjectCullInstance-BufferRWResultCB",
-        "CopyBlitObjectConstants-TextureFrameColor",
-        "CopyBlitObjectConstants-TextureFrameDepth",
-        "Cull-BufferRWArgsCB",
-        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB",
-        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-TextureCSR",
-        "Cull-CullObjectConstants-BufferRWArgsCB-BufferRWLodCB-BufferRWResultCB-BufferRWClipCB-TextureCSR",
-        "HizDepth-TextureFS",
-        "HizDepth-TextureCSRWSrc-TextureCSRWDst",
-        "TextureCopy-TextureCSR-TextureCSRW",
-        "PassConstants-TerrainObjectConstants-Material-Instance-Terrain-TextureVS-TextureVS-TextureFS-TextureFS-TextureFS",
-    };
-    void OpenGLWindow::destroyDescriptorSetLayouts_Internal()
-    {
-        size_t count = this->m_aDescriptorSetLayouts_Internal.size();
-        for (size_t i = 0; i < count; i++)
-        {
-            DescriptorSetLayout* pDes = this->m_aDescriptorSetLayouts_Internal[i];
-            delete pDes;
-        }
-        this->m_aDescriptorSetLayouts_Internal.clear();
-        this->m_mapDescriptorSetLayouts_Internal.clear();
-        this->m_mapName2Layouts_Internal.clear();
-    }   
-    void OpenGLWindow::createDescriptorSetLayouts_Internal()
-    {
-        for (int i = 0; i < g_DescriptorSetLayoutCount_Internal; i++)
-        {
-            String nameLayout(g_DescriptorSetLayoutNames_Internal[i]);
-            DescriptorSetLayout* pDes = new DescriptorSetLayout();
-            pDes->Init(nameLayout);
-
-            this->m_aDescriptorSetLayouts_Internal.push_back(pDes);
-            this->m_mapDescriptorSetLayouts_Internal[nameLayout] = pDes;
-            this->m_mapName2Layouts_Internal[nameLayout] = pDes->aLayouts;
-
-            F_LogInfo("OpenGLWindow::createDescriptorSetLayouts_Internal: create DescriptorSetLayout: [%s] success !", nameLayout.c_str());
-        }
-    }
-    DescriptorSetLayout* OpenGLWindow::FindDescriptorSetLayout_Internal(const String& nameDescriptorSetLayout)
-    {
-        DescriptorSetLayoutPtrMap::iterator itFind = this->m_mapDescriptorSetLayouts_Internal.find(nameDescriptorSetLayout);
-        if (itFind == this->m_mapDescriptorSetLayouts_Internal.end())
-        {
-            return nullptr;
-        }
-        return itFind->second;
-    }
-    StringVector* OpenGLWindow::FindDescriptorSetLayoutNames_Internal(const String& nameDescriptorSetLayout)
-    {
-        std::map<String, StringVector>::iterator itFind = this->m_mapName2Layouts_Internal.find(nameDescriptorSetLayout);
-        if (itFind == this->m_mapName2Layouts_Internal.end())
-        {
-            return nullptr;
-        }
-        return &(itFind->second);
-    }
-
-    //ShaderModule
-    static const int g_ShaderCount_Internal = 4;
-    static const char* g_ShaderModulePaths_Internal[3 * g_ShaderCount_Internal] = 
-    {
-        //name                                                     //type               //path
-        ///////////////////////////////////////// vert /////////////////////////////////////////
-        "vert_standard_copy_blit_from_frame",                     "vert",              "standard_copy_blit_from_frame.vert.spv", //standard_copy_blit_from_frame vert
-        "vert_standard_copy_blit_to_frame",                       "vert",              "standard_copy_blit_to_frame.vert.spv", //standard_copy_blit_to_frame vert
-        
-        ///////////////////////////////////////// tesc /////////////////////////////////////////
-    
-
-        ///////////////////////////////////////// tese /////////////////////////////////////////
-    
-
-        ///////////////////////////////////////// geom /////////////////////////////////////////
-
-
-        ///////////////////////////////////////// frag /////////////////////////////////////////
-        "frag_standard_copy_blit_from_frame",                     "frag",              "standard_copy_blit_from_frame.frag.spv", //standard_copy_blit_from_frame frag
-        "frag_standard_copy_blit_to_frame",                       "frag",              "standard_copy_blit_to_frame.frag.spv", //standard_copy_blit_to_frame frag
-       
-        ///////////////////////////////////////// comp /////////////////////////////////////////
-        
-    };
-    void OpenGLWindow::destroyShaders_Internal()
-    {
-        size_t count = this->m_aShaders_Internal.size();
-        for (size_t i = 0; i < count; i++)
-        {
-            GLShader* pShader = this->m_aShaders_Internal[i];
-            F_DELETE(pShader)
-        }
-        this->m_aShaders_Internal.clear();
-        this->m_mapShaders_Internal.clear();
-    }
-    void OpenGLWindow::createShaders_Internal()
-    {
-        for (int i = 0; i < g_ShaderCount_Internal; i++)
-        {
-            String shaderName = g_ShaderModulePaths_Internal[3 * i + 0];
-            String shaderType = g_ShaderModulePaths_Internal[3 * i + 1];
-            String shaderPath = getShaderPathRelative(g_ShaderModulePaths_Internal[3 * i + 2], ShaderSort_Common);
-            FShaderType typeShader = F_ParseShaderType(shaderType);
-
-            GLShader* pShader = createShader(shaderName, shaderPath, typeShader);
-            if (pShader == nullptr)
-            {
-                String msg = "*********************** OpenGLWindow::createShaders_Internal: create shader: [" + shaderName + "] failed !";
-                F_LogError(msg.c_str());
-                throw std::runtime_error(msg);
-            }
-            this->m_aShaders_Internal.push_back(pShader);
-            this->m_mapShaders_Internal[shaderName] = pShader;
-            F_LogInfo("OpenGLWindow::createShaders_Internal: create shader, name: [%s], type: [%s], path: [%s] success !", 
-                      shaderName.c_str(), shaderType.c_str(), shaderPath.c_str());
-        }
-    }
-    GLShader* OpenGLWindow::FindShader_Internal(const String& nameShaderModule)
-    {
-        GLShaderPtrMap::iterator itFind = this->m_mapShaders_Internal.find(nameShaderModule);
-        if (itFind == this->m_mapShaders_Internal.end())
-        {
-            return nullptr;
-        }
-        return itFind->second;
-    }
-
     //UniformConstantBuffer
     void OpenGLWindow::destroyUniformCB_Internal()
     {
@@ -793,10 +780,9 @@ namespace LostPeterOpenGL
         {
             this->m_pPipelineGraphics_CopyBlitToFrame = new GLPipelineGraphicsCopyBlitToFrame("PipelineGraphics-CopyBlitToFrame");
             String descriptorSetLayout = "CopyBlitObjectConstants-TextureFrameColor";
-            StringVector* pDescriptorSetLayoutNames = FindDescriptorSetLayoutNames_Internal(descriptorSetLayout);
+            DescriptorSetLayout* pDescriptorSetLayout_Blit = FindDescriptorSetLayout_Internal(descriptorSetLayout);
 
-            F_Assert(pDescriptorSetLayoutNames != nullptr &&
-                     "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame")
+            F_Assert(pDescriptorSetLayout_Blit != nullptr && "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame")
 
             String nameShaderVert = "vert_standard_copy_blit_to_frame";
             String nameShaderFrag = "frag_standard_copy_blit_to_frame";
@@ -806,11 +792,10 @@ namespace LostPeterOpenGL
 
             Mesh* pMeshBlit = FindMesh_Internal("quad");
             F_Assert(pMeshBlit && "OpenGLWindow::createPipelineGraphics_CopyBlitToFrame");
-            if (!this->m_pPipelineGraphics_CopyBlitToFrame->Init(pShaderVertex,
+            if (!this->m_pPipelineGraphics_CopyBlitToFrame->Init(pDescriptorSetLayout_Blit,
+																 pShaderVertex,
                                                                  pShaderFrag,
-                                                                 pMeshBlit,
-                                                                 descriptorSetLayout,
-                                                                 pDescriptorSetLayoutNames))
+                                                                 pMeshBlit))
             {
                 F_LogError("*********************** OpenGLWindow::createPipelineGraphics_CopyBlitToFrame: PipelineGraphics_CopyBlitToFrame->Init failed !");
                 return;
@@ -1097,17 +1082,10 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::OnResize(int w, int h, bool force)
     {
-		if (this->width != w || this->height != h)
+		if (this->width != w || this->height != h || force)
 		{
 			recreateSwapChain();
 		}
-		resizeWindow(w, h, force);
-		createViewport();
-
-        if (this->pCamera != nullptr)
-        {
-            this->pCamera->PerspectiveLH(this->cfg_cameraFov, this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
-        }
     }
 
     bool OpenGLWindow::OnBeginCompute_BeforeRender()
@@ -1485,28 +1463,29 @@ namespace LostPeterOpenGL
             //4> Create Command Objects
             createCommandObjects();
 
-            //5> Create Swap Chain Objects
+			//5> createInternal/createResourceInternal
+            createInternal();
+            createResourceInternal();
+
+            //6> Create Swap Chain Objects
             createSwapChainObjects();
 
-
-            //8> Camera/Light/Shadow/Terrain
+            //7> Camera/Light/Shadow/Terrain
             createCamera();
             createLightMain();
             createShadowLightMain();
             createTerrain();
 
-            //9> Create Pipeline Objects
+            //8> Create Pipeline Objects
             createPipelineObjects();
 
+			//9> Create Sync Objects
+			createSyncObjects();
 
-            //11> createInternal/createResourceInternal
-            createInternal();
-            createResourceInternal();
-
-            //12> createDescriptorSetLayouts
+            //10> createDescriptorSetLayouts
             createDescriptorSetLayouts();
 
-            //13> isCreateDevice
+            //11> isCreateDevice
             this->isCreateDevice = true;
         }
         F_LogInfo("**********<1> OpenGLWindow::createPipeline finish **********");
@@ -1743,7 +1722,7 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::createSwapChainObjects()
     {
-        F_LogInfo("*****<1-5> OpenGLWindow::createSwapChainObjects start *****");
+        F_LogInfo("*****<1-6> OpenGLWindow::createSwapChainObjects start *****");
         {
             //1> createSwapChain
             createSwapChain();
@@ -1766,7 +1745,7 @@ namespace LostPeterOpenGL
             //5> createColorResourceLists
             createColorResourceLists();
         }
-        F_LogInfo("*****<1-5> OpenGLWindow::createSwapChainObjects finish *****");
+        F_LogInfo("*****<1-6> OpenGLWindow::createSwapChainObjects finish *****");
     }
         void OpenGLWindow::createSwapChain()
         {
@@ -1779,7 +1758,7 @@ namespace LostPeterOpenGL
 			createViewport();
 
             
-            F_LogInfo("<1-5-1> OpenGLWindow::createSwapChain finish, Swapchain size: [%f, %f], window size: [%d, %d], scale: [%f, %f], format color: [%d], format depth stencil: [%d] !", 
+            F_LogInfo("<1-6-1> OpenGLWindow::createSwapChain finish, Swapchain size: [%f, %f], window size: [%d, %d], scale: [%f, %f], format color: [%d], format depth stencil: [%d] !", 
 					  this->poFramebufferSize.x, this->poFramebufferSize.y, 
 					  this->width, this->height, 
 					  this->poWindowContentScale.x, this->poWindowContentScale.y, 
@@ -1923,17 +1902,17 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::createDescriptorSetLayouts()
     {
-        F_LogInfo("*****<1-12> OpenGLWindow::createDescriptorSetLayouts start *****");
+        F_LogInfo("*****<1-10> OpenGLWindow::createDescriptorSetLayouts start *****");
         {
             //1> createDescriptorSetLayout_Default
             createDescriptorSetLayout_Default();
-            F_LogInfo("<1-12-1> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Default finish !");
+            F_LogInfo("<1-10-1> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Default finish !");
 
             //3> createDescriptorSetLayout_Custom
             createDescriptorSetLayout_Custom();
-            F_LogInfo("<1-12-2> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Custom finish !");
+            F_LogInfo("<1-10-2> OpenGLWindow::createDescriptorSetLayouts: createDescriptorSetLayout_Custom finish !");
         }
-        F_LogInfo("*****<1-12> OpenGLWindow::createDescriptorSetLayouts finish *****");
+        F_LogInfo("*****<1-10> OpenGLWindow::createDescriptorSetLayouts finish *****");
     }
     void OpenGLWindow::createDescriptorSetLayout_Default()
     {
@@ -1950,17 +1929,17 @@ namespace LostPeterOpenGL
 
     void OpenGLWindow::createPipelineObjects()
     {
-        F_LogInfo("*****<1-9> OpenGLWindow::createPipelineObjects start *****");
+        F_LogInfo("*****<1-8> OpenGLWindow::createPipelineObjects start *****");
         {
             //1> createRenderPasses
             createRenderPasses();
-            F_LogInfo("<1-9-1> OpenGLWindow::createPipelineObjects: Success to create RenderPasses !");
+            F_LogInfo("<1-8-1> OpenGLWindow::createPipelineObjects: Success to create RenderPasses !");
 
             //2> createFramebuffers
             createFramebuffers();
-            F_LogInfo("<1-9-2> OpenGLWindow::createPipelineObjects: Success to create Framebuffers !");
+            F_LogInfo("<1-8-2> OpenGLWindow::createPipelineObjects: Success to create Framebuffers !");
         }
-        F_LogInfo("*****<1-9> OpenGLWindow::createPipelineObjects finish *****");
+        F_LogInfo("*****<1-8> OpenGLWindow::createPipelineObjects finish *****");
     }
         void OpenGLWindow::createRenderPasses()
         {
@@ -2232,6 +2211,18 @@ namespace LostPeterOpenGL
                 if (nFrameBufferID <= 0)
                     return;
                 glDeleteFramebuffers(1, &nFrameBufferID);
+            }
+
+		
+		void OpenGLWindow::createSyncObjects()
+        {
+            createFence();
+
+            F_LogInfo("*****<1-9> OpenGLWindow::createSyncObjects finish *****");
+        }
+            void OpenGLWindow::createFence()
+            {
+                
             }
 
 
@@ -3592,6 +3583,7 @@ namespace LostPeterOpenGL
                     //2> Shader Pipeline Graphics
                     String nameStatePipelineGraphics = "StatePipelineGraphics-Default";
 					this->poStatePipelineGraphics = createStatePipelineGraphics(nameStatePipelineGraphics,
+																				this->pDescriptorSetLayout,
 																				this->poShaderVertex,
 						                                            			nullptr,
 																				nullptr,
@@ -3639,6 +3631,7 @@ namespace LostPeterOpenGL
                 }
 
 				 	GLStatePipelineGraphics* OpenGLWindow::createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																					   DescriptorSetLayout* pDSL,
 																					   GLShaderProgram* pShaderProgram,
 																					   bool deleteShaderProgram,
 																					   FMeshVertexType typeVertex,
@@ -3671,7 +3664,8 @@ namespace LostPeterOpenGL
 																					   GLboolean colorWriteMask_Alpha)
 					{
 						GLStatePipelineGraphics* pStatePipelineGraphics = new GLStatePipelineGraphics(nameStatePipelineGraphics);
-						if (!pStatePipelineGraphics->Init(pShaderProgram,
+						if (!pStatePipelineGraphics->Init(pDSL,
+														  pShaderProgram,
 														  deleteShaderProgram,
 														  typeVertex,
 														  typePrimitive,
@@ -3708,6 +3702,7 @@ namespace LostPeterOpenGL
 						return pStatePipelineGraphics;
 					}
  					GLStatePipelineGraphics* OpenGLWindow::createStatePipelineGraphics(const String& nameStatePipelineGraphics,
+																					   DescriptorSetLayout* pDSL,
 																					   GLShader* pShaderVertex,
 																					   GLShader* pShaderTessellationControl,
 																					   GLShader* pShaderTessellationEvaluation,
@@ -3743,7 +3738,8 @@ namespace LostPeterOpenGL
 																					   GLboolean colorWriteMask_Alpha)
 					{
 						GLStatePipelineGraphics* pStatePipelineGraphics = new GLStatePipelineGraphics(nameStatePipelineGraphics);
-						if (!pStatePipelineGraphics->Init(pShaderVertex,
+						if (!pStatePipelineGraphics->Init(pDSL,
+														  pShaderVertex,
 														  pShaderTessellationControl,
 													   	  pShaderTessellationEvaluation,
 														  pShaderGeometry,
@@ -4001,6 +3997,12 @@ namespace LostPeterOpenGL
 
 		refreshFramebufferSize(w, h);
         RefreshAspectRatio();
+		createViewport();
+
+        if (this->pCamera != nullptr)
+        {
+            this->pCamera->PerspectiveLH(this->cfg_cameraFov, this->aspectRatio, this->cfg_cameraNear, this->cfg_cameraFar);
+        }
     }
 	void OpenGLWindow::refreshFramebufferSize(int w, int h)
 	{
@@ -5125,6 +5127,7 @@ namespace LostPeterOpenGL
                         return;
                     }
                 }
+				resizeWindow(width, height, true);
 				
 				cleanupSwapChain();
 				

@@ -24,7 +24,8 @@ namespace LostPeterOpenGL
 
 		//DescriptorSetLayouts
         , nameDescriptorSetLayout("")
-
+		, pDescriptorSetLayout(nullptr)
+		
         //GLStatePipelineGraphics
         , pPipelineGraphics(nullptr)
     {
@@ -41,6 +42,15 @@ namespace LostPeterOpenGL
 		if (itFind == this->mapShaders.end())
 			return nullptr;
 		return itFind->second;
+	}
+
+	void EditorBase::destroyInternal()
+	{
+		destroyPipelineGraphics();
+        destroyPipelineLayout();
+        destroyDescriptorSetLayout();
+        destroyShaders();
+        destroyBufferUniforms();
 	}
 
 	void EditorBase::Init()
@@ -125,8 +135,8 @@ namespace LostPeterOpenGL
         
     }
     void EditorBase::destroyDescriptorSetLayout()
-    {
-		
+    {	
+		F_DELETE(this->pDescriptorSetLayout)
     }   
 
     void EditorBase::Draw()
@@ -155,19 +165,11 @@ namespace LostPeterOpenGL
 
     void EditorBase::CleanupSwapChain()
     {
-        destroyPipelineGraphics();
-        destroyPipelineLayout();
-        destroyDescriptorSetLayout();
-        destroyShaders();
-        destroyBufferUniforms();
+        
     }
     void EditorBase::RecreateSwapChain()
     {
-        initShaders();
-        initBufferUniforms();
-        initDescriptorSetLayout();
-        initPipelineLayout();
-        initPipelineGraphics();
+        
     }
 
 }; //LostPeterOpenGL

@@ -23,8 +23,7 @@ namespace LostPeterOpenGL
         virtual ~GLStatePipelineGraphics();
 
     public:
-		String nameDescriptorSetLayout;
-		StringVector* poDescriptorSetLayoutNames;
+		DescriptorSetLayout* poDescriptorSetLayout;
 
 		FMeshVertexType poTypeVertex;
 
@@ -71,7 +70,8 @@ namespace LostPeterOpenGL
 
     public:
         void Destroy();
-		bool Init(GLShaderProgram* pShaderProgram,
+		bool Init(DescriptorSetLayout* pDescriptorSetLayout,
+				  GLShaderProgram* pShaderProgram,
 				  bool deleteShaderProgram,
 				  FMeshVertexType typeVertex,
 				  GLenum typePrimitive,
@@ -101,7 +101,8 @@ namespace LostPeterOpenGL
 				  GLboolean colorWriteMask_Green,
 				  GLboolean colorWriteMask_Blue,
 				  GLboolean colorWriteMask_Alpha);
-		bool Init(GLShader* pShaderVertex,
+		bool Init(DescriptorSetLayout* pDescriptorSetLayout,
+				  GLShader* pShaderVertex,
 				  GLShader* pShaderTessellationControl,
 				  GLShader* pShaderTessellationEvaluation,
 				  GLShader* pShaderGeometry,

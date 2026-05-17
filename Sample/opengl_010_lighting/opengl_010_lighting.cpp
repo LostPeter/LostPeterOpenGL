@@ -109,6 +109,10 @@ OpenGL_010_Lighting::OpenGL_010_Lighting(int width, int height, String name)
 
 	this->poTypeVertex = F_MeshVertex_Pos3Color4Normal3Tex2;
 
+	this->nameDescriptorSetLayoutLocal = "PassConstants-ObjectConstants-MaterialConstants-TextureFS";
+    this->pDescriptorSetLayoutLocal = new DescriptorSetLayout();
+    this->pDescriptorSetLayoutLocal->Init(this->nameDescriptorSetLayoutLocal);
+
     this->cfg_cameraPos = FVector3(0.0f, 15.0f, -20.0f);
     this->mainLight.common.x = 0; //Directional Type
     this->mainLight.common.y = 1.0f; //Enable
@@ -401,6 +405,7 @@ void OpenGL_010_Lighting::createGraphicsPipeline_Custom()
         //poStatePipelineGraphics
 		String namePipelineGraphics_Stencil = "PipelineGraphics-" + pModelObject->nameModel;
         pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics_Stencil,
+																			this->pDescriptorSetLayoutLocal,
                                                                             pShaderVertex,
                                                                             nullptr,
                                                                             nullptr,

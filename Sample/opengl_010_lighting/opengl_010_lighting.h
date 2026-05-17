@@ -193,6 +193,9 @@ public:
 	ModelObjectPtrVector m_aModelObjects_Render;
 	ModelObjectPtrMap m_mapModelObjects;
 
+	String nameDescriptorSetLayoutLocal;
+	DescriptorSetLayout* pDescriptorSetLayoutLocal;
+
 	GLShaderPtrVector m_aGLShaderModules;
     GLShaderPtrMap m_mapGLShaderModules;
 

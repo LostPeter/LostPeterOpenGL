@@ -75,7 +75,7 @@ namespace LostPeterOpenGL
 	public:
 		//DescriptorSetLayouts
 		String nameDescriptorSetLayout_CopyBlit; 
-		StringVector aNameDescriptorSetLayouts_CopyBlit;
+		DescriptorSetLayout* pDescriptorSetLayout_CopyBlit;
 
 		//GLStatePipelineGraphics
 		GLStatePipelineGraphics* pPipelineGraphics_CopyBlit;

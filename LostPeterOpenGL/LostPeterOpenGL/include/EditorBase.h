@@ -35,7 +35,7 @@ namespace LostPeterOpenGL
 
         //DescriptorSetLayouts
         String nameDescriptorSetLayout;
-        StringVector aNameDescriptorSetLayouts;
+		DescriptorSetLayout* pDescriptorSetLayout;
 
         //GLStatePipelineGraphics
         GLStatePipelineGraphics* pPipelineGraphics;
@@ -45,6 +45,7 @@ namespace LostPeterOpenGL
 
     public:
         virtual void Destroy() = 0;
+			virtual void destroyInternal();
 
         virtual void Init();
 

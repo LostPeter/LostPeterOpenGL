@@ -84,6 +84,14 @@ OpenGL_007_Stencil::OpenGL_007_Stencil(int width, int height, String name)
 	this->shaderVertex_Path_Outline = getShaderPathRelative("pos3_color4_normal3_tex2_ubo_outline.vert.spv", ShaderSort_Common);
     this->shaderFragment_Path_Outline = getShaderPathRelative("pos3_color4_normal3_tex2_ubo_outline.frag.spv", ShaderSort_Common);
 
+	this->nameDescriptorSetLayout_Stencil = "PassConstants-ObjectConstants-TextureFS";
+    this->pDescriptorSetLayout_Stencil = new DescriptorSetLayout();
+    this->pDescriptorSetLayout_Stencil->Init(this->nameDescriptorSetLayout_Stencil);
+
+    this->nameDescriptorSetLayout_Outline = "PassConstants-OutlineObjectConstants";
+    this->pDescriptorSetLayout_Outline = new DescriptorSetLayout();
+    this->pDescriptorSetLayout_Outline->Init(this->nameDescriptorSetLayout_Outline);
+
     this->cfg_cameraPos = FVector3(0.5f, 2.5f, -4.0f);
 }
 
@@ -351,7 +359,8 @@ void OpenGL_007_Stencil::createGraphicsPipeline_Custom()
 
         //poStatePipelineGraphics_Stencil
 		String namePipelineGraphics_Stencil = "PipelineGraphics-Stencil-" + pModelObject->nameModel;
-        pModelObject->poStatePipelineGraphics_Stencil = createStatePipelineGraphics(namePipelineGraphics_Stencil,
+        pModelObject->poStatePipelineGraphics_Stencil = createStatePipelineGraphics(namePipelineGraphics_Stencil,								
+																					this->pDescriptorSetLayout_Stencil,
 																					this->pShaderVertex,
 																					nullptr,
 																					nullptr,
@@ -395,6 +404,7 @@ void OpenGL_007_Stencil::createGraphicsPipeline_Custom()
 		//2> poStatePipelineGraphics_Outline
 		String namePipelineGraphics_Outline = "PipelineGraphics-Outline-" + pModelObject->nameModel;
         pModelObject->poStatePipelineGraphics_Outline = createStatePipelineGraphics(namePipelineGraphics_Outline,
+																					this->pDescriptorSetLayout_Outline,
 																					this->pShaderVertex_Outline,
 																					nullptr,
 																					nullptr,

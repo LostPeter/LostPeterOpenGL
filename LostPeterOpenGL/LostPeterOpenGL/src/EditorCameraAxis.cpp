@@ -74,6 +74,8 @@ namespace LostPeterOpenGL
 
         //Quad Blit
         , nameDescriptorSetLayout_CopyBlit("")
+		, pDescriptorSetLayout_CopyBlit(nullptr)
+		
         , pPipelineGraphics_CopyBlit(nullptr)
 		, poBufferUniform_CopyBlitObjectCB(nullptr)
     {
@@ -87,7 +89,7 @@ namespace LostPeterOpenGL
 	void EditorCameraAxis::Destroy()
     {
         F_DELETE(this->pCamera)
-        CleanupSwapChain();
+		destroyInternal();
         destroyMeshes();
     }
     void EditorCameraAxis::Init()
@@ -261,12 +263,14 @@ namespace LostPeterOpenGL
             //CameraAxis
             {
                 this->nameDescriptorSetLayout = "PassConstants-CameraAxisObjectConstants";
-                this->aNameDescriptorSetLayouts = FUtilString::Split(this->nameDescriptorSetLayout, "-");
+				this->pDescriptorSetLayout = new DescriptorSetLayout();
+				this->pDescriptorSetLayout->Init(this->nameDescriptorSetLayout);
             }
             //Quad Blit
             {
                 this->nameDescriptorSetLayout_CopyBlit = "CopyBlitObjectConstants-TextureFrameColor";
-                this->aNameDescriptorSetLayouts_CopyBlit = FUtilString::Split(this->nameDescriptorSetLayout_CopyBlit, "-");
+				this->pDescriptorSetLayout_CopyBlit = new DescriptorSetLayout();
+				this->pDescriptorSetLayout_CopyBlit->Init(this->nameDescriptorSetLayout_CopyBlit);
             }
         }
         //5> Camera/Viewport
@@ -440,6 +444,7 @@ namespace LostPeterOpenGL
 				GLShader* pShaderFragment = GetShader(s_strNameShader_CameraAxis_Frag);
 				F_Assert("EditorCameraAxis::initPipelineGraphics: Shader Fragment" && pShaderFragment)
                 this->pPipelineGraphics = pWindow->createStatePipelineGraphics(namePipelineGraphics,
+																			   this->pDescriptorSetLayout,
 																			   pShaderVertex,
 																			   nullptr,
 																			   nullptr,
@@ -479,8 +484,6 @@ namespace LostPeterOpenGL
                     F_LogError(msg.c_str());
                     throw std::runtime_error(msg.c_str());
 				}
-                this->pPipelineGraphics->nameDescriptorSetLayout = this->nameDescriptorSetLayout;
-                this->pPipelineGraphics->poDescriptorSetLayoutNames = &this->aNameDescriptorSetLayouts;
 				F_LogInfo("EditorCameraAxis::initPipelineGraphics: [EditorCameraAxis] Create pipeline graphics success !");
 				
 				//2> TextureTarget/FrameBuffer/RenderPass
@@ -557,6 +560,7 @@ namespace LostPeterOpenGL
 				GLShader* pShaderFragment = GetShader(s_strNameShader_QuadBlit_Frag);
 				F_Assert("EditorCameraAxis::initPipelineGraphics: Shader Fragment" && pShaderFragment)
                 this->pPipelineGraphics_CopyBlit = pWindow->createStatePipelineGraphics(namePipelineGraphics,
+																						this->pDescriptorSetLayout_CopyBlit,
 																						pShaderVertex,
 																						nullptr,
 																						nullptr,
@@ -596,8 +600,6 @@ namespace LostPeterOpenGL
                     F_LogError(msg.c_str());
                     throw std::runtime_error(msg.c_str());
                 }
-                this->pPipelineGraphics_CopyBlit->nameDescriptorSetLayout = this->nameDescriptorSetLayout_CopyBlit;
-                this->pPipelineGraphics_CopyBlit->poDescriptorSetLayoutNames = &this->aNameDescriptorSetLayouts_CopyBlit;
 				F_LogInfo("EditorCameraAxis::initPipelineGraphics: [EditorCameraAxis_CopyBlit] Create pipeline graphics success !");
             }
             updateDescriptorSets_Graphics();
@@ -607,12 +609,10 @@ namespace LostPeterOpenGL
     {
         //CameraAxis
         {
-            StringVector* pDescriptorSetLayoutNames = this->pPipelineGraphics->poDescriptorSetLayoutNames;
-            F_Assert(pDescriptorSetLayoutNames != nullptr && "EditorCameraAxis::updateDescriptorSets_Graphics")
-			uint32_t count_names = (uint32_t)pDescriptorSetLayoutNames->size();
+			uint32_t count_names = (uint32_t)this->pPipelineGraphics->poDescriptorSetLayout->aLayouts.size();
 			for (uint32_t i = 0; i < count_names; i++)
 			{
-				String& nameDescriptorSet = (*pDescriptorSetLayoutNames)[i];
+				String& nameDescriptorSet = this->pPipelineGraphics->poDescriptorSetLayout->aLayouts[i];
 				uint32 nBindingUniformIndex = i + 1;
 
 				if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
@@ -639,12 +639,10 @@ namespace LostPeterOpenGL
         }
         //Quad Blit
         {
-            StringVector* pDescriptorSetLayoutNames = this->pPipelineGraphics_CopyBlit->poDescriptorSetLayoutNames;
-            F_Assert(pDescriptorSetLayoutNames != nullptr && "EditorCameraAxis::updateDescriptorSets_Graphics")
-			uint32_t count_names = (uint32_t)pDescriptorSetLayoutNames->size();
+			uint32_t count_names = (uint32_t)this->pPipelineGraphics_CopyBlit->poDescriptorSetLayout->aLayouts.size();
 			for (uint32_t i = 0; i < count_names; i++)
 			{
-				String& nameDescriptorSet = (*pDescriptorSetLayoutNames)[i];
+				String& nameDescriptorSet = this->pPipelineGraphics_CopyBlit->poDescriptorSetLayout->aLayouts[i];
 				uint32 nBindingUniformIndex = i + 1;
 
 				if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_CopyBlitObjectConstants)) //CopyBlitObjectConstants
@@ -719,8 +717,8 @@ namespace LostPeterOpenGL
     {
         EditorBase::destroyDescriptorSetLayout();
         //Quad Blit
-        {   
-			
+        {   	
+			F_DELETE(this->pDescriptorSetLayout_CopyBlit)
         } 
     }
     void EditorCameraAxis::CleanupSwapChain()
