@@ -9,7 +9,8 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 330 core
+#version 410 core
+#extension GL_ARB_tessellation_shader : require
 #extension GL_ARB_shading_language_include : enable
 #include "/glsl_common.glsl"
 

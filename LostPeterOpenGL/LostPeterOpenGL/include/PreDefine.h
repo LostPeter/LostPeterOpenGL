@@ -277,8 +277,8 @@ namespace LostPeterOpenGL
         DescriptorSet_MaterialConstants,             //11: MaterialConstants
         DescriptorSet_InstanceConstants,             //12: InstanceConstants
         DescriptorSet_TextureCopy,                   //13: TextureCopy
-        DescriptorSet_Tessellation,                  //14: Tessellation
-        DescriptorSet_Geometry,                      //15: Geometry
+        DescriptorSet_TessellationConstants,         //14: TessellationConstants
+        DescriptorSet_GeometryConstants,             //15: GeometryConstants
         DescriptorSet_TextureVS,                     //16: TextureVS
         DescriptorSet_TextureTESC,                   //17: TextureTESC
         DescriptorSet_TextureTESE,                   //18: TextureTESE

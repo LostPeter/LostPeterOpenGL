@@ -361,7 +361,7 @@ static const char* g_nameDescriptorSetLayouts[g_DescriptorSetLayoutCount] =
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",
 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureTESE-TextureFS-Tessellation",
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureTESE-TextureFS-TessellationConstants",
 
 };
 
@@ -488,28 +488,28 @@ static const char* g_ObjectNameShaderModules[6 * g_ObjectCount] =
 static const char* g_ObjectNameDescriptorSetLayouts[2 * g_ObjectCount] = 
 {
     //Pipeline Graphics                                                 //Pipeline Compute
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //ground 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //ground 
 
 ////Basic-Level Texture Operation
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureSampler_Wrap 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureSampler_Mirror 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureSampler_Clamp 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureSampler_Border 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //texture1D 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //texture2D 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //texture2Darray
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //texture3D
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureCubeMap_SkyBox
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureCubeMap_Sphere
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureAnimation_Scroll
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureAnimation_Chunk
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureSampler_Wrap 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureSampler_Mirror 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureSampler_Clamp 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureSampler_Border 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //texture1D 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //texture2D 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //texture2Darray
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //texture3D
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureCubeMap_SkyBox
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureCubeMap_Sphere
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureAnimation_Scroll
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureAnimation_Chunk
 
 ////High-Level Texture Operation
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                          "", //textureOriginal 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                "", //textureBumpMap
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                "", //textureNormalMap
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                "", //textureParallaxMap
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureTESE-TextureFS-Tessellation", "", //textureDisplacementMap
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                      "", //textureOriginal 
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                            "", //textureBumpMap
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                            "", //textureNormalMap
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",                            "", //textureParallaxMap
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureTESE-TextureFS-TessellationConstants",    "", //textureDisplacementMap
 
 };
 static float g_instanceGap = 1.2f;
@@ -1226,7 +1226,7 @@ void OpenGL_011_Texturing::rebuildInstanceCBs(bool isCreateBuffer)
                 F_DELETE(pModelObject->poBufferUniform_Tessellation)
                 nameBuffer = "TessellationConstants-" + pModelObject->nameObject;
                 pModelObject->poBufferUniform_Tessellation = createBufferUniform(nameBuffer,
-																				 DescriptorSet_Tessellation,
+																				 DescriptorSet_TessellationConstants,
 																				 GL_DYNAMIC_DRAW,
                                                                                  sizeof(TessellationConstants) * pModelObject->tessellationCBs.size(),
                                                                                  (uint8*)(pModelObject->tessellationCBs.data()),
@@ -1592,12 +1592,12 @@ void OpenGL_011_Texturing::createDescriptorSets_Custom()
                 {
 
                 }
-                else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_Tessellation)) //Tessellation
+                else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TessellationConstants)) //TessellationConstants
                 {
 					if (pModelObject->isUsedTessellation)
 					{
 						uint32 nUniformBlockIndex = pModelObject->poStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-						uint32 nBindingIndex = (uint32)DescriptorSet_Tessellation;
+						uint32 nBindingIndex = (uint32)DescriptorSet_TessellationConstants;
 						pModelObject->poStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 						pModelObject->poStatePipelineGraphics->BindBufferUniform(pModelObject->poBufferUniform_Tessellation, nBindingIndex);
 					}
