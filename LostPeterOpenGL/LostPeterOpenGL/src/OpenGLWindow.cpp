@@ -604,7 +604,6 @@ namespace LostPeterOpenGL
                                                 g_TextureBorderColors_Internal[i],
                                                 true,
                                                 true,
-                                                false,
                                                 isGraphicsComputeShared,
 												isRenderTarget,
 												false,
@@ -1831,7 +1830,6 @@ namespace LostPeterOpenGL
                                                     true,
                                                     true,
                                                     false,
-                                                    false,
 													true,
 													false,
 													FMath::ms_clBlack);
@@ -1866,7 +1864,6 @@ namespace LostPeterOpenGL
 													 FColor(0, 0, 0, 1),
 													 true,
 													 true,
-													 false,
 													 false,
 													 true,
 													 false,
@@ -2704,7 +2701,6 @@ namespace LostPeterOpenGL
                                                         true,
                                                         false,
                                                         false,
-                                                        false,
 														false,
 														FMath::ms_clBlack);
                         if (this->poTexture == nullptr)
@@ -2737,7 +2733,6 @@ namespace LostPeterOpenGL
                                                        const FColor& borderColor,
                                                        bool isUseBorderColor,
                                                        bool isAutoMipmap,
-                                                       bool isCubeMap,
                                                        bool isGraphicsComputeShared,
 													   bool isRenderTarget,
 													   bool isUnOrderedAccess,
@@ -2754,7 +2749,6 @@ namespace LostPeterOpenGL
                                                         borderColor,
                                                         isUseBorderColor,
                                                         isAutoMipmap,
-                                                        isCubeMap,
                                                         isGraphicsComputeShared,
 														isRenderTarget,
 														isUnOrderedAccess,
@@ -2778,7 +2772,6 @@ namespace LostPeterOpenGL
                                                    int& mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
-                                                   bool isCubeMap,
                                                    FTexturePixelFormatType typePixelFormat,
                                                    FTextureAddressingType typeAddressing,
                                                    FTextureFilterType typeFilterSizeMin,
@@ -2814,7 +2807,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -2841,7 +2833,6 @@ namespace LostPeterOpenGL
                                                    int& mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
-                                                   bool isCubeMap,
                                                    FTexturePixelFormatType typePixelFormat,
                                                    FTextureAddressingType typeAddressing,
                                                    FTextureFilterType typeFilterSizeMin,
@@ -2877,7 +2868,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -2913,7 +2903,6 @@ namespace LostPeterOpenGL
 													    int& mipMapCount, 
 													    bool isAutoMipmap,
 													    FTextureType typeTexture, 
-													    bool isCubeMap,
 													    FTexturePixelFormatType typePixelFormat,
 													    FTextureAddressingType typeAddressing,
 													    FTextureFilterType typeFilterSizeMin,
@@ -2996,7 +2985,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3023,7 +3011,6 @@ namespace LostPeterOpenGL
                                                    int& mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
-                                                   bool isCubeMap,
                                                    FTexturePixelFormatType typePixelFormat,
                                                    FTextureAddressingType typeAddressing,
                                                    FTextureFilterType typeFilterSizeMin,
@@ -3059,7 +3046,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3089,7 +3075,6 @@ namespace LostPeterOpenGL
                                                    int& mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
-                                                   bool isCubeMap,
                                                    FTexturePixelFormatType typePixelFormat,
                                                    FTextureAddressingType typeAddressing,
                                                    FTextureFilterType typeFilterSizeMin,
@@ -3112,7 +3097,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3132,6 +3116,114 @@ namespace LostPeterOpenGL
                     return true;
 				}
 
+				bool OpenGLWindow::createTextureCubeMap(const String& nameTexture,
+													    const StringVector& aPathAsset_Tex, 
+													    int& mipMapCount, 
+													    bool isAutoMipmap,
+													    FTextureType typeTexture, 
+													    FTexturePixelFormatType typePixelFormat,
+													    FTextureAddressingType typeAddressing,
+													    FTextureFilterType typeFilterSizeMin,
+													    FTextureFilterType typeFilterSizeMag,
+													    FMSAASampleCountType numSamples, 
+													    const FColor& borderColor,
+													    bool isUseBorderColor,
+													    bool isGraphicsComputeShared,
+													    bool isUnOrderedAccess,
+													    uint32& nTextureID)
+				{
+					//1> Load Texture From File
+					std::vector<int> aWidth;
+					std::vector<int> aHeight;
+					std::vector<stbi_uc*> aPixels;
+					
+					size_t count_tex = aPathAsset_Tex.size();
+					if (count_tex <= 0)
+					{
+						F_LogError("*********************** OpenGLWindow::createTextureCubeMap: Texture path count <= 0 !");
+						return false;
+					}
+					for (size_t i = 0; i < count_tex; i++)
+					{
+						const String& pathAsset_Tex = aPathAsset_Tex[i];
+						String pathTexture = GetAssetFullPath(pathAsset_Tex);
+						int width, height, texChannels;
+						stbi_uc* pixels = stbi_load(pathTexture.c_str(), &width, &height, &texChannels, STBI_rgb_alpha);
+						if (!pixels) 
+						{
+							s_DeletePixels(aPixels);
+							String msg = "*********************** OpenGLWindow::createTextureCubeMap: Failed to load texture image: " + pathTexture;
+							F_LogError(msg.c_str());
+							throw std::runtime_error(msg);
+						}
+
+						aWidth.push_back(width);
+						aHeight.push_back(height);
+						aPixels.push_back(pixels);
+					}
+
+					int width = aWidth[0];
+					int height = aHeight[0];
+					for (size_t i = 1; i < count_tex; i++)
+					{
+						if (aWidth[i] != width)
+						{
+							s_DeletePixels(aPixels);
+							String msg = "*********************** OpenGLWindow::createTextureCubeMap: Texture image's all width must the same !";
+							F_LogError(msg.c_str());
+							throw std::runtime_error(msg);
+						}
+						if (aHeight[i] != height)
+						{
+							s_DeletePixels(aPixels);
+							String msg = "*********************** OpenGLWindow::createTextureCubeMap: Texture image's all height must the same !";
+							F_LogError(msg.c_str());
+							throw std::runtime_error(msg);
+						}
+					}
+
+					int channel = 4;
+					uint8* pData = new uint8[count_tex * width * height * channel];
+					for (size_t i = 0; i < count_tex; i++)
+					{
+						stbi_uc* pixels = aPixels[i];
+						uint8* pSrc = pData + i * width * height * channel;
+						memcpy(pSrc, pixels, width * height * channel);
+					}
+					s_DeletePixels(aPixels);
+					
+					//2> Create
+                    if (!createGLTexture(nameTexture,
+                                         pData,
+                                         channel,
+                                         width,
+                                         height,
+                                         0,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+										 isUnOrderedAccess,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTextureCubeMap: Failed to create texture, name: [%s] !", nameTexture.c_str());
+						F_DELETE_T(pData)
+                        return false;
+                    }
+                    F_DELETE_T(pData)
+
+                    F_LogInfo("OpenGLWindow::createTextureCubeMap: Success to create texture, name: [%s] !", nameTexture.c_str());
+                    return true;
+				}
+
 				bool OpenGLWindow::createTextureRenderTarget1D(const String& nameTexture,
                                                                const FVector4& clDefault,
                                                                bool isSetColor,
@@ -3141,7 +3233,6 @@ namespace LostPeterOpenGL
                                                                int& mipMapCount, 
                                                                bool isAutoMipmap,
                                                                FTextureType typeTexture, 
-                                                               bool isCubeMap,
                                                                FTexturePixelFormatType typePixelFormat,
                                                                FTextureAddressingType typeAddressing,
                                                                FTextureFilterType typeFilterSizeMin,
@@ -3184,7 +3275,6 @@ namespace LostPeterOpenGL
                                                      mipMapCount,
                                                      isAutoMipmap,
                                                      typeTexture,
-                                                     isCubeMap,
                                                      typePixelFormat,
                                                      typeAddressing,
                                                      typeFilterSizeMin,
@@ -3212,7 +3302,6 @@ namespace LostPeterOpenGL
                                                                int& mipMapCount, 
                                                                bool isAutoMipmap,
                                                                FTextureType typeTexture, 
-                                                               bool isCubeMap,
                                                                FTexturePixelFormatType typePixelFormat,
                                                                FTextureAddressingType typeAddressing,
                                                                FTextureFilterType typeFilterSizeMin,
@@ -3234,7 +3323,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3263,7 +3351,6 @@ namespace LostPeterOpenGL
                                                                int& mipMapCount, 
                                                                bool isAutoMipmap,
                                                                FTextureType typeTexture, 
-                                                               bool isCubeMap,
                                                                FTexturePixelFormatType typePixelFormat,
                                                                FTextureAddressingType typeAddressing,
                                                                FTextureFilterType typeFilterSizeMin,
@@ -3306,7 +3393,6 @@ namespace LostPeterOpenGL
                                                      mipMapCount,
                                                      isAutoMipmap,
                                                      typeTexture,
-                                                     isCubeMap,
                                                      typePixelFormat,
                                                      typeAddressing,
                                                      typeFilterSizeMin,
@@ -3334,7 +3420,6 @@ namespace LostPeterOpenGL
                                                                int& mipMapCount, 
                                                                bool isAutoMipmap,
                                                                FTextureType typeTexture, 
-                                                               bool isCubeMap,
                                                                FTexturePixelFormatType typePixelFormat,
                                                                FTextureAddressingType typeAddressing,
                                                                FTextureFilterType typeFilterSizeMin,
@@ -3356,7 +3441,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3386,7 +3470,6 @@ namespace LostPeterOpenGL
                                                                     int& mipMapCount, 
                                                                     bool isAutoMipmap,
                                                                     FTextureType typeTexture, 
-                                                                    bool isCubeMap,
                                                                     FTexturePixelFormatType typePixelFormat,
                                                                     FTextureAddressingType typeAddressing,
                                                                     FTextureFilterType typeFilterSizeMin,
@@ -3439,7 +3522,6 @@ namespace LostPeterOpenGL
                                                           mipMapCount,
                                                           isAutoMipmap,
                                                           typeTexture,
-                                                          isCubeMap,
                                                           typePixelFormat,
                                                           typeAddressing,
                                                           typeFilterSizeMin,
@@ -3469,7 +3551,6 @@ namespace LostPeterOpenGL
                                                                     int& mipMapCount, 
                                                                     bool isAutoMipmap,
                                                                     FTextureType typeTexture, 
-                                                                    bool isCubeMap,
                                                                     FTexturePixelFormatType typePixelFormat,
                                                                     FTextureAddressingType typeAddressing,
                                                                     FTextureFilterType typeFilterSizeMin,
@@ -3492,7 +3573,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3522,7 +3602,6 @@ namespace LostPeterOpenGL
 															   int& mipMapCount, 
 															   bool isAutoMipmap,
 															   FTextureType typeTexture, 
-															   bool isCubeMap,
 															   FTexturePixelFormatType typePixelFormat,
 															   FTextureAddressingType typeAddressing,
 															   FTextureFilterType typeFilterSizeMin,
@@ -3566,7 +3645,6 @@ namespace LostPeterOpenGL
 													 mipMapCount,
 													 isAutoMipmap,
 													 typeTexture,
-													 isCubeMap,
 													 typePixelFormat,
 													 typeAddressing,
 													 typeFilterSizeMin,
@@ -3596,7 +3674,6 @@ namespace LostPeterOpenGL
 															   int& mipMapCount, 
 															   bool isAutoMipmap,
 															   FTextureType typeTexture, 
-															   bool isCubeMap,
 															   FTexturePixelFormatType typePixelFormat,
 															   FTextureAddressingType typeAddressing,
 															   FTextureFilterType typeFilterSizeMin,
@@ -3619,7 +3696,6 @@ namespace LostPeterOpenGL
                                          mipMapCount,
                                          isAutoMipmap,
                                          typeTexture,
-                                         isCubeMap,
                                          typePixelFormat,
                                          typeAddressing,
                                          typeFilterSizeMin,
@@ -3639,6 +3715,129 @@ namespace LostPeterOpenGL
                     return true;
 				}
 
+				bool OpenGLWindow::createTextureRenderTargetCubeMap(const String& nameTexture,
+																	const FVector4& clDefault,
+																	bool isSetColor,
+																	int channel,
+																	int width, 
+																	int height,
+																	int depth,
+																	int& mipMapCount, 
+																	bool isAutoMipmap,
+																	FTextureType typeTexture, 
+																	FTexturePixelFormatType typePixelFormat,
+																	FTextureAddressingType typeAddressing,
+																	FTextureFilterType typeFilterSizeMin,
+																	FTextureFilterType typeFilterSizeMag,
+																	FMSAASampleCountType numSamples, 
+																	const FColor& borderColor,
+																	bool isUseBorderColor,
+																	bool isGraphicsComputeShared,
+																	bool isUnOrderedAccess,
+																	const FColor& rtColor,
+																	uint32& nTextureID)
+				{
+					int imageSize = width * height * depth * channel;
+					uint8* pData = new uint8[imageSize];
+					memset(pData, 0, imageSize);
+					if (isSetColor)
+					{
+						uint8 r = (uint8)(clDefault.x * 255);
+						uint8 g = (uint8)(clDefault.y * 255);
+						uint8 b = (uint8)(clDefault.z * 255);
+						uint8 a = (uint8)(clDefault.w * 255);
+						uint8* pColor = (uint8*)pData;
+						for (uint32_t i = 0; i < width * height * depth; i++)
+						{
+							pColor[channel * i + 0] = r;
+							if (channel > 1)
+								pColor[channel * i + 1] = g;
+							if (channel > 2)
+								pColor[channel * i + 2] = b;
+							if (channel > 3)
+								pColor[channel * i + 3] = a;
+						}
+					}
+
+                    if (!createTextureRenderTargetCubeMap(nameTexture,
+														  pData,
+														  channel,
+														  width,
+														  height,
+														  depth,
+														  mipMapCount,
+														  isAutoMipmap,
+														  typeTexture,
+														  typePixelFormat,
+														  typeAddressing,
+														  typeFilterSizeMin,
+														  typeFilterSizeMag,
+														  numSamples,
+														  borderColor,
+														  isUseBorderColor,
+														  isGraphicsComputeShared,
+														  isUnOrderedAccess,
+														  rtColor,
+														  nTextureID))
+                    {
+                        F_DELETE_T(pData)
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTargetCubeMap: Failed to create texture RenderTargetCubeMap, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+					F_DELETE_T(pData)
+                    
+                    return true;
+				}
+                bool OpenGLWindow::createTextureRenderTargetCubeMap(const String& nameTexture,
+																	uint8* pData, 
+																	int channel,
+																	int width, 
+																	int height,
+																	int depth,
+																	int& mipMapCount, 
+																	bool isAutoMipmap,
+																	FTextureType typeTexture, 
+																	FTexturePixelFormatType typePixelFormat,
+																	FTextureAddressingType typeAddressing,
+																	FTextureFilterType typeFilterSizeMin,
+																	FTextureFilterType typeFilterSizeMag,
+																	FMSAASampleCountType numSamples, 
+																	const FColor& borderColor,
+																	bool isUseBorderColor,
+																	bool isGraphicsComputeShared,
+																	bool isUnOrderedAccess,
+																	const FColor& rtColor,
+																	uint32& nTextureID)
+				{
+					if (!createGLTexture(nameTexture,
+                                         pData,
+                                         channel,
+                                         width,
+                                         height,
+                                         depth,
+                                         1,
+                                         mipMapCount,
+                                         isAutoMipmap,
+                                         typeTexture,
+                                         typePixelFormat,
+                                         typeAddressing,
+                                         typeFilterSizeMin,
+                                         typeFilterSizeMag,
+                                         numSamples,
+                                         borderColor,
+                                         isUseBorderColor,
+                                         isGraphicsComputeShared,
+										 isUnOrderedAccess,
+                                         nTextureID))
+                    {
+                        F_LogError("*********************** OpenGLWindow::createTextureRenderTargetCubeMap: Failed to create texture RenderTargetCubeMap, name: [%s] !", nameTexture.c_str());
+                        return false;
+                    }
+
+                    F_LogInfo("OpenGLWindow::createTextureRenderTargetCubeMap: Success to create texture RenderTargetCubeMap, name: [%s] !", nameTexture.c_str());
+                    return true;
+				}
+
                 bool OpenGLWindow::createGLTexture(const String& nameTexture,
                                                    uint8* pData,
                                                    int channel,
@@ -3649,7 +3848,6 @@ namespace LostPeterOpenGL
                                                    int mipMapCount, 
                                                    bool isAutoMipmap,
                                                    FTextureType typeTexture, 
-                                                   bool isCubeMap,
                                                    FTexturePixelFormatType typePixelFormat,
                                                    FTextureAddressingType typeAddressing,
                                                    FTextureFilterType typeFilterSizeMin,
@@ -3727,7 +3925,19 @@ namespace LostPeterOpenGL
                     }
                     else if (typeTexture == F_Texture_CubeMap)
                     {
-
+						for (int i = 0; i < numArray; i++)
+						{
+							uint8* pDataCur = pData + i * width * height * channel;
+							glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+										 0, 
+										 format, 
+										 width, 
+										 height, 
+										 0, 
+										 format, 
+										 GL_UNSIGNED_BYTE, 
+										 pDataCur);
+						}
                     }
                     else
                     {

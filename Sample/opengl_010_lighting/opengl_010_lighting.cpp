@@ -275,7 +275,6 @@ bool OpenGL_010_Lighting::loadModel_Texture(ModelObject* pModelObject)
 												false,
 												false,
 												false,
-												false,
 												FMath::ms_clBlack);
 		if (!pModelObject->poTexture->Init())
 		{

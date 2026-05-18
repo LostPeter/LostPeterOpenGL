@@ -25,7 +25,6 @@ namespace LostPeterOpenGL
                          const FColor& _borderColor,
                          bool _isUseBorderColor,
                          bool _isAutoMipmap,
-                         bool _isCubeMap,
                          bool _isGraphicsComputeShared,
 						 bool _isRenderTarget,
 						 bool _isUnOrderedAccess,
@@ -40,7 +39,6 @@ namespace LostPeterOpenGL
         , numSamples(_numSamples)
         , borderColor(_borderColor)
         , isUseBorderColor(_isUseBorderColor)
-        , isCubeMap(_isCubeMap)
         , isGraphicsComputeShared(_isGraphicsComputeShared)
 		, isRenderTarget(_isRenderTarget)
 		, isUnOrderedAccess(_isUnOrderedAccess)
@@ -131,7 +129,6 @@ namespace LostPeterOpenGL
 											  this->mipMapCount,
 											  this->isAutoMipmap,
 											  this->typeTexture,
-											  this->isCubeMap,
 											  this->typePixelFormat,
 											  this->typeAddressing,
 											  this->typeFilterSizeMin,
@@ -154,7 +151,6 @@ namespace LostPeterOpenGL
 											  this->mipMapCount,
 											  this->isAutoMipmap,
 											  this->typeTexture,
-											  this->isCubeMap,
 											  this->typePixelFormat,
 											  this->typeAddressing,
 											  this->typeFilterSizeMin,
@@ -177,7 +173,6 @@ namespace LostPeterOpenGL
 												   this->mipMapCount,
 												   this->isAutoMipmap,
 												   this->typeTexture,
-												   this->isCubeMap,
 												   this->typePixelFormat,
 												   this->typeAddressing,
 												   this->typeFilterSizeMin,
@@ -200,7 +195,6 @@ namespace LostPeterOpenGL
 											  this->mipMapCount,
 											  this->isAutoMipmap,
 											  this->typeTexture,
-											  this->isCubeMap,
 											  this->typePixelFormat,
 											  this->typeAddressing,
 											  this->typeFilterSizeMin,
@@ -218,11 +212,29 @@ namespace LostPeterOpenGL
             }
             else if (this->typeTexture == F_Texture_CubeMap)
             {
-
+				if (!pWindow->createTextureCubeMap(this->name,
+												   this->aPathTexture, 
+												   this->mipMapCount,
+												   this->isAutoMipmap,
+												   this->typeTexture,
+												   this->typePixelFormat,
+												   this->typeAddressing,
+												   this->typeFilterSizeMin,
+												   this->typeFilterSizeMag,
+												   this->numSamples,
+												   this->borderColor,
+												   this->isUseBorderColor,
+												   this->isGraphicsComputeShared,
+												   this->isUnOrderedAccess,
+												   this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture cubemap, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else
             {
-                String msg = "*********************** GLTexture::LoadTexture: Wrong texture type, Create from file, name: [" + this->name + "] !";
+                String msg = "*********************** GLTexture::LoadTexture: Wrong texture type, name: [" + this->name + "] !";
                 F_LogError(msg.c_str());
                 throw std::runtime_error(msg);
             }
@@ -239,7 +251,6 @@ namespace LostPeterOpenGL
 														  this->mipMapCount,
 														  this->isAutoMipmap,
 														  this->typeTexture,
-														  this->isCubeMap,
 														  this->typePixelFormat,
 														  this->typeAddressing,
 														  this->typeFilterSizeMin,
@@ -265,7 +276,6 @@ namespace LostPeterOpenGL
 														  this->mipMapCount,
 														  this->isAutoMipmap,
 														  this->typeTexture,
-														  this->isCubeMap,
 														  this->typePixelFormat,
 														  this->typeAddressing,
 														  this->typeFilterSizeMin,
@@ -292,7 +302,6 @@ namespace LostPeterOpenGL
 															   this->mipMapCount,
 															   this->isAutoMipmap,
 															   this->typeTexture,
-															   this->isCubeMap,
 															   this->typePixelFormat,
 															   this->typeAddressing,
 															   this->typeFilterSizeMin,
@@ -333,7 +342,6 @@ namespace LostPeterOpenGL
 														  this->mipMapCount,
 														  this->isAutoMipmap,
 														  this->typeTexture,
-														  this->isCubeMap,
 														  this->typePixelFormat,
 														  this->typeAddressing,
 														  this->typeFilterSizeMin,
@@ -352,11 +360,34 @@ namespace LostPeterOpenGL
             }
             else if (this->typeTexture == F_Texture_CubeMap)
             {
-
+				if (!pWindow->createTextureRenderTargetCubeMap(this->name,
+														   	   pData, 
+															   channel,
+															   width,
+															   height,
+															   depth,
+															   this->mipMapCount,
+															   this->isAutoMipmap,
+															   this->typeTexture,
+															   this->typePixelFormat,
+															   this->typeAddressing,
+															   this->typeFilterSizeMin,
+															   this->typeFilterSizeMag,
+															   this->numSamples,
+															   this->borderColor,
+															   this->isUseBorderColor,
+															   this->isGraphicsComputeShared,
+															   this->isUnOrderedAccess,
+															   this->rtColorDefault,
+															   this->nTextureID))
+                {
+                    F_LogError("*********************** GLTexture::LoadTexture: Failed to create texture RenderTargetCubeMap, name: [%s] !", this->name.c_str());
+                    return false;
+                }
             }
             else
             {
-                String msg = "*********************** GLTexture::LoadTexture: Wrong texture type, Create render target, name: [" + this->name + "] !";
+                String msg = "*********************** GLTexture::LoadTexture: Wrong texture type, name: [" + this->name + "] !";
                 F_LogError(msg.c_str());
                 throw std::runtime_error(msg);
             }

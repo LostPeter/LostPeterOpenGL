@@ -508,7 +508,6 @@ namespace LostPeterOpenGL
 															 true,
 															 true,
 															 false,
-															 false,
 															 true,
 															 false,
 															 this->poColorBackground);

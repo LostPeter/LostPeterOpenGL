@@ -604,8 +604,8 @@ static bool g_ObjectIsShows[] =
     true, //texture2D
     true, //texture2Darray
     true, //texture3D
-    false, //textureCubeMap_SkyBox
-    false, //textureCubeMap_Sphere
+    true, //textureCubeMap_SkyBox
+    true, //textureCubeMap_Sphere
     true, //textureAnimation_Scroll
     true, //textureAnimation_Chunk
 
@@ -1431,7 +1431,6 @@ void OpenGL_011_Texturing::createTextures()
 											g_TextureBorderColors[i],
 											true,
 											true,
-											false,
 											false,
 											isRenderTarget,
 											false,

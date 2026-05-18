@@ -30,7 +30,6 @@ namespace LostPeterOpenGL
                   const FColor& _borderColor,
                   bool _isUseBorderColor,
                   bool _isAutoMipmap,
-                  bool _isCubeMap,
                   bool _isGraphicsComputeShared,
 			  	  bool _isRenderTarget,
                   bool _isUnOrderedAccess,
@@ -47,7 +46,6 @@ namespace LostPeterOpenGL
         FMSAASampleCountType numSamples;
         FColor borderColor;
         bool isUseBorderColor;
-        bool isCubeMap;
         bool isGraphicsComputeShared;
 		bool isRenderTarget;
 		bool isUnOrderedAccess;
