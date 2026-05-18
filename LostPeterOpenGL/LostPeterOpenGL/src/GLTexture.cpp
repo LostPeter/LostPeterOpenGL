@@ -84,6 +84,10 @@ namespace LostPeterOpenGL
             Base::GetWindowPtr()->destroyGLTexture(this->nTextureID);
         }
         this->nTextureID = 0;
+        if (this->isDeleteRGBA)
+        {
+            F_DELETE_T(this->pDataRGBA)
+        }
     }
 
     bool GLTexture::Init()
@@ -307,8 +311,21 @@ namespace LostPeterOpenGL
             }
             else if (this->typeTexture == F_Texture_3D)
             {
+                if (pData == nullptr)
+                {
+                    uint32_t size = width * height * depth * channel;
+                    this->pDataRGBA = new uint8[size];
+                    memset(this->pDataRGBA, 0, (size_t)size);
+                    updateNoiseTextureData();
+                    this->isDeleteRGBA = true;
+                }
+                else 
+                {
+                    this->pDataRGBA = pData;
+                    this->isDeleteRGBA = false;
+                }
 				if (!pWindow->createTextureRenderTarget3D(this->name,
-														  pData, 
+														  this->pDataRGBA, 
 														  channel,
 														  width,
 														  height,

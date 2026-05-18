@@ -134,13 +134,13 @@ public:
 			, poDepthTestEnabled(true)
 			, poDepthWriteEnabled(true)
 
-			, poStencilEnabled(true)
+			, poStencilEnabled(false)
 			, poStencil_CompareFunction(GL_LEQUAL)
 			, poStencil_StencilFailureOp(GL_KEEP)
 			, poStencil_DepthFailureOp(GL_KEEP)
 			, poStencil_DepthStencilPassOp(GL_KEEP)
 			, poStencil_Ref(0)
-			, poStencil_Mask(0)
+			, poStencil_Mask(0xFF)
 			
 			, poBlendEnabled(false)
 			, poBlendColorFactorSrc(GL_ONE)
