@@ -17,7 +17,7 @@
 layout(triangles, equal_spacing, ccw) in;
 
 
-uniform sampler2D texDisplacementMap;
+uniform sampler2D texSampler0;
 
 
 in HSOutput {
@@ -59,7 +59,7 @@ void main() {
                     + uvw.z * IN[2].outColor;
 
     TessellationConstant tess = tessellationConsts.tes[instanceIndex];
-    float displacement = texture(texDisplacementMap, texCoord).a;
+    float displacement = texture(texSampler0, texCoord).a;
     displacement = max(displacement, 0.0);
     posObject += normalize(normalObject) * displacement * tess.tessStrength;
 

@@ -21,8 +21,8 @@ in vec3 fragWorldNormal;
 in vec3 fragWorldTangent;
 in vec2 fragTexCoord;
 
-uniform sampler2D texSamplerDiffuse;
-uniform sampler2D texSamplerNormalMap;
+uniform sampler2D texSampler0;
+uniform sampler2D texSampler1;
 
 out vec4 outColor;
 
@@ -36,7 +36,7 @@ void main()
     float normalMapType = mat.aTexLayers[1].indexTextureArray;
     if (normalMapType == 1 ||
         normalMapType == 2)
-        N = Func_CalculateNormal(texSamplerNormalMap,
+        N = Func_CalculateNormal(texSampler1,
                                  fragTexCoord,
                                  fragWorldNormal,
                                  fragWorldTangent);
@@ -60,7 +60,7 @@ void main()
 
 
     //Texture
-    vec3 colorTexture = texture(texSamplerDiffuse, fragTexCoord).xyz;
+    vec3 colorTexture = texture(texSampler0, fragTexCoord).xyz;
     //VertexColor
     vec3 colorVertex = fragColor.xyz;
 

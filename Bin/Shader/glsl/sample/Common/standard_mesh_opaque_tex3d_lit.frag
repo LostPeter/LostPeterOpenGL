@@ -19,7 +19,7 @@ in vec4 fragColor;
 in vec3 fragWorldNormal;
 in vec2 fragTexCoord;
 
-uniform sampler3D texSampler;
+uniform sampler3D texSampler0;
 
 out vec4 outColor;
 
@@ -47,7 +47,7 @@ void main()
 
 
     //Texture
-    vec3 colorTexture = texture(texSampler, vec3(fragTexCoord, mat.aTexLayers[0].indexTextureArray)).xyz;
+    vec3 colorTexture = texture(texSampler0, vec3(fragTexCoord, mat.aTexLayers[0].indexTextureArray)).xyz;
     //VertexColor
     vec3 colorVertex = fragColor.xyz;
 

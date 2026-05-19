@@ -19,7 +19,7 @@ in vec4 fragColor;
 in vec3 fragWorldNormal;
 in vec3 fragTexCoord;
 
-uniform samplerCube texSampler;
+uniform samplerCube texSampler0;
 
 out vec4 outColor;
 
@@ -47,7 +47,7 @@ void main()
 
 
     //Texture
-    vec3 colorTexture = texture(texSampler, fragTexCoord).xyz;
+    vec3 colorTexture = texture(texSampler0, fragTexCoord).xyz;
     //VertexColor
     vec3 colorVertex = fragColor.xyz;
 
