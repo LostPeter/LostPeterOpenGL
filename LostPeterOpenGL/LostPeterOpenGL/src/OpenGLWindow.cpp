@@ -5843,22 +5843,32 @@ namespace LostPeterOpenGL
 
                     void OpenGLWindow::draw(GLenum mode, GLint first, GLsizei count)
                     {
+                        if (mode == GL_PATCHES)
+                            glPatchParameteri(GL_PATCH_VERTICES, 3);
                         glDrawArrays(mode, first, count);
                     }
 					void OpenGLWindow::drawInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount)
 					{
+                        if (mode == GL_PATCHES)
+                            glPatchParameteri(GL_PATCH_VERTICES, 3);
 						glDrawArraysInstanced(mode, first, count, instancecount);
 					}
                     void OpenGLWindow::drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices)
                     {
+                        if (mode == GL_PATCHES)
+                            glPatchParameteri(GL_PATCH_VERTICES, 3);
                         glDrawElements(mode, count, type, indices);
                     }
 					void OpenGLWindow::drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount)
 					{
+                        if (mode == GL_PATCHES)
+                            glPatchParameteri(GL_PATCH_VERTICES, 3);
 						glDrawElementsInstanced(mode, count, type, indices, instancecount);
 					}
 					void OpenGLWindow::drawIndexedInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance)
 					{
+                        if (mode == GL_PATCHES)
+                            glPatchParameteri(GL_PATCH_VERTICES, 3);
 						glDrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
 					}
 

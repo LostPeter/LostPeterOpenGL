@@ -614,7 +614,7 @@ static bool g_ObjectIsShows[] =
     true, //textureBumpMap
     true, //textureNormalMap
     true, //textureParallaxMap
-    false, //textureDisplacementMap
+    true, //textureDisplacementMap
 
 };
 static GLenum g_ObjectTypeCulling[] = 
@@ -1007,7 +1007,7 @@ void OpenGL_011_Texturing::loadModel_Custom()
             pModelObject->isUsedTessellation = true;
             if (g_ObjectIsTopologyPatchLists[i])
             {
-                //pModelObject->poTypePrimitive = GL_TRIANGLES_ADJACENCY;
+                pModelObject->poTypePrimitive = GL_PATCHES;
             }
         }
 
