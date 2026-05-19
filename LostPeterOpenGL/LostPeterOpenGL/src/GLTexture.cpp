@@ -440,11 +440,14 @@ namespace LostPeterOpenGL
         
     }
 
-    void GLTexture::BindTexture()
+    void GLTexture::BindTexture(uint slot, bool enable)
     {
         if (this->nTextureID > 0)
         {
-            Base::GetWindowPtr()->bindGLTexture(this->typeTexture, this->nTextureID);
+            if (enable)
+                Base::GetWindowPtr()->bindGLTexture(this->typeTexture, slot, this->nTextureID);
+            else
+                Base::GetWindowPtr()->bindGLTexture(this->typeTexture, slot, 0);
         }
     }
 

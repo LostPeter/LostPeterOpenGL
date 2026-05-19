@@ -934,7 +934,7 @@ namespace LostPeterOpenGL
                                                  bool isGraphicsComputeShared,
 												 bool isUnOrderedAccess,
                                                  uint32& nTextureID);
-                    virtual void bindGLTexture(FTextureType typeTexture, uint32 nTextureID);
+                    virtual void bindGLTexture(FTextureType typeTexture, uint slot, uint32 nTextureID);
                     virtual void destroyGLTexture(uint32 nTextureID);
 
 

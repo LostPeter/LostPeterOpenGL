@@ -822,13 +822,14 @@ namespace LostPeterOpenGL
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindShader();
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->BindBufferUniforms();
         GLTexture* pTexture = pFrameBuffer->GetColorTexture(0);
-        pTexture->BindTexture();
-        
+        pTexture->BindTexture(0, true);
+
 		Mesh* pMesh = this->m_pPipelineGraphics_CopyBlitToFrame->pMeshBlit;
         MeshSub* pMeshSub = pMesh->aMeshSubs[0];
         pMeshSub->pBufferVertexIndex->BindVertexArray();
         drawIndexed(GL_TRIANGLES, (int)pMeshSub->poIndexCount, GL_UNSIGNED_INT, 0);
 		this->m_pPipelineGraphics_CopyBlitToFrame->pStatePipelineGraphics->UnBindState();
+        pTexture->BindTexture(0, false);
     }
 
         void OpenGLWindow::createPipelineGraphics_DepthShadowMap()
@@ -2579,18 +2580,34 @@ namespace LostPeterOpenGL
                                                          uint8* pBuf,
                                                          uint32& nBufferUniformID)
                 {
+                    uint error;
                     glGenBuffers(1, &nBufferUniformID);
+
+                    error = (uint)glGetError();
+                    if (GL_NO_ERROR != error) 
+                    {
+                        F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, glGenBuffers GL error: [%u] !", error);
+                    }
+
                     glBindBuffer(GL_UNIFORM_BUFFER, nBufferUniformID);
                     glBufferData(GL_UNIFORM_BUFFER, bufSize, pBuf, usage);
+
+                    error = (uint)glGetError();
+                    if (GL_NO_ERROR != error) 
+                    {
+                        F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, glBufferData GL error: [%u] !", error);
+                    }
+
                     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 					glBindBufferRange(GL_UNIFORM_BUFFER, bindingIndex, nBufferUniformID, 0, bufSize);
 
-                    if (GL_NO_ERROR != glGetError())
+                    error = (uint)glGetError();
+                    if (GL_NO_ERROR != error) 
                     {
-                        F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, GL error: [%u] !", glGetError());
+                        F_LogError("*********************** OpenGLWindow::createGLBufferUniform: create uniform buffer error, glBindBufferRange GL error: [%u] !", error);
                     }
 
-                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, "" + nameBuffer);
+                    this->poDebug->SetGLBufferUniformName(nBufferUniformID, nameBuffer);
                     return true;
                 }
                 void OpenGLWindow::updateGLBufferUniform(size_t offset,
@@ -3965,9 +3982,10 @@ namespace LostPeterOpenGL
 
                     return true;
                 }
-                void OpenGLWindow::bindGLTexture(FTextureType typeTexture, uint32 nTextureID)
+                void OpenGLWindow::bindGLTexture(FTextureType typeTexture, uint slot, uint32 nTextureID)
                 {
                     GLenum type = Util_Transform2GLTextureType(typeTexture);
+                    glActiveTexture(GL_TEXTURE0 + slot);
                     glBindTexture(type, nTextureID);
                 }
                 void OpenGLWindow::destroyGLTexture(uint32 nTextureID)
@@ -4749,7 +4767,7 @@ namespace LostPeterOpenGL
                     {
 						if (this->poTexture != nullptr)
 						{
-							this->poStatePipelineGraphics->BindTexture(this->poTexture, 0);
+							this->poStatePipelineGraphics->BindTextureFS(this->poTexture, 0);
 						}
 						return;
 					}
@@ -4799,7 +4817,7 @@ namespace LostPeterOpenGL
 							{
 								if (this->poTexture != nullptr)
 								{
-									pStatePipelineGraphics->BindTexture(this->poTexture, nBindingTextureFragementIndex);
+									pStatePipelineGraphics->BindTextureFS(this->poTexture, nBindingTextureFragementIndex);
 									nBindingTextureFragementIndex ++;
 								}
 							}

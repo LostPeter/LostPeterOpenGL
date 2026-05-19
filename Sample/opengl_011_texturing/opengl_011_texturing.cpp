@@ -1604,7 +1604,7 @@ void OpenGL_011_Texturing::createDescriptorSets_Custom()
                 else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureVS)) //TextureVS
                 {
                     GLTexture* pTexture = pModelObject->GetTexture(F_GetShaderTypeName(F_Shader_Vertex), nIndexTextureVS);
-					pModelObject->poStatePipelineGraphics->BindTexture(pTexture, nIndexTextureVS);
+					pModelObject->poStatePipelineGraphics->BindTextureVS(pTexture, nIndexTextureVS);
 					nIndexTextureVS ++;
                 }
                 else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureTESC)) //TextureTESC
@@ -1614,13 +1614,13 @@ void OpenGL_011_Texturing::createDescriptorSets_Custom()
                 else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureTESE)) //TextureTESE
                 {
                     GLTexture* pTexture = pModelObject->GetTexture(F_GetShaderTypeName(F_Shader_TessellationEvaluation), nIndexTextureTESE);
-                    pModelObject->poStatePipelineGraphics->BindTexture(pTexture, nIndexTextureTESE);
+                    pModelObject->poStatePipelineGraphics->BindTextureTESE(pTexture, nIndexTextureTESE);
 					nIndexTextureTESE ++;
                 }
                 else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureFS)) //TextureFS
                 {
                     GLTexture* pTexture = pModelObject->GetTexture(F_GetShaderTypeName(F_Shader_Fragment), nIndexTextureFS);
-                    pModelObject->poStatePipelineGraphics->BindTexture(pTexture, nIndexTextureFS);
+                    pModelObject->poStatePipelineGraphics->BindTextureFS(pTexture, nIndexTextureFS);
 					nIndexTextureFS ++;
                 }
                 else
@@ -2208,6 +2208,7 @@ void OpenGL_011_Texturing::drawMeshDefault_Custom()
 		{	
 			F_Assert(false && "OpenGL_011_Texturing::drawMeshDefault_Custom")
 		}
+        pModelObject->poStatePipelineGraphics->UnBindState();
     }
 }
 

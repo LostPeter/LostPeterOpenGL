@@ -633,7 +633,7 @@ void OpenGL_009_Instancing::createDescriptorSets_Custom()
 		}
 		//(5) Image
 		{
-			pModelObject->poStatePipelineGraphics_Stencil->BindTexture(pModelObject->poTexture, 0);
+			pModelObject->poStatePipelineGraphics_Stencil->BindTextureFS(pModelObject->poTexture, 0);
 		}
     }
 }
@@ -871,6 +871,7 @@ void OpenGL_009_Instancing::drawMeshDefault_Custom()
 		{	
 			F_Assert(false && "OpenGL_009_Instancing::drawMeshDefault_Custom")
 		}
+        pModelObject->poStatePipelineGraphics_Stencil->UnBindState();
 
 		if (pModelObject->isOutline)
 		{
@@ -895,6 +896,7 @@ void OpenGL_009_Instancing::drawMeshDefault_Custom()
 			{	
 				F_Assert(false && "OpenGL_009_Instancing::drawMeshDefault_Custom")
 			}
+            pModelObject->poStatePipelineGraphics_Outline->UnBindState();
 		}
     }
 }

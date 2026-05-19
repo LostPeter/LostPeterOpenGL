@@ -654,7 +654,7 @@ namespace LostPeterOpenGL
 				else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureFrameColor)) //TextureFrameColor
 				{
 					GLTexture* pTexture = this->poTextureColors[0];
-					this->pPipelineGraphics_CopyBlit->BindTexture(pTexture, 0);
+					this->pPipelineGraphics_CopyBlit->BindTextureFS(pTexture, 0);
 				}
 				else
 				{

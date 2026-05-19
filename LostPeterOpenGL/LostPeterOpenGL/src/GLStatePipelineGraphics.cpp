@@ -18,6 +18,7 @@
 
 namespace LostPeterOpenGL
 {
+	std::map<uint, String> GLStatePipelineGraphics::s_mapIndex2SamplerName;
     GLStatePipelineGraphics::GLStatePipelineGraphics(const String& nameState)
         : Base(nameState)
 
@@ -61,7 +62,25 @@ namespace LostPeterOpenGL
 		, isDeleteShaderProgram(true)
 
     {
-
+		if (s_mapIndex2SamplerName.size() <= 0)
+		{
+			s_mapIndex2SamplerName[0] = "texSampler0";
+			s_mapIndex2SamplerName[1] = "texSampler1";
+			s_mapIndex2SamplerName[2] = "texSampler2";
+			s_mapIndex2SamplerName[3] = "texSampler3";
+			s_mapIndex2SamplerName[4] = "texSampler4";
+			s_mapIndex2SamplerName[5] = "texSampler5";
+			s_mapIndex2SamplerName[6] = "texSampler6";
+			s_mapIndex2SamplerName[7] = "texSampler7";
+			s_mapIndex2SamplerName[8] = "texSampler8";
+			s_mapIndex2SamplerName[9] = "texSampler9";
+			s_mapIndex2SamplerName[10] = "texSampler10";
+			s_mapIndex2SamplerName[11] = "texSampler11";
+			s_mapIndex2SamplerName[12] = "texSampler12";
+			s_mapIndex2SamplerName[13] = "texSampler13";
+			s_mapIndex2SamplerName[14] = "texSampler14";
+			s_mapIndex2SamplerName[15] = "texSampler15";
+		}
     }
     GLStatePipelineGraphics::~GLStatePipelineGraphics()
     {
@@ -239,7 +258,12 @@ namespace LostPeterOpenGL
 
 		this->mapBindIndex2UniformBlockIndex.clear();
 		this->mapBufferUniform.clear();
-		this->mapTexture.clear();
+		this->mapTextureVS.clear();
+		this->mapTextureFS.clear();
+		this->mapTextureTESC.clear();
+		this->mapTextureTESE.clear();
+		this->mapTextureGS.clear();
+		this->mapTextureCS.clear();
 	}
 
 	uint32 GLStatePipelineGraphics::GetUniformBlockIndex(const String& name)
@@ -256,9 +280,29 @@ namespace LostPeterOpenGL
 	{
 		this->mapBufferUniform[nBindingIndex] = pBufferUnifom;
 	}
-	void GLStatePipelineGraphics::BindTexture(GLTexture* pTexture, uint32 nBindingIndex)
+	void GLStatePipelineGraphics::BindTextureVS(GLTexture* pTexture, uint32 nBindingIndex)
 	{
-		this->mapTexture[nBindingIndex] = pTexture;
+		this->mapTextureVS[nBindingIndex] = pTexture;
+	}
+	void GLStatePipelineGraphics::BindTextureFS(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureFS[nBindingIndex] = pTexture;
+	}
+	void GLStatePipelineGraphics::BindTextureTESC(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureTESC[nBindingIndex] = pTexture;
+	}
+	void GLStatePipelineGraphics::BindTextureTESE(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureTESE[nBindingIndex] = pTexture;
+	}
+	void GLStatePipelineGraphics::BindTextureGS(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureGS[nBindingIndex] = pTexture;
+	}
+	void GLStatePipelineGraphics::BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureCS[nBindingIndex] = pTexture;
 	}
 
 	void GLStatePipelineGraphics::BindState()
@@ -278,6 +322,7 @@ namespace LostPeterOpenGL
 		bindStateDepth(false);
 		bindStateStencil(false);
 		bindStateBlend(false);
+		bindTextures(false);
 	}
 	void GLStatePipelineGraphics::bindStateDepth(bool depthEnable)
 	{
@@ -337,14 +382,39 @@ namespace LostPeterOpenGL
 	}
 	void GLStatePipelineGraphics::BindTextures()
 	{
-		size_t count = this->mapTexture.size();
-		if (count > 0)
+		bindTextures(true);
+	}
+	void GLStatePipelineGraphics::bindTextures(bool enable)
+	{
+		//VS
+		if (this->mapTextureVS.size() > 0)
+			bindTexture(this->mapTextureVS, enable);
+		//FS
+		if (this->mapTextureFS.size() > 0)
+			bindTexture(this->mapTextureFS, enable);
+		//TESC
+		if (this->mapTextureTESC.size() > 0)
+			bindTexture(this->mapTextureTESC, enable);
+		//TESE
+		if (this->mapTextureTESE.size() > 0)
+			bindTexture(this->mapTextureTESE, enable);
+		//GS
+		if (this->mapTextureGS.size() > 0)
+			bindTexture(this->mapTextureGS, enable);
+		//CS
+		if (this->mapTextureCS.size() > 0)
+			bindTexture(this->mapTextureCS, enable);
+	}
+	void GLStatePipelineGraphics::bindTexture(GLTexturePtrIDMap& mapTexture, bool enable)
+	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		for (GLTexturePtrIDMap::iterator it = mapTexture.begin();
+			 it != mapTexture.end(); ++it)
 		{
-			for (GLTexturePtrIDMap::iterator it = this->mapTexture.begin();
-				 it != this->mapTexture.end(); ++it)
-			{
-				it->second->BindTexture();
-			}
+			GLTexture* pTexture = it->second;
+			uint nBindingIndex = it->first;
+			pTexture->BindTexture(nBindingIndex, enable);
+			pWindow->setUniform1i(this->poShaderProgram->nShaderProgramID, s_mapIndex2SamplerName[nBindingIndex], (int)nBindingIndex);
 		}
 	}
 

@@ -388,7 +388,7 @@ void OpenGL_006_Depth::createDescriptorSets_Custom()
 		}
 		//(4) Image
 		{
-			pModelObject->poStatePipelineGraphics->BindTexture(pModelObject->poTexture, 0);
+			pModelObject->poStatePipelineGraphics->BindTextureFS(pModelObject->poTexture, 0);
 		}
     }
 }
@@ -591,6 +591,7 @@ void OpenGL_006_Depth::drawMeshDefault_Custom()
 		{	
 			F_Assert(false && "OpenGL_006_Depth::drawMeshDefault_Custom")
 		}
+        pModelObject->poStatePipelineGraphics->UnBindState();
     }
 }
 

@@ -532,7 +532,7 @@ void OpenGL_008_Blend::createDescriptorSets_Custom()
 		}
 		//(5) Image
 		{
-			pModelObject->poStatePipelineGraphics_Stencil->BindTexture(pModelObject->poTexture, 0);
+			pModelObject->poStatePipelineGraphics_Stencil->BindTextureFS(pModelObject->poTexture, 0);
 		}
     }
 }
@@ -619,7 +619,7 @@ void OpenGL_008_Blend::modelConfig()
         {
             ModelObject* pModelObject = this->m_aModelObjects[i];
 
-            String nameModel = FUtilString::SaveInt(i) + " - " + pModelObject->nameModel;
+            String nameModel = FUtilString::SaveInt((int)i) + " - " + pModelObject->nameModel;
             if (ImGui::CollapsingHeader(nameModel.c_str()))
             {
                 String nameIsShow = "Is Show - " + pModelObject->nameModel;
@@ -639,7 +639,7 @@ void OpenGL_008_Blend::modelConfig()
                 if (ImGui::CollapsingHeader(nameWorld.c_str()))
                 {
                     const FMatrix4& mat4World = pModelObject->objectCBs[0].g_MatWorld;
-                    String nameTable = FUtilString::SaveInt(i) + " - split_model_world";
+                    String nameTable = FUtilString::SaveInt((int)i) + " - split_model_world";
                     if (ImGui::BeginTable(nameTable.c_str(), 4))
                     {
                         ImGui::TableNextColumn(); ImGui::Text("%f", mat4World[0][0]);
@@ -739,6 +739,7 @@ void OpenGL_008_Blend::drawMeshDefault_Custom()
 		{	
 			F_Assert(false && "OpenGL_008_Blend::drawMeshDefault_Custom")
 		}
+		pModelObject->poStatePipelineGraphics_Stencil->UnBindState();
 
 		if (pModelObject->isOutline)
 		{
@@ -763,6 +764,7 @@ void OpenGL_008_Blend::drawMeshDefault_Custom()
 			{	
 				F_Assert(false && "OpenGL_008_Blend::drawMeshDefault_Custom")
 			}
+			pModelObject->poStatePipelineGraphics_Outline->UnBindState();
 		}
     }
 }

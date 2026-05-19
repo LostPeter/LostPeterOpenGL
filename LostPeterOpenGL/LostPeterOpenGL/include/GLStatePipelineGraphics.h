@@ -22,6 +22,9 @@ namespace LostPeterOpenGL
         GLStatePipelineGraphics(const String& nameState);
         virtual ~GLStatePipelineGraphics();
 
+	public:
+		static std::map<uint, String> s_mapIndex2SamplerName;
+
     public:
 		DescriptorSetLayout* poDescriptorSetLayout;
 
@@ -65,8 +68,12 @@ namespace LostPeterOpenGL
 
 		Uint2UintMap mapBindIndex2UniformBlockIndex;
 		GLBufferUniformPtrIDMap mapBufferUniform;
-		GLTexturePtrIDMap mapTexture;
-
+		GLTexturePtrIDMap mapTextureVS;
+		GLTexturePtrIDMap mapTextureFS;
+		GLTexturePtrIDMap mapTextureTESC;
+		GLTexturePtrIDMap mapTextureTESE;
+		GLTexturePtrIDMap mapTextureGS;
+		GLTexturePtrIDMap mapTextureCS;
 
     public:
         void Destroy();
@@ -146,7 +153,12 @@ namespace LostPeterOpenGL
 			
 	public:
 		void BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex);
-		void BindTexture(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureVS(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureFS(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureTESC(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureTESE(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureGS(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex);
 
     public:
 		void BindState();
@@ -159,6 +171,9 @@ namespace LostPeterOpenGL
 		void bindStateDepth(bool depthEnable);
 		void bindStateStencil(bool stencilEnable);
 		void bindStateBlend(bool blendEnable);
+		
+		void bindTextures(bool enable);
+		void bindTexture(GLTexturePtrIDMap& mapTexture, bool enable);
         
     };
 
