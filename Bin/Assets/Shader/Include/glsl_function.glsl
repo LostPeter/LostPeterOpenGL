@@ -68,7 +68,67 @@ vec3 Func_CalculateNormal(sampler2D texNormalMap,
 
 
 ///////////////////////////////// ParallaxMap ////////////////////////////////////////////
+vec2 Func_ParallaxMapping_Common(sampler2D texParallaxMap,
+								 vec2 uv,
+								 vec3 viewDirTS,
+								 float heightScale,
+								 float parallaxBias)
+{
+	float height = 1.0 - texture(texParallaxMap, uv).w;
+	vec2 p = viewDirTS.xy * (height * (heightScale * 0.5) + parallaxBias) / viewDirTS.z;
+	return uv - p;
+}
 
+vec2 Func_ParallaxMapping_Steep(sampler2D texParallaxMap,
+								vec2 uv, 
+								vec3 viewDirTS,
+								float heightScale,
+								float numLayers)
+{
+	float layerDepth = 1.0 / numLayers;
+	float currLayerDepth = 0.0;
+	vec2 deltaUV = viewDirTS.xy * heightScale / (viewDirTS.z * numLayers);
+	vec2 currUV = uv;
+	float height = 1.0 - texture(texParallaxMap, currUV).w;
+	for (int i = 0; i < numLayers; i++) 
+    {
+		currLayerDepth += layerDepth;
+		currUV -= deltaUV;
+		height = 1.0 - texture(texParallaxMap, currUV).w;
+		if (height < currLayerDepth) 
+        {
+			break;
+		}
+	}
+	return currUV;
+}
+
+vec2 Func_ParallaxMapping_Occlusion(sampler2D texParallaxMap,
+									vec2 uv, 
+									vec3 viewDirTS,
+									float heightScale,
+									float numLayers)
+{
+	float layerDepth = 1.0 / numLayers;
+	float currLayerDepth = 0.0;
+	vec2 deltaUV = viewDirTS.xy * heightScale / (viewDirTS.z * numLayers);
+	vec2 currUV = uv;
+	float height = 1.0 - texture(texParallaxMap, currUV).w;
+	for (int i = 0; i < numLayers; i++) 
+    {
+		currLayerDepth += layerDepth;
+		currUV -= deltaUV;
+		height = 1.0 - texture(texParallaxMap, currUV).w;
+		if (height < currLayerDepth) 
+        {
+			break;
+		}
+	}
+	vec2 prevUV = currUV + deltaUV;
+	float nextDepth = height - currLayerDepth;
+	float prevDepth = 1.0 - texture(texParallaxMap, prevUV).w - currLayerDepth + layerDepth;
+	return mix(currUV, prevUV, nextDepth / (nextDepth - prevDepth));
+}
 
 
 
