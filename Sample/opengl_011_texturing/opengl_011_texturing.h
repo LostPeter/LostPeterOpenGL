@@ -261,7 +261,7 @@ public:
 		GLboolean poColorWriteMask_Alpha;
 
 
-		////Mesh
+	////Mesh
         void SetMesh(ModelMesh* pMesh)
         {
             this->pMesh = pMesh;
@@ -299,7 +299,7 @@ public:
             return &(itFind->second);
         }
 
-    //Pipeline Computes
+    ////Pipeline Computes
         void AddPipelineCompute(GLStatePipelineCompute* pPipelineCompute)
         {
             this->aPipelineComputes.push_back(pPipelineCompute);

@@ -1172,7 +1172,7 @@ void OpenGL_011_Texturing::rebuildInstanceCBs(bool isCreateBuffer)
 
                 }
             }
-             pModelObject->materialCBs[j] = materialConstants;
+            pModelObject->materialCBs[j] = materialConstants;
 
             //TessellationConstants
             if (pModelObject->isUsedTessellation)
