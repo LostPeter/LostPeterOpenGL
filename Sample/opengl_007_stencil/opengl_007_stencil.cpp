@@ -723,6 +723,8 @@ void OpenGL_007_Stencil::drawMeshDefault_Custom()
 
 void OpenGL_007_Stencil::cleanupCustom()
 {
+	F_DELETE(this->pDescriptorSetLayout_Stencil)
+	F_DELETE(this->pDescriptorSetLayout_Outline)
 	F_DELETE(this->pShaderVertex)
     F_DELETE(this->pShaderFragment)
 	F_DELETE(this->pShaderVertex_Outline)

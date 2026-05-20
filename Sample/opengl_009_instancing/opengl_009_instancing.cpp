@@ -903,6 +903,8 @@ void OpenGL_009_Instancing::drawMeshDefault_Custom()
 
 void OpenGL_009_Instancing::cleanupCustom()
 {
+	F_DELETE(this->pDescriptorSetLayout_Stencil)
+	F_DELETE(this->pDescriptorSetLayout_Outline)
 	destroyShaderModules();
 
     size_t count = this->m_aModelObjects.size();

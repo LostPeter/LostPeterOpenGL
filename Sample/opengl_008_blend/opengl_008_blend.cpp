@@ -771,6 +771,8 @@ void OpenGL_008_Blend::drawMeshDefault_Custom()
 
 void OpenGL_008_Blend::cleanupCustom()
 {
+	F_DELETE(this->pDescriptorSetLayout_Stencil)
+	F_DELETE(this->pDescriptorSetLayout_Outline)
 	F_DELETE(this->pShaderVertex)
     F_DELETE(this->pShaderFragment)
 	F_DELETE(this->pShaderVertex_Outline)

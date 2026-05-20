@@ -402,8 +402,8 @@ void OpenGL_010_Lighting::createGraphicsPipeline_Custom()
         }
 
         //poStatePipelineGraphics
-		String namePipelineGraphics_Stencil = "PipelineGraphics-" + pModelObject->nameModel;
-        pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics_Stencil,
+		String namePipelineGraphics = "PipelineGraphics-" + pModelObject->nameModel;
+        pModelObject->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics,
 																			this->pDescriptorSetLayoutLocal,
                                                                             pShaderVertex,
                                                                             nullptr,
@@ -825,6 +825,7 @@ void OpenGL_010_Lighting::drawMeshDefault_Custom()
 
 void OpenGL_010_Lighting::cleanupCustom()
 {
+	F_DELETE(this->pDescriptorSetLayoutLocal)
 	destroyShaderModules();
 
     size_t count = this->m_aModelObjects.size();
