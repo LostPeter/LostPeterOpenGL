@@ -1491,8 +1491,7 @@ void OpenGL_011_Texturing::createShaderModules()
         String shaderName = g_ShaderModulePaths[3 * i + 0];
         String shaderType = g_ShaderModulePaths[3 * i + 1];
         String shaderPath = g_ShaderModulePaths[3 * i + 2];
-
-        //vert
+		
         GLShader* pShader =  createShader(shaderName, shaderPath, shaderType);
         if (pShader == nullptr)
         {
