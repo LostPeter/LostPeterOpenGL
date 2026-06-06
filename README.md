@@ -131,3 +131,21 @@ License:
 * sample006：Depth state test: depthTest and depthWrite 
 
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_006_depth.png)
+
+### <007> opengl_007_stencil
+
+
+### <008> opengl_008_blend
+
+
+### <009> opengl_009_instancing
+
+
+### <010> opengl_010_lighting
+
+
+### <011> opengl_011_texturing
+
+
+### <012> opengl_012_shadering
+
