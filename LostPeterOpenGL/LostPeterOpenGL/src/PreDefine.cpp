@@ -114,9 +114,9 @@ namespace LostPeterOpenGL
         "CullObjectConstants",              //10:  CullObjectConstants
         "MaterialConstants",                //11:  MaterialConstants
         "InstanceConstants",                //12:  InstanceConstants
-        "TextureCopy",                      //13:  TextureCopy
-        "TessellationConstants",            //14:  TessellationConstants
-        "GeometryConstants",                //15:  GeometryConstants
+        "TessellationConstants",            //13:  TessellationConstants
+        "GeometryConstants",                //14:  GeometryConstants
+		"TextureCopyConstants",             //15:  TextureCopyConstants
         "TextureVS",                        //16:  TextureVS
         "TextureTESC",                      //17:  TextureTESC
         "TextureTESE",                      //18:  TextureTESE

@@ -73,7 +73,6 @@ namespace LostPeterOpenGL
 		GLTexturePtrIDMap mapTextureTESC;
 		GLTexturePtrIDMap mapTextureTESE;
 		GLTexturePtrIDMap mapTextureGS;
-		GLTexturePtrIDMap mapTextureCS;
 
     public:
         void Destroy();
@@ -158,7 +157,6 @@ namespace LostPeterOpenGL
 		void BindTextureTESC(GLTexture* pTexture, uint32 nBindingIndex);
 		void BindTextureTESE(GLTexture* pTexture, uint32 nBindingIndex);
 		void BindTextureGS(GLTexture* pTexture, uint32 nBindingIndex);
-		void BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex);
 
     public:
 		void BindState();

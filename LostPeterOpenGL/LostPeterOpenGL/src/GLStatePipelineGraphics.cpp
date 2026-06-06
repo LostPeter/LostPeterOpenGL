@@ -263,7 +263,6 @@ namespace LostPeterOpenGL
 		this->mapTextureTESC.clear();
 		this->mapTextureTESE.clear();
 		this->mapTextureGS.clear();
-		this->mapTextureCS.clear();
 	}
 
 	uint32 GLStatePipelineGraphics::GetUniformBlockIndex(const String& name)
@@ -299,10 +298,6 @@ namespace LostPeterOpenGL
 	void GLStatePipelineGraphics::BindTextureGS(GLTexture* pTexture, uint32 nBindingIndex)
 	{
 		this->mapTextureGS[nBindingIndex] = pTexture;
-	}
-	void GLStatePipelineGraphics::BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex)
-	{
-		this->mapTextureCS[nBindingIndex] = pTexture;
 	}
 
 	void GLStatePipelineGraphics::BindState()
@@ -401,9 +396,6 @@ namespace LostPeterOpenGL
 		//GS
 		if (this->mapTextureGS.size() > 0)
 			bindTexture(this->mapTextureGS, enable);
-		//CS
-		if (this->mapTextureCS.size() > 0)
-			bindTexture(this->mapTextureCS, enable);
 	}
 	void GLStatePipelineGraphics::bindTexture(GLTexturePtrIDMap& mapTexture, bool enable)
 	{

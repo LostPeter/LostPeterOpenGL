@@ -22,12 +22,49 @@ namespace LostPeterOpenGL
         GLStatePipelineCompute(const String& nameState);
         virtual ~GLStatePipelineCompute();
 
-    public:
-        
+	public:
+		static std::map<uint, String> s_mapIndex2SamplerName;
 
     public:
-        virtual void Destroy() = 0;
-        
+        DescriptorSetLayout* poDescriptorSetLayout;
+
+		GLShaderProgram* poShaderProgram;
+		bool isDeleteShaderProgram;
+
+		Uint2UintMap mapBindIndex2UniformBlockIndex;
+		GLBufferUniformPtrIDMap mapBufferUniform;
+		GLTexturePtrIDMap mapTextureCS;
+
+    public:
+        virtual void Destroy();
+		bool Init(DescriptorSetLayout* pDescriptorSetLayout,
+				  GLShaderProgram* pShaderProgram,
+				  bool deleteShaderProgram);
+		bool Init(DescriptorSetLayout* pDescriptorSetLayout,
+				  GLShader* pShaderCompute);
+
+		virtual void CleanupSwapChain();
+					
+	public:
+		GLShaderProgram* GetShaderProgram() const { return this->poShaderProgram; }
+
+		uint32 GetUniformBlockIndex(const String& name);
+        void BindUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
+
+	public:
+		void BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex);
+		void BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex);
+
+	public:
+		void BindState();
+		void UnBindState();
+		void BindShader();
+		void BindBufferUniforms();
+		void BindTextures();
+
+	protected:
+		void bindTextures(bool enable);
+		void bindTexture(GLTexturePtrIDMap& mapTexture, bool enable);
     };
 
 }; //LostPeterOpenGL
