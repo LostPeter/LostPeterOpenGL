@@ -1292,7 +1292,7 @@ void OpenGL_011_Texturing::createGraphicsPipeline_Custom()
                                                                             pShaderTese,
                                                                             pShaderGeom,
                                                                             pShaderFragment,
-                                                                            this->poTypeVertex,
+                                                                            pModelObject->pMesh->poTypeVertex,
                                                                             pModelObject->poTypePrimitive,
                                                                             pModelObject->poIsCull,
                                                                             pModelObject->poTypeFrontFace,
