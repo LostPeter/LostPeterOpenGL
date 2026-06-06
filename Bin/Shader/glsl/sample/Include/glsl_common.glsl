@@ -214,28 +214,6 @@ layout (std140) uniform InstanceConstants
 } instanceConstants;
 
 
-///////////////////////////////// ComputeConstants //////////////////////////////
-struct TextureCopyConstants
-{
-    //[x,y,z,w] = [w,h,mip,processLinear]
-    vec4 texInfo;
-	vec4 texOffset;
-	vec4 texIndexArray;
-	vec4 texClearColor;
-};
-
-
-///////////////////////////////// GeometryConstants /////////////////////////////
-//GeometryConstants
-struct GeometryConstants
-{
-    float width;
-    float height;
-    float length;
-	float reserve;
-};
-
-
 ///////////////////////////////// TessellationConstants /////////////////////////
 struct TessellationConstant
 {
@@ -251,7 +229,28 @@ layout (std140) uniform TessellationConstants
 
 
 ///////////////////////////////// GeometryConstants /////////////////////////////
+struct GeometryConstant
+{
+    float width;
+    float height;
+    float length;
+	float reserve;
+};
+layout (std140) uniform GeometryConstants
+{
+	GeometryConstant geo[MAX_OBJECT_COUNT];
+} geometryConsts;
 
+
+///////////////////////////////// ComputeConstants //////////////////////////////
+struct TextureCopyConstants
+{
+    //[x,y,z,w] = [w,h,mip,processLinear]
+    vec4 texInfo;
+	vec4 texOffset;
+	vec4 texIndexArray;
+	vec4 texClearColor;
+};
 
 
 ///////////////////////////////// TerrainConstants //////////////////////////////

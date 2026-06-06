@@ -1,0 +1,114 @@
+/****************************************************************************
+* LostPeterOpenGL - Copyright (C) 2022 by LostPeter
+* 
+* Author:   LostPeter
+* Time:     2026-06-06
+* Github:   https://github.com/LostPeter/LostPeterOpenGL
+* Document: https://www.zhihu.com/people/lostpeter/posts
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+****************************************************************************/
+
+#version 410 core
+#extension GL_ARB_tessellation_shader : require
+#extension GL_ARB_shading_language_include : enable
+#include "/glsl_common.glsl"
+
+layout(vertices = 3) out;
+
+in vec4 vs_outPosition[];
+in vec4 vs_outColor[];
+in vec3 vs_outNormal[];
+in vec2 vs_outTexCoord[];
+
+out vec4 tesc_outPosition[];
+out vec4 tesc_outColor[];
+out vec3 tesc_outNormal[];
+out vec2 tesc_outTexCoord[];
+out float tesc_pnPatch[];
+
+
+//PN Patch
+struct PnPatch {
+    float b210;
+    float b120;
+    float b021;
+    float b012;
+    float b102;
+    float b201;
+    float b111;
+    float n110;
+    float n011;
+    float n101;
+};
+
+void SetPnPatch(out float output[10], PnPatch patch) {
+    output[0] = patch.b210;
+    output[1] = patch.b120;
+    output[2] = patch.b021;
+    output[3] = patch.b012;
+    output[4] = patch.b102;
+    output[5] = patch.b201;
+    output[6] = patch.b111;
+    output[7] = patch.n110;
+    output[8] = patch.n011;
+    output[9] = patch.n101;
+}
+
+float wij(vec4 iPos, vec3 iNormal, vec4 jPos) {
+    return dot(jPos.xyz - iPos.xyz, iNormal);
+}
+
+float vij(vec4 iPos, vec3 iNormal, vec4 jPos, vec3 jNormal) {
+    vec3 Pj_minus_Pi = jPos.xyz - iPos.xyz;
+    vec3 Ni_plus_Nj = iNormal + jNormal;
+    return 2.0 * dot(Pj_minus_Pi, Ni_plus_Nj) / dot(Pj_minus_Pi, Pj_minus_Pi);
+}
+
+void main() {
+	if (gl_InvocationID == 0)
+    {
+        uint instanceIndex = uint(vs_outPosition[0].w + 0.5);
+        TessellationConstant tess = tessellationConsts.tes[instanceIndex];
+
+        gl_TessLevelOuter[0] = tess.tessLevelOuter;
+        gl_TessLevelOuter[1] = tess.tessLevelOuter;
+        gl_TessLevelOuter[2] = tess.tessLevelOuter;
+        gl_TessLevelInner[0] = tess.tessLevelInner;
+    }
+
+	tesc_outPosition[gl_InvocationID] = vs_outPosition[gl_InvocationID];
+    tesc_outColor[gl_InvocationID] = vs_outColor[gl_InvocationID];
+    tesc_outNormal[gl_InvocationID] = vs_outNormal[gl_InvocationID];
+    tesc_outTexCoord[gl_InvocationID] = vs_outTexCoord[gl_InvocationID];
+
+    vec4 P0 = vs_outPosition[0];
+    vec4 P1 = vs_outPosition[1];
+    vec4 P2 = vs_outPosition[2];
+    vec3 N0 = vs_outNormal[0];
+    vec3 N1 = vs_outNormal[1];
+    vec3 N2 = vs_outNormal[2];
+
+    PnPatch pnPatch;
+    pnPatch.b210 = (2.0 * P0[gl_InvocationID] + P1[gl_InvocationID] - wij(P0, N0, P1) * N0[gl_InvocationID]) / 3.0;
+    pnPatch.b120 = (2.0 * P1[gl_InvocationID] + P0[gl_InvocationID] - wij(P1, N1, P0) * N1[gl_InvocationID]) / 3.0;
+    pnPatch.b021 = (2.0 * P1[gl_InvocationID] + P2[gl_InvocationID] - wij(P1, N1, P2) * N1[gl_InvocationID]) / 3.0;
+    pnPatch.b012 = (2.0 * P2[gl_InvocationID] + P1[gl_InvocationID] - wij(P2, N2, P1) * N2[gl_InvocationID]) / 3.0;
+    pnPatch.b102 = (2.0 * P2[gl_InvocationID] + P0[gl_InvocationID] - wij(P2, N2, P0) * N2[gl_InvocationID]) / 3.0;
+    pnPatch.b201 = (2.0 * P0[gl_InvocationID] + P2[gl_InvocationID] - wij(P0, N0, P2) * N0[gl_InvocationID]) / 3.0;
+
+    float E = (pnPatch.b210 + pnPatch.b120 + pnPatch.b021 + pnPatch.b012 + pnPatch.b102 + pnPatch.b201) / 6.0;
+    float V = (P0[gl_InvocationID] + P1[gl_InvocationID] + P2[gl_InvocationID]) / 3.0;
+    pnPatch.b111 = E + (E - V) * 0.5;
+
+    pnPatch.n110 = N0[gl_InvocationID] + N1[gl_InvocationID] - vij(P0, N0, P1, N1) * (P1[gl_InvocationID] - P0[gl_InvocationID]);
+    pnPatch.n011 = N1[gl_InvocationID] + N2[gl_InvocationID] - vij(P1, N1, P2, N2) * (P2[gl_InvocationID] - P1[gl_InvocationID]);
+    pnPatch.n101 = N2[gl_InvocationID] + N0[gl_InvocationID] - vij(P2, N2, P0, N0) * (P0[gl_InvocationID] - P2[gl_InvocationID]);
+
+    float tempPatch[10];
+    SetPnPatch(tempPatch, pnPatch);
+
+    for (int i = 0; i < 10; ++i) {
+        tesc_pnPatch[gl_InvocationID * 10 + i] = tempPatch[i];
+    }
+}

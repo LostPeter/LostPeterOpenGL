@@ -1090,37 +1090,19 @@ namespace LostPeterOpenGL
 
     bool OpenGLWindow::OnBeginCompute_BeforeRender()
     {
-        return false;
+        return beginCompute_BeforeRender();
     }
         void OpenGLWindow::OnUpdateCompute_BeforeRender()
         {
-
+			updateCompute_BeforeRender();
         }
         void OpenGLWindow::OnCompute_BeforeRender()
         {
-
+			compute_BeforeRender();
         }
     void OpenGLWindow::OnEndCompute_BeforeRender()
     {
-
-    }
-
-
-    bool OpenGLWindow::OnBeginCompute_AfterRender()
-    {
-        return false;
-    }
-        void OpenGLWindow::OnUpdateCompute_AfterRender()
-        {
-
-        }
-        void OpenGLWindow::OnCompute_AfterRender()
-        {
-
-        }
-    void OpenGLWindow::OnEndCompute_AfterRender()
-    {
-
+		endCompute_BeforeRender();
     }
 
 
@@ -1139,6 +1121,24 @@ namespace LostPeterOpenGL
     void OpenGLWindow::OnEndRender()
     {
         endRender();
+    }
+
+
+	bool OpenGLWindow::OnBeginCompute_AfterRender()
+    {
+        return beginCompute_AfterRender();
+    }
+        void OpenGLWindow::OnUpdateCompute_AfterRender()
+        {
+			updateCompute_AfterRender();
+        }
+        void OpenGLWindow::OnCompute_AfterRender()
+        {
+			compute_AfterRender();
+        }
+    void OpenGLWindow::OnEndCompute_AfterRender()
+    {
+		endCompute_AfterRender();
     }
 
 
@@ -4958,6 +4958,90 @@ namespace LostPeterOpenGL
 		this->poFramebufferSize.y = (float)frameH;
 	}
 
+	//Compute Before Render
+    bool OpenGLWindow::beginCompute_BeforeRender() 
+    {
+        if (!this->cfg_isUseComputeShaderBeforeRender)
+        {
+            return false;
+        }
+        return true;
+    }
+        void OpenGLWindow::updateCompute_BeforeRender()
+        {
+            //CommandBuffer
+            updateComputeCommandBuffer_BeforeRender();
+
+        }
+            void OpenGLWindow::updateComputeCommandBuffer_BeforeRender()
+            {
+                updateCompute_BeforeRender_Default();
+                updateCompute_BeforeRender_Terrain();
+                updateCompute_BeforeRender_Custom();
+                updateCompute_BeforeRender_Cull();
+            }
+                void OpenGLWindow::updateCompute_BeforeRender_Default()
+                {
+
+                }
+                void OpenGLWindow::updateCompute_BeforeRender_Terrain()
+                {
+
+                }
+                void OpenGLWindow::updateCompute_BeforeRender_Custom()
+                {
+
+                }
+                void OpenGLWindow::updateCompute_BeforeRender_Cull()
+                {
+
+                }
+                    
+        void OpenGLWindow::compute_BeforeRender()
+        {
+
+        }
+    void OpenGLWindow::endCompute_BeforeRender()
+    {
+
+    }
+
+    //Compute After Render
+    bool OpenGLWindow::beginCompute_AfterRender()
+    {
+        return true;
+    }
+        void OpenGLWindow::updateCompute_AfterRender()
+        {
+
+        }
+            void OpenGLWindow::updateComputeCommandBuffer_AfterRender()
+            {
+
+            }
+                void OpenGLWindow::updateCompute_AfterRender_Default()
+                {
+
+                }
+                void OpenGLWindow::updateCompute_AfterRender_Custom()
+                {
+
+                }
+                void OpenGLWindow::updateCompute_AfterRender_HizDepthGenerate()
+                {
+
+                }
+
+        void OpenGLWindow::compute_AfterRender()
+        {
+
+        }
+    void OpenGLWindow::endCompute_AfterRender()
+    {
+
+    }
+
+
     bool OpenGLWindow::beginRender()
     {
         GLFrameBuffer* pFrameBuffer = this->poFrameBuffers[this->poCurrentFrame];
@@ -5870,6 +5954,11 @@ namespace LostPeterOpenGL
                         if (mode == GL_PATCHES)
                             glPatchParameteri(GL_PATCH_VERTICES, 3);
 						glDrawElementsInstancedBaseInstance(mode, count, type, indices, instancecount, baseinstance);
+					}
+
+					void OpenGLWindow::dispatch(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)
+					{
+						glDispatchCompute(num_groups_x, num_groups_y, num_groups_z);
 					}
 
                 void OpenGLWindow::endRenderPass(GLRenderPass* pRenderPass)

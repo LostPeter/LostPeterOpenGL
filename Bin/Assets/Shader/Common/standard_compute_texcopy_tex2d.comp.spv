@@ -1,0 +1,53 @@
+/****************************************************************************
+* LostPeterOpenGL - Copyright (C) 2022 by LostPeter
+* 
+* Author:   LostPeter
+* Time:     2026-06-06
+* Github:   https://github.com/LostPeter/LostPeterOpenGL
+* Document: https://www.zhihu.com/people/lostpeter/posts
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+****************************************************************************/
+
+#version 410 core
+#extension GL_ARB_gpu_shader5 : enable
+#extension GL_EXT_shader_image_load_store : require
+#extension GL_ARB_shading_language_include : enable
+#include "/glsl_common.glsl"
+#include "/glsl_function.glsl"
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout(binding = 1) uniform sampler2D texSampler0;
+layout(binding = 2, rgba8) writeonly uniform image2D texSampler1;
+
+
+void main()
+{
+    uint coordX = gl_GlobalInvocationID.x;
+    uint coordY = gl_GlobalInvocationID.y;
+
+    bool inRange =
+        coordX >= uint(_textureInfo.texOffset.x) &&
+        coordX <  uint(_textureInfo.texOffset.x + _textureInfo.texInfo.x) &&
+        coordY >= uint(_textureInfo.texOffset.y) &&
+        coordY <  uint(_textureInfo.texOffset.y + _textureInfo.texInfo.y);
+
+    if (inRange)
+    {
+        int sx = int(coordX - uint(_textureInfo.texOffset.x));
+        int sy = int(coordY - uint(_textureInfo.texOffset.y));
+        int mipLevel = int(_textureInfo.texInfo.z);
+
+        vec4 pixel = texelFetch(texSampler0, ivec2(sx, sy), mipLevel);
+        if (_textureInfo.texInfo.w > 0)
+        {
+            pixel = Func_LinearToSRGB(pixel);
+        }
+        imageStore(texSampler1, ivec2(int(coordX), int(coordY)), pixel);
+    }
+    else
+    {
+        imageStore(texSampler1, ivec2(int(coordX), int(coordY)), _textureInfo.texClearColor);
+    }
+}

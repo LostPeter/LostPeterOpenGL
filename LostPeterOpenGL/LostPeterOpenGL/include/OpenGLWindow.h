@@ -1126,10 +1126,27 @@ namespace LostPeterOpenGL
 		virtual void refreshFramebufferSize(int w, int h);
 
         //Compute Before Render
-
+		virtual bool beginCompute_BeforeRender();
+            virtual void updateCompute_BeforeRender();
+                virtual void updateComputeCommandBuffer_BeforeRender();
+                    virtual void updateCompute_BeforeRender_Default();
+                    virtual void updateCompute_BeforeRender_Terrain();
+                    virtual void updateCompute_BeforeRender_Custom();
+                    virtual void updateCompute_BeforeRender_Cull();
+                    
+            virtual void compute_BeforeRender();
+        virtual void endCompute_BeforeRender();
 
         //Compute After Render
+		virtual bool beginCompute_AfterRender();
+            virtual void updateCompute_AfterRender();
+                virtual void updateComputeCommandBuffer_AfterRender();
+                    virtual void updateCompute_AfterRender_Default();
+                    virtual void updateCompute_AfterRender_Custom();
+                    virtual void updateCompute_AfterRender_HizDepthGenerate();
 
+            virtual void compute_AfterRender();
+        virtual void endCompute_AfterRender();
 
 
         //Render/Update
@@ -1236,6 +1253,8 @@ namespace LostPeterOpenGL
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
 						virtual void drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount);
 						virtual void drawIndexedInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance);
+
+						virtual void dispatch(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
 
                     virtual void endRenderPass(GLRenderPass* pRenderPass);
 
