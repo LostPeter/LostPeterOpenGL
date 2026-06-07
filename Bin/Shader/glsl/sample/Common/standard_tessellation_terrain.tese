@@ -20,32 +20,31 @@ in vec4 tesc_outPosition[];
 in vec4 tesc_outColor[];
 in vec3 tesc_outNormal[];
 in vec2 tesc_outTexCoord[];
-in float tesc_pnPatch[3*10];
+in float tesc_pnPatch[];
 
-out DSOutput {
-    vec4 outWorldPos;
-    vec4 outColor;
-    vec3 outWorldNormal;
-    vec2 outTexCoord;
-};
+out vec4 fragWorldPos;
+out vec4 fragColor;
+out vec3 fragWorldNormal;
+out vec2 fragTexCoord;
+
 
 struct PnPatch {
     float b210, b120, b021, b012, b102, b201, b111;
     float n110, n011, n101;
 };
 
-PnPatch GetPnPatch(float input[10]) {
+PnPatch GetPnPatch(float inVals[10]) {
     PnPatch res;
-    res.b210 = input[0];
-    res.b120 = input[1];
-    res.b021 = input[2];
-    res.b012 = input[3];
-    res.b102 = input[4];
-    res.b201 = input[5];
-    res.b111 = input[6];
-    res.n110 = input[7];
-    res.n011 = input[8];
-    res.n101 = input[9];
+    res.b210 = inVals[0];
+    res.b120 = inVals[1];
+    res.b021 = inVals[2];
+    res.b012 = inVals[3];
+    res.b102 = inVals[4];
+    res.b201 = inVals[5];
+    res.b111 = inVals[6];
+    res.n110 = inVals[7];
+    res.n011 = inVals[8];
+    res.n101 = inVals[9];
     return res;
 }
 
@@ -55,7 +54,7 @@ void main() {
     TransformConstants trans = passConsts.g_Transforms[viewIndex];
     uint instanceIndex = uint(tesc_outPosition[0].w);
     ObjectConstant obj = objectConsts.objs[instanceIndex];
-    TessellationConstant tess = tessellationConsts.tess[instanceIndex];
+    TessellationConstant tess = tessellationConsts.tes[instanceIndex];
 
     float patch0[10], patch1[10], patch2[10];
     for (int i=0; i<10; i++) { patch0[i] = tesc_pnPatch[0*10+i]; }
@@ -118,10 +117,10 @@ void main() {
     vec4 posWorld = obj.g_MatWorld * vec4(finalPos, 1.0);
     gl_Position   = trans.mat4Proj * trans.mat4View * posWorld;
 
-    outWorldPos       = posWorld;
-    outWorldPos.xyz  /= outWorldPos.w;
-    outWorldPos.w     = float(instanceIndex);
-    outColor          = uvw.z * tesc_outColor[0] + uvw.x * tesc_outColor[1] + uvw.y * tesc_outColor[2];
-    outWorldNormal    = mat3(obj.g_MatWorld) * outNormal;
-    outTexCoord       = uvw.z * tesc_outTexCoord[0] + uvw.x * tesc_outTexCoord[1] + uvw.y * tesc_outTexCoord[2];
+    fragWorldPos       = posWorld;
+    fragWorldPos.xyz  /= fragWorldPos.w;
+    fragWorldPos.w     = float(instanceIndex);
+    fragColor          = uvw.z * tesc_outColor[0] + uvw.x * tesc_outColor[1] + uvw.y * tesc_outColor[2];
+    fragWorldNormal    = mat3(obj.g_MatWorld) * outNormal;
+    fragTexCoord       = uvw.z * tesc_outTexCoord[0] + uvw.x * tesc_outTexCoord[1] + uvw.y * tesc_outTexCoord[2];
 }

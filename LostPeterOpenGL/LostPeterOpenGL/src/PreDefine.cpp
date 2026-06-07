@@ -290,11 +290,16 @@ namespace LostPeterOpenGL
             case F_Shader_TessellationEvaluation:
                 return GL_TESS_EVALUATION_SHADER;
             case F_Shader_Geometry:
+		#if F_PLATFORM == F_PLATFORM_MAC
+                F_Assert(false && "Util_Transform2GLShaderType: MacOS only support 4.1, can not support geometry shader !")
+                return GL_VERTEX_SHADER;
+        #else
                 return GL_GEOMETRY_SHADER;
+        #endif
             case F_Shader_Fragment:
                 return GL_FRAGMENT_SHADER;
             case F_Shader_Compute:
-        #if F_PLATFORM == F_PLATFORM_MAC
+		#if F_PLATFORM == F_PLATFORM_MAC
                 F_Assert(false && "Util_Transform2GLShaderType: MacOS only support 4.1, can not support compute shader !")
                 return GL_VERTEX_SHADER;
         #else

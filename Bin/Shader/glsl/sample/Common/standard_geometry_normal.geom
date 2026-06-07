@@ -11,7 +11,6 @@
 
 #version 410 core
 #extension GL_ARB_gpu_shader5 : enable
-#extension GL_ARB_geometry_shader4 : require
 #extension GL_ARB_shading_language_include : enable
 #include "/glsl_common.glsl"
 

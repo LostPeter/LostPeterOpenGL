@@ -27,12 +27,6 @@ out vec4 fragColor;
 out vec3 fragWorldNormal;
 out vec2 fragTexCoord;
 
-out DSOutput {
-    vec4 outWorldPos;
-    vec4 outColor;
-    vec3 outWorldNormal;
-    vec2 outTexCoord;
-};
 
 struct PnPatch {
     float b210; float b120; float b021; float b012; float b102; float b201; float b111;
@@ -40,18 +34,18 @@ struct PnPatch {
 };
 
 PnPatch GetPnPatch(float pnPatch[10]) {
-    PnPatch output;
-    output.b210 = pnPatch[0];
-    output.b120 = pnPatch[1];
-    output.b021 = pnPatch[2];
-    output.b012 = pnPatch[3];
-    output.b102 = pnPatch[4];
-    output.b201 = pnPatch[5];
-    output.b111 = pnPatch[6];
-    output.n110 = pnPatch[7];
-    output.n011 = pnPatch[8];
-    output.n101 = pnPatch[9];
-    return output;
+    PnPatch outVals;
+    outVals.b210 = pnPatch[0];
+    outVals.b120 = pnPatch[1];
+    outVals.b021 = pnPatch[2];
+    outVals.b012 = pnPatch[3];
+    outVals.b102 = pnPatch[4];
+    outVals.b201 = pnPatch[5];
+    outVals.b111 = pnPatch[6];
+    outVals.n110 = pnPatch[7];
+    outVals.n011 = pnPatch[8];
+    outVals.n101 = pnPatch[9];
+    return outVals;
 }
 
 void main() {
@@ -120,10 +114,10 @@ void main() {
     vec4 posWorld = obj.g_MatWorld * vec4(finalPos, 1.0);
     gl_Position = trans.mat4Proj * trans.mat4View * posWorld;
 
-    outWorldPos = posWorld;
-    outWorldPos.xyz /= outWorldPos.w;
-    outWorldPos.w = float(instanceIndex);
-    outColor = uvw.z * tesc_outColor[0] + uvw.x * tesc_outColor[1] + uvw.y * tesc_outColor[2];
-    outWorldNormal = mat3(obj.g_MatWorld) * outNormal;
-    outTexCoord = uvw.z * tesc_outTexCoord[0] + uvw.x * tesc_outTexCoord[1] + uvw.y * tesc_outTexCoord[2];
+    fragWorldPos = posWorld;
+    fragWorldPos.xyz /= fragWorldPos.w;
+    fragWorldPos.w = float(instanceIndex);
+    fragColor = uvw.z * tesc_outColor[0] + uvw.x * tesc_outColor[1] + uvw.y * tesc_outColor[2];
+    fragWorldNormal = mat3(obj.g_MatWorld) * outNormal;
+    fragTexCoord = uvw.z * tesc_outTexCoord[0] + uvw.x * tesc_outTexCoord[1] + uvw.y * tesc_outTexCoord[2];
 }

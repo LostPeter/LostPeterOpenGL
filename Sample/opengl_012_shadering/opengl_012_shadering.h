@@ -113,9 +113,16 @@ public:
 			//Uniform
 			, countInstanceExt(5)
             , countInstance(11)
+			, isUsedTessellation(false)
+			, isUsedGeometry(false)
+			, isUsedCompute(false)
+			, frameRand(0)
+
 			, poBufferUniform(nullptr)
 			, poBufferUniform_Material(nullptr)
 			, poBufferUniform_Tessellation(nullptr)
+			, poBufferUniform_Geometry(nullptr)
+			, poBufferUniform_TextureCopy(nullptr)
 			
 			//Pipeline Graphics
 			, poStatePipelineGraphics(nullptr)
@@ -162,6 +169,13 @@ public:
 			//Mesh
             this->pMesh = nullptr;
 
+			//Uniform
+			this->objectCBs.clear();
+			this->materialCBs.clear();
+			this->tessellationCBs.clear();
+			this->geometryCBs.clear();
+			this->textureCopyCBs.clear();
+
             //Texture
             this->mapModelTexturesShaderSort.clear();
 
@@ -170,6 +184,14 @@ public:
 			
 			//Pipeline
 			F_DELETE(this->poStatePipelineGraphics)
+
+			//Pipeline Computes
+			size_t count = this->aPipelineComputes.size();
+            for (size_t i = 0; i < count; i++) 
+			{
+				F_DELETE(this->aPipelineComputes[i])
+			}
+			this->aPipelineComputes.clear();
 		}
 
 		void CleanupSwapChain()
@@ -178,7 +200,8 @@ public:
 			F_DELETE(this->poBufferUniform)
 			F_DELETE(this->poBufferUniform_Material)
 			F_DELETE(this->poBufferUniform_Tessellation)
-
+			F_DELETE(this->poBufferUniform_Geometry)
+			F_DELETE(this->poBufferUniform_TextureCopy)
 
 		}
 
@@ -220,6 +243,15 @@ public:
 		std::vector<TessellationConstants> tessellationCBs;
 		GLBufferUniform* poBufferUniform_Tessellation;
         bool isUsedTessellation;
+
+		std::vector<GeometryConstants> geometryCBs;
+		GLBufferUniform* poBufferUniform_Geometry;
+		bool isUsedGeometry;
+
+		std::vector<TextureCopyConstants> textureCopyCBs;
+		GLBufferUniform* poBufferUniform_TextureCopy;
+		bool isUsedCompute;
+		int frameRand;
 
 		//Pipeline
 		GLStatePipelineGraphics* poStatePipelineGraphics;
@@ -351,7 +383,10 @@ protected:
 		//DescriptorSets
 		virtual void createDescriptorSets_Custom();
 
-		//Render/Update
+	//Compute/Update
+		virtual void updateCompute_BeforeRender_Custom();
+
+	//Render/Update
 			virtual void updateCBs_Custom();
 
 			virtual bool beginRenderImgui();

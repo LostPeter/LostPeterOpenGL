@@ -4742,6 +4742,22 @@ namespace LostPeterOpenGL
 
                 }
 
+					GLStatePipelineCompute* OpenGLWindow::createStatePipelineCompute(const String& nameStatePipelineCompute,
+                                                                                     DescriptorSetLayout* pDSL,
+                                                                                     GLShader* pShaderCompute)
+					{
+						GLStatePipelineCompute* pStatePipelineCompute = new GLStatePipelineCompute(nameStatePipelineCompute);
+                        if (!pStatePipelineCompute->Init(pDSL,
+                                                         pShaderCompute)) 
+                        {
+                            F_LogError("*********************** OpenGL_012_Shadering::createStatePipelineCompute failed, name: [%s] !", nameStatePipelineCompute.c_str());
+                            F_DELETE(pStatePipelineCompute)
+                            return nullptr;
+                        }
+
+                        return pStatePipelineCompute;
+					}
+
 
             void OpenGLWindow::createDescriptorSets()
             {

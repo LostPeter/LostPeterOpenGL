@@ -113,6 +113,8 @@ public:
 			//Uniform
 			, countInstanceExt(5)
             , countInstance(11)
+			, isUsedTessellation(false)
+
 			, poBufferUniform(nullptr)
 			, poBufferUniform_Material(nullptr)
 			, poBufferUniform_Tessellation(nullptr)
@@ -161,6 +163,11 @@ public:
 		{
 			//Mesh
             this->pMesh = nullptr;
+
+			//Uniform
+			this->objectCBs.clear();
+			this->materialCBs.clear();
+			this->tessellationCBs.clear();
 
             //Texture
             this->mapModelTexturesShaderSort.clear();

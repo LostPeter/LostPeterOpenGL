@@ -24,7 +24,6 @@ in HSOutput {
     vec2 outTexCoord;
 } IN[];
 
-
 out vec4 fragWorldPos;
 out vec4 fragColor;
 out vec3 fragWorldNormal;

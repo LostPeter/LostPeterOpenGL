@@ -1098,6 +1098,10 @@ namespace LostPeterOpenGL
                     virtual void createComputePipeline_Default();
                     virtual void createComputePipeline_Custom();
 
+						virtual GLStatePipelineCompute* createStatePipelineCompute(const String& nameStatePipelineCompute,
+                                                                                   DescriptorSetLayout* pDSL,
+                                                                                   GLShader* pShaderCompute);
+
 
                 virtual void createDescriptorSets();
                     virtual void createDescriptorSets_Default();

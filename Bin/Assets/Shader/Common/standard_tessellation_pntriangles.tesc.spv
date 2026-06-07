@@ -16,10 +16,13 @@
 
 layout(vertices = 3) out;
 
-in vec4 vs_outPosition[];
-in vec4 vs_outColor[];
-in vec3 vs_outNormal[];
-in vec2 vs_outTexCoord[];
+in VSOutput
+{
+    vec4 outPosition;   // xyz: Object Pos; w: instanceIndex
+    vec4 outColor;
+    vec3 outNormal;
+    vec2 outTexCoord;
+} IN[];
 
 out vec4 tesc_outPosition[];
 out vec4 tesc_outColor[];
@@ -42,17 +45,17 @@ struct PnPatch {
     float n101;
 };
 
-void SetPnPatch(out float output[10], PnPatch patch) {
-    output[0] = patch.b210;
-    output[1] = patch.b120;
-    output[2] = patch.b021;
-    output[3] = patch.b012;
-    output[4] = patch.b102;
-    output[5] = patch.b201;
-    output[6] = patch.b111;
-    output[7] = patch.n110;
-    output[8] = patch.n011;
-    output[9] = patch.n101;
+void SetPnPatch(out float outVals[10], PnPatch pnPatch) {
+    outVals[0] = pnPatch.b210;
+    outVals[1] = pnPatch.b120;
+    outVals[2] = pnPatch.b021;
+    outVals[3] = pnPatch.b012;
+    outVals[4] = pnPatch.b102;
+    outVals[5] = pnPatch.b201;
+    outVals[6] = pnPatch.b111;
+    outVals[7] = pnPatch.n110;
+    outVals[8] = pnPatch.n011;
+    outVals[9] = pnPatch.n101;
 }
 
 float wij(vec4 iPos, vec3 iNormal, vec4 jPos) {
@@ -68,7 +71,7 @@ float vij(vec4 iPos, vec3 iNormal, vec4 jPos, vec3 jNormal) {
 void main() {
 	if (gl_InvocationID == 0)
     {
-        uint instanceIndex = uint(vs_outPosition[0].w + 0.5);
+        uint instanceIndex = uint(IN[0].outPosition.w + 0.5);
         TessellationConstant tess = tessellationConsts.tes[instanceIndex];
 
         gl_TessLevelOuter[0] = tess.tessLevelOuter;
@@ -77,17 +80,17 @@ void main() {
         gl_TessLevelInner[0] = tess.tessLevelInner;
     }
 
-	tesc_outPosition[gl_InvocationID] = vs_outPosition[gl_InvocationID];
-    tesc_outColor[gl_InvocationID] = vs_outColor[gl_InvocationID];
-    tesc_outNormal[gl_InvocationID] = vs_outNormal[gl_InvocationID];
-    tesc_outTexCoord[gl_InvocationID] = vs_outTexCoord[gl_InvocationID];
+	tesc_outPosition[gl_InvocationID] = IN[gl_InvocationID].outPosition;
+    tesc_outColor[gl_InvocationID] = IN[gl_InvocationID].outColor;
+    tesc_outNormal[gl_InvocationID] = IN[gl_InvocationID].outNormal;
+    tesc_outTexCoord[gl_InvocationID] = IN[gl_InvocationID].outTexCoord;
 
-    vec4 P0 = vs_outPosition[0];
-    vec4 P1 = vs_outPosition[1];
-    vec4 P2 = vs_outPosition[2];
-    vec3 N0 = vs_outNormal[0];
-    vec3 N1 = vs_outNormal[1];
-    vec3 N2 = vs_outNormal[2];
+    vec4 P0 = IN[0].outPosition;
+    vec4 P1 = IN[1].outPosition;
+    vec4 P2 = IN[2].outPosition;
+    vec3 N0 = IN[0].outNormal;
+    vec3 N1 = IN[1].outNormal;
+    vec3 N2 = IN[2].outNormal;
 
     PnPatch pnPatch;
     pnPatch.b210 = (2.0 * P0[gl_InvocationID] + P1[gl_InvocationID] - wij(P0, N0, P1) * N0[gl_InvocationID]) / 3.0;
@@ -107,8 +110,7 @@ void main() {
 
     float tempPatch[10];
     SetPnPatch(tempPatch, pnPatch);
-
-    for (int i = 0; i < 10; ++i) {
-        tesc_pnPatch[gl_InvocationID * 10 + i] = tempPatch[i];
-    }
+	for (int i = 0; i < 10; i++) {
+		tesc_pnPatch[i] = tempPatch[i];
+	}
 }
