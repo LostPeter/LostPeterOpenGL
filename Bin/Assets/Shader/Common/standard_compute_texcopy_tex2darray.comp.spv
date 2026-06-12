@@ -33,23 +33,23 @@ void main()
     if (id.x < uint(texCopy.texInfo.x) &&
         id.y < uint(texCopy.texInfo.y))
     {
-        index = texCopy.texIndexArray.x;
+        index = int(texCopy.texIndexArray.x);
     }
     else if (id.x >= uint(texCopy.texInfo.x) &&
              id.y < uint(texCopy.texInfo.y))
     {
-        index = texCopy.texIndexArray.y;
+        index = int(texCopy.texIndexArray.y);
         coord.x -= uint(texCopy.texInfo.x);
     }
     else if (id.x < uint(texCopy.texInfo.x) &&
              id.y >= uint(texCopy.texInfo.y))
     {
-        index = texCopy.texIndexArray.z;
+        index = int(texCopy.texIndexArray.z);
         coord.y -= uint(texCopy.texInfo.y);
     }
     else
     {
-        index = texCopy.texIndexArray.w;
+        index = int(texCopy.texIndexArray.w);
         coord.x -= uint(texCopy.texInfo.x);
         coord.y -= uint(texCopy.texInfo.y);
     }

@@ -20,104 +20,120 @@ in vec4 tesc_outPosition[];
 in vec4 tesc_outColor[];
 in vec3 tesc_outNormal[];
 in vec2 tesc_outTexCoord[];
-in float tesc_pnPatch[];
+
+patch in vec3 tesc_pnPatchPos[7];
+patch in vec3 tesc_pnPatchNormal[3];
 
 out vec4 fragWorldPos;
 out vec4 fragColor;
 out vec3 fragWorldNormal;
 out vec2 fragTexCoord;
 
-
-struct PnPatch {
-    float b210; float b120; float b021; float b012; float b102; float b201; float b111;
-    float n110; float n011; float n101;
-};
-
-PnPatch GetPnPatch(float pnPatch[10]) {
-    PnPatch outVals;
-    outVals.b210 = pnPatch[0];
-    outVals.b120 = pnPatch[1];
-    outVals.b021 = pnPatch[2];
-    outVals.b012 = pnPatch[3];
-    outVals.b102 = pnPatch[4];
-    outVals.b201 = pnPatch[5];
-    outVals.b111 = pnPatch[6];
-    outVals.n110 = pnPatch[7];
-    outVals.n011 = pnPatch[8];
-    outVals.n101 = pnPatch[9];
-    return outVals;
-}
-
-void main() {
+void main()
+{
     vec3 uvw = gl_TessCoord.xyz;
 
     uint viewIndex = 0;
-    TransformConstants trans = passConsts.g_Transforms[viewIndex];
-    uint instanceIndex = uint(tesc_outPosition[0].w + 0.5);
-    ObjectConstant obj = objectConsts.objs[instanceIndex];
-    TessellationConstant tess = tessellationConsts.tes[instanceIndex];
 
-    float patch0[10], patch1[10], patch2[10];
-    for(int i=0;i<10;i++) { patch0[i] = tesc_pnPatch[0*10+i]; }
-    for(int i=0;i<10;i++) { patch1[i] = tesc_pnPatch[1*10+i]; }
-    for(int i=0;i<10;i++) { patch2[i] = tesc_pnPatch[2*10+i]; }
+    TransformConstants trans =
+        passConsts.g_Transforms[viewIndex];
 
-    PnPatch pnPatch0 = GetPnPatch(patch0);
-    PnPatch pnPatch1 = GetPnPatch(patch1);
-    PnPatch pnPatch2 = GetPnPatch(patch2);
+    uint instanceIndex =
+        uint(tesc_outPosition[0].w + 0.5);
 
-    vec3 uvwSquared = uvw * uvw;
-    vec3 uvwCubed = uvwSquared * uvw;
+    ObjectConstant obj =
+        objectConsts.objs[instanceIndex];
 
-    vec3 b210 = vec3(pnPatch0.b210, pnPatch1.b210, pnPatch2.b210);
-    vec3 b120 = vec3(pnPatch0.b120, pnPatch1.b120, pnPatch2.b120);
-    vec3 b021 = vec3(pnPatch0.b021, pnPatch1.b021, pnPatch2.b021);
-    vec3 b012 = vec3(pnPatch0.b012, pnPatch1.b012, pnPatch2.b012);
-    vec3 b102 = vec3(pnPatch0.b102, pnPatch1.b102, pnPatch2.b102);
-    vec3 b201 = vec3(pnPatch0.b201, pnPatch1.b201, pnPatch2.b201);
-    vec3 b111 = vec3(pnPatch0.b111, pnPatch1.b111, pnPatch2.b111);
+    TessellationConstant tess =
+        tessellationConsts.tes[instanceIndex];
 
-    vec3 n110 = normalize(vec3(pnPatch0.n110, pnPatch1.n110, pnPatch2.n110));
-    vec3 n011 = normalize(vec3(pnPatch0.n011, pnPatch1.n011, pnPatch2.n011));
-    vec3 n101 = normalize(vec3(pnPatch0.n101, pnPatch1.n101, pnPatch2.n101));
+    vec3 uvw2 = uvw * uvw;
+    vec3 uvw3 = uvw2 * uvw;
 
-    //Normal
-    vec3 barNormal = uvw.z * tesc_outNormal[0] + uvw.x * tesc_outNormal[1] + uvw.y * tesc_outNormal[2];
+    vec3 b210 = tesc_pnPatchPos[0];
+    vec3 b120 = tesc_pnPatchPos[1];
+    vec3 b021 = tesc_pnPatchPos[2];
+    vec3 b012 = tesc_pnPatchPos[3];
+    vec3 b102 = tesc_pnPatchPos[4];
+    vec3 b201 = tesc_pnPatchPos[5];
+    vec3 b111 = tesc_pnPatchPos[6];
+
+    vec3 n110 = normalize(tesc_pnPatchNormal[0]);
+    vec3 n011 = normalize(tesc_pnPatchNormal[1]);
+    vec3 n101 = normalize(tesc_pnPatchNormal[2]);
+
+    vec3 barNormal =
+        uvw.z * tesc_outNormal[0] +
+        uvw.x * tesc_outNormal[1] +
+        uvw.y * tesc_outNormal[2];
+
     vec3 pnNormal =
-        tesc_outNormal[0] * uvwCubed.z +
-        tesc_outNormal[1] * uvwCubed.x +
-        tesc_outNormal[2] * uvwCubed.y +
+        tesc_outNormal[0] * uvw3.z +
+        tesc_outNormal[1] * uvw3.x +
+        tesc_outNormal[2] * uvw3.y +
         n110 * uvw.z * uvw.x +
         n011 * uvw.x * uvw.y +
         n101 * uvw.z * uvw.y;
 
-    vec3 outNormal = tess.tessAlpha * pnNormal + (1.0 - tess.tessAlpha) * barNormal;
+    vec3 finalNormal =
+        mix(barNormal, pnNormal, tess.tessAlpha);
 
-    //Position
-    vec3 barPos = uvw.z * tesc_outPosition[0].xyz + uvw.x * tesc_outPosition[1].xyz + uvw.y * tesc_outPosition[2].xyz;
-    uvwSquared *= 3.0;
+    vec3 barPos =
+        uvw.z * tesc_outPosition[0].xyz +
+        uvw.x * tesc_outPosition[1].xyz +
+        uvw.y * tesc_outPosition[2].xyz;
+
+    uvw2 *= 3.0;
 
     vec3 pnPos =
-        tesc_outPosition[0].xyz * uvwCubed.z +
-        tesc_outPosition[1].xyz * uvwCubed.x +
-        tesc_outPosition[2].xyz * uvwCubed.y +
-        b210 * uvwSquared.z * uvw.x +
-        b120 * uvwSquared.x * uvw.z +
-        b201 * uvwSquared.z * uvw.y +
-        b021 * uvwSquared.x * uvw.y +
-        b102 * uvwSquared.y * uvw.z +
-        b012 * uvwSquared.y * uvw.x +
-        b111 * 6.0 * uvw.x * uvw.y * uvw.z;
+        tesc_outPosition[0].xyz * uvw3.z +
+        tesc_outPosition[1].xyz * uvw3.x +
+        tesc_outPosition[2].xyz * uvw3.y +
 
-    vec3 finalPos = tess.tessAlpha * pnPos + (1.0 - tess.tessAlpha) * barPos;
+        b210 * uvw2.z * uvw.x +
+        b120 * uvw2.x * uvw.z +
 
-    vec4 posWorld = obj.g_MatWorld * vec4(finalPos, 1.0);
-    gl_Position = trans.mat4Proj * trans.mat4View * posWorld;
+        b201 * uvw2.z * uvw.y +
+        b021 * uvw2.x * uvw.y +
 
-    fragWorldPos = posWorld;
-    fragWorldPos.xyz /= fragWorldPos.w;
-    fragWorldPos.w = float(instanceIndex);
-    fragColor = uvw.z * tesc_outColor[0] + uvw.x * tesc_outColor[1] + uvw.y * tesc_outColor[2];
-    fragWorldNormal = mat3(obj.g_MatWorld) * outNormal;
-    fragTexCoord = uvw.z * tesc_outTexCoord[0] + uvw.x * tesc_outTexCoord[1] + uvw.y * tesc_outTexCoord[2];
+        b102 * uvw2.y * uvw.z +
+        b012 * uvw2.y * uvw.x +
+
+        b111 * 6.0 *
+        uvw.x * uvw.y * uvw.z;
+
+    vec3 finalPos =
+        mix(barPos, pnPos, tess.tessAlpha);
+
+    vec4 worldPos =
+        obj.g_MatWorld *
+        vec4(finalPos, 1.0);
+
+    gl_Position =
+        trans.mat4Proj *
+        trans.mat4View *
+        worldPos;
+
+    fragWorldPos = worldPos;
+
+    fragWorldPos.xyz /=
+        fragWorldPos.w;
+
+    fragWorldPos.w =
+        float(instanceIndex);
+
+    fragColor =
+        uvw.z * tesc_outColor[0] +
+        uvw.x * tesc_outColor[1] +
+        uvw.y * tesc_outColor[2];
+
+    fragWorldNormal =
+        normalize(
+            mat3(obj.g_MatWorld) *
+            finalNormal);
+
+    fragTexCoord =
+        uvw.z * tesc_outTexCoord[0] +
+        uvw.x * tesc_outTexCoord[1] +
+        uvw.y * tesc_outTexCoord[2];
 }
