@@ -9,7 +9,7 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 410 core
+#version 450 core
 #extension GL_ARB_gpu_shader5 : enable
 #extension GL_EXT_shader_image_load_store : require
 #extension GL_ARB_shading_language_include : enable
@@ -27,20 +27,22 @@ void main()
     uint coordX = gl_GlobalInvocationID.x;
     uint coordY = gl_GlobalInvocationID.y;
 
+    TextureCopyConstant texCopy = textureCopyConsts.texCopy;
+
     bool inRange =
-        coordX >= uint(_textureInfo.texOffset.x) &&
-        coordX <  uint(_textureInfo.texOffset.x + _textureInfo.texInfo.x) &&
-        coordY >= uint(_textureInfo.texOffset.y) &&
-        coordY <  uint(_textureInfo.texOffset.y + _textureInfo.texInfo.y);
+        coordX >= uint(texCopy.texOffset.x) &&
+        coordX <  uint(texCopy.texOffset.x + texCopy.texInfo.x) &&
+        coordY >= uint(texCopy.texOffset.y) &&
+        coordY <  uint(texCopy.texOffset.y + texCopy.texInfo.y);
 
     if (inRange)
     {
-        int sx = int(coordX - uint(_textureInfo.texOffset.x));
-        int sy = int(coordY - uint(_textureInfo.texOffset.y));
-        int mipLevel = int(_textureInfo.texInfo.z);
+        int sx = int(coordX - uint(texCopy.texOffset.x));
+        int sy = int(coordY - uint(texCopy.texOffset.y));
+        int mipLevel = int(texCopy.texInfo.z);
 
         vec4 pixel = texelFetch(texSampler0, ivec2(sx, sy), mipLevel);
-        if (_textureInfo.texInfo.w > 0)
+        if (texCopy.texInfo.w > 0)
         {
             pixel = Func_LinearToSRGB(pixel);
         }
@@ -48,6 +50,6 @@ void main()
     }
     else
     {
-        imageStore(texSampler1, ivec2(int(coordX), int(coordY)), _textureInfo.texClearColor);
+        imageStore(texSampler1, ivec2(int(coordX), int(coordY)), texCopy.texClearColor);
     }
 }

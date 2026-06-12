@@ -9,7 +9,7 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 ****************************************************************************/
 
-#version 410 core
+#version 450 core
 #extension GL_ARB_gpu_shader5 : enable
 #extension GL_EXT_shader_image_load_store : require
 #extension GL_ARB_shading_language_include : enable
@@ -28,32 +28,34 @@ void main()
     uvec2 coord = id;
     int index = 0;
 
-    if (id.x < uint(_textureInfo.texInfo.x) &&
-        id.y < uint(_textureInfo.texInfo.y))
+    TextureCopyConstant texCopy = textureCopyConsts.texCopy;
+
+    if (id.x < uint(texCopy.texInfo.x) &&
+        id.y < uint(texCopy.texInfo.y))
     {
-        index = _textureInfo.texIndexArray.x;
+        index = texCopy.texIndexArray.x;
     }
-    else if (id.x >= uint(_textureInfo.texInfo.x) &&
-             id.y < uint(_textureInfo.texInfo.y))
+    else if (id.x >= uint(texCopy.texInfo.x) &&
+             id.y < uint(texCopy.texInfo.y))
     {
-        index = _textureInfo.texIndexArray.y;
-        coord.x -= uint(_textureInfo.texInfo.x);
+        index = texCopy.texIndexArray.y;
+        coord.x -= uint(texCopy.texInfo.x);
     }
-    else if (id.x < uint(_textureInfo.texInfo.x) &&
-             id.y >= uint(_textureInfo.texInfo.y))
+    else if (id.x < uint(texCopy.texInfo.x) &&
+             id.y >= uint(texCopy.texInfo.y))
     {
-        index = _textureInfo.texIndexArray.z;
-        coord.y -= uint(_textureInfo.texInfo.y);
+        index = texCopy.texIndexArray.z;
+        coord.y -= uint(texCopy.texInfo.y);
     }
     else
     {
-        index = _textureInfo.texIndexArray.w;
-        coord.x -= uint(_textureInfo.texInfo.x);
-        coord.y -= uint(_textureInfo.texInfo.y);
+        index = texCopy.texIndexArray.w;
+        coord.x -= uint(texCopy.texInfo.x);
+        coord.y -= uint(texCopy.texInfo.y);
     }
 
     vec4 pixel = texelFetch(texSampler0, ivec3(int(coord.x), int(coord.y), index), 0);
-    if (_textureInfo.texInfo.w > 0)
+    if (texCopy.texInfo.w > 0)
     {
         pixel = Func_LinearToSRGB(pixel);
     }

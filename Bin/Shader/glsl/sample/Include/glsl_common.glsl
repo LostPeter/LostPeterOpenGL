@@ -243,7 +243,7 @@ layout (std140) uniform GeometryConstants
 
 
 ///////////////////////////////// ComputeConstants //////////////////////////////
-struct TextureCopyConstants
+struct TextureCopyConstant
 {
     //[x,y,z,w] = [w,h,mip,processLinear]
     vec4 texInfo;
@@ -251,6 +251,10 @@ struct TextureCopyConstants
 	vec4 texIndexArray;
 	vec4 texClearColor;
 };
+layout (std140) uniform TextureCopyConstants
+{
+	TextureCopyConstant texCopy;
+} textureCopyConsts;
 
 
 ///////////////////////////////// TerrainConstants //////////////////////////////
