@@ -3884,18 +3884,26 @@ namespace LostPeterOpenGL
 
                     //2> Texture Data
                     GLenum typeFormat = Util_Transform2GLFormat(typePixelFormat);
-					GLenum format;
-					if (channel == 1)
-						format = GL_RED;
-					else if (channel == 3)
-						format = GL_RGB;
-					else if (channel == 4)
-						format = GL_RGBA;
+                    GLenum formatInternal;
+                    GLenum format;
+					if (channel == 1) {
+                        formatInternal = GL_RED;
+                        format = GL_RED;
+                    }
+					else if (channel == 3) {
+                        formatInternal = GL_RGB;
+                        format = GL_RGB;
+                    }
+					else if (channel == 4) {
+                        formatInternal = GL_RGBA8;
+                        format = GL_RGBA;
+                    }
+						
                     if (typeTexture == F_Texture_1D)
                     {
                         glTexImage1D(type, 
 									 0, 
-									 format, 
+									 formatInternal, 
 									 width, 
 									 0, 
 									 format, 
@@ -3906,7 +3914,7 @@ namespace LostPeterOpenGL
                     {
                         glTexImage2D(type, 
 									 0, 
-									 format, 
+									 formatInternal, 
 									 width, 
 									 height, 
 									 0, 
@@ -3918,7 +3926,7 @@ namespace LostPeterOpenGL
                     {
 						glTexImage3D(GL_TEXTURE_2D_ARRAY, 
 									 0, 
-									 format,               
+									 formatInternal,               
 									 width,               
 									 height,               
 									 numArray,           
@@ -3931,7 +3939,7 @@ namespace LostPeterOpenGL
                     {
 						glTexImage3D(GL_TEXTURE_3D, 
 									 0, 
-									 format,               
+									 formatInternal,               
 									 width,               
 									 height,               
 									 depth,           
@@ -3947,7 +3955,7 @@ namespace LostPeterOpenGL
 							uint8* pDataCur = pData + i * width * height * channel;
 							glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
 										 0, 
-										 format, 
+										 formatInternal, 
 										 width, 
 										 height, 
 										 0, 
@@ -3996,6 +4004,17 @@ namespace LostPeterOpenGL
                     }
                 }
 
+
+                void OpenGLWindow::bindGLTextureImage(FTextureType typeTexture, uint slot, uint32 nTextureID, uint32 access, uint32 format)
+                {
+                    glBindImageTexture(slot,
+                                       nTextureID,
+                                       0,
+                                       GL_FALSE,
+                                       0,
+                                       access,
+                                       format);
+                }
 
 
             void OpenGLWindow::createConstBuffers()

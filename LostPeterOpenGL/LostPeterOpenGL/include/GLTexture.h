@@ -89,6 +89,7 @@ namespace LostPeterOpenGL
 
     public:
         void BindTexture(uint slot, bool enable);
+        void BindTextureImage(uint slot, uint32 access, bool enable);
 
 	protected:
         virtual void updateNoiseTextureData();

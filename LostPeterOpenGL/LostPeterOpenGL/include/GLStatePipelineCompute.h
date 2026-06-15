@@ -34,6 +34,7 @@ namespace LostPeterOpenGL
 		Uint2UintMap mapBindIndex2UniformBlockIndex;
 		GLBufferUniformPtrIDMap mapBufferUniform;
 		GLTexturePtrIDMap mapTextureCS;
+		GLTexturePtrIDMap mapTextureImageCS;
 
     public:
         virtual void Destroy();
@@ -54,6 +55,7 @@ namespace LostPeterOpenGL
 	public:
 		void BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex);
 		void BindTextureCS(GLTexture* pTexture, uint32 nBindingIndex);
+		void BindTextureImageCS(GLTexture* pTexture, uint32 nBindingIndex);
 
 	public:
 		void BindState();
@@ -65,6 +67,9 @@ namespace LostPeterOpenGL
 	protected:
 		void bindTextures(bool enable);
 		void bindTexture(GLTexturePtrIDMap& mapTexture, bool enable);
+
+		void bindTextureImages(bool enable);
+		void bindTextureImage(GLTexturePtrIDMap& mapTexture, bool enable);
     };
 
 }; //LostPeterOpenGL

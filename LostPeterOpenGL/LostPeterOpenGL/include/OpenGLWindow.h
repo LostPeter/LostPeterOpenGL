@@ -937,6 +937,8 @@ namespace LostPeterOpenGL
                     virtual void bindGLTexture(FTextureType typeTexture, uint slot, uint32 nTextureID);
                     virtual void destroyGLTexture(uint32 nTextureID);
 
+                    virtual void bindGLTextureImage(FTextureType typeTexture, uint slot, uint32 nTextureID, uint32 access, uint32 format);
+                    
 
                 virtual void createConstBuffers();
                     virtual void createObjectCB();

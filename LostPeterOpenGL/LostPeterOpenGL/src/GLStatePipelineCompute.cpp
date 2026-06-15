@@ -99,6 +99,7 @@ namespace LostPeterOpenGL
 		this->mapBindIndex2UniformBlockIndex.clear();
 		this->mapBufferUniform.clear();
 		this->mapTextureCS.clear();
+		this->mapTextureImageCS.clear();
 	}
 
 	uint32 GLStatePipelineCompute::GetUniformBlockIndex(const String& name)
@@ -120,6 +121,11 @@ namespace LostPeterOpenGL
 	{
 		this->mapTextureCS[nBindingIndex] = pTexture;
 	}
+	void GLStatePipelineCompute::BindTextureImageCS(GLTexture* pTexture, uint32 nBindingIndex)
+	{
+		this->mapTextureImageCS[nBindingIndex] = pTexture;
+	}
+
 
 	void GLStatePipelineCompute::BindState()
 	{
@@ -154,6 +160,7 @@ namespace LostPeterOpenGL
 	void GLStatePipelineCompute::BindTextures()
 	{
 		bindTextures(true);
+		bindTextureImages(true);
 	}
 
 	void GLStatePipelineCompute::bindTextures(bool enable)
@@ -175,5 +182,23 @@ namespace LostPeterOpenGL
 		}
 	}
 
+
+	void GLStatePipelineCompute::bindTextureImages(bool enable)
+	{
+		//Image CS
+		if (this->mapTextureImageCS.size() > 0)
+			bindTextureImage(this->mapTextureImageCS, enable);
+	}
+	void GLStatePipelineCompute::bindTextureImage(GLTexturePtrIDMap& mapTexture, bool enable)
+	{
+		OpenGLWindow* pWindow = Base::GetWindowPtr();
+		for (GLTexturePtrIDMap::iterator it = mapTexture.begin();
+			 it != mapTexture.end(); ++it)
+		{
+			GLTexture* pTexture = it->second;
+			uint nBindingIndex = it->first;
+			pTexture->BindTextureImage(nBindingIndex, GL_WRITE_ONLY, enable);
+		}
+	}
 
 }; //LostPeterOpenGL

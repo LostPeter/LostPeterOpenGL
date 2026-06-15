@@ -1568,7 +1568,7 @@ void OpenGL_012_Shadering::createDescriptorSets_Custom()
                     else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_TextureCSRW)) //TextureCSRW
                     {
 						GLTexture* pTexture = pModelObject->GetTexture(F_GetShaderTypeName(F_Shader_Compute), nIndexTextureCS);
-						pStatePipelineCompute->BindTextureCS(pTexture, nIndexTextureCS);
+						pStatePipelineCompute->BindTextureImageCS(pTexture, nIndexTextureCS);
 						nIndexTextureCS ++;
                     }
                     else
