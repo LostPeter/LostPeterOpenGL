@@ -446,6 +446,7 @@ static const char* g_ObjectConfigs[8 * g_ObjectCount] =
 
 };
 
+static const String g_Object_Texture2DArray = "texture2Darray";
 static const String g_Object_Texture3D = "texture3D";
 static const String g_Object_TextureAnimation_Scroll = "textureAnimation_Scroll";
 static const String g_Object_TextureAnimation_Chunk = "textureAnimation_Chunk";
@@ -1084,7 +1085,11 @@ void OpenGL_011_Texturing::rebuildInstanceCBs(bool isCreateBuffer)
                         materialConstants.aTexLayers[p].texHeight = (float)pTexture->height;
                         materialConstants.aTexLayers[p].texDepth = (float)pTexture->depth;
 
-                        if (pModelObject->nameObject == g_Object_Texture3D) //Texture3D
+                        if (pModelObject->nameObject == g_Object_Texture2DArray) //Texture2DArray
+                        {
+                            materialConstants.aTexLayers[p].indexTextureArray = (float)pTexture->RandomTextureIndex();
+                        }
+                        else if (pModelObject->nameObject == g_Object_Texture3D) //Texture3D
                         {
                             materialConstants.aTexLayers[p].indexTextureArray = FMath::RandF(0.0f, 1.0f);
                         }
