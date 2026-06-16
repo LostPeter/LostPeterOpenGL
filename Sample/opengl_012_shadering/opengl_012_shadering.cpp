@@ -733,7 +733,7 @@ bool OpenGL_012_Shadering::ModelMesh::LoadMesh(bool isFlipY, bool isTransformLoc
                                                                                  false);
 		if (this->pBufferVertexIndex == nullptr)
 		{
-			F_LogError("*********************** DirectX11_010_Lighting::loadModel_VertexIndex: create buffer vertex index failed: [%s] !", this->nameMesh.c_str());
+			F_LogError("*********************** OpenGL_012_Shadering::loadModel_VertexIndex: create buffer vertex index failed: [%s] !", this->nameMesh.c_str());
 			return false;
 		}
 	}
@@ -746,7 +746,7 @@ bool OpenGL_012_Shadering::ModelMesh::LoadMesh(bool isFlipY, bool isTransformLoc
                                                                        false);
 		if (this->pBufferVertex == nullptr)
 		{
-			F_LogError("*********************** DirectX11_010_Lighting::loadModel_VertexIndex: create buffer vertex failed: [%s] !", this->nameMesh.c_str());
+			F_LogError("*********************** OpenGL_012_Shadering::loadModel_VertexIndex: create buffer vertex failed: [%s] !", this->nameMesh.c_str());
 			return false;
 		}
 	}
