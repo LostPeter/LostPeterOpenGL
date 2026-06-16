@@ -66,7 +66,7 @@ namespace LostPeterOpenGL
 		this->isDeleteShaderProgram = deleteShaderProgram;
 
 		this->poDescriptorSetLayout = pDescriptorSetLayout;
-		
+
 		return true;
 	}
 	bool GLStatePipelineCompute::Init(DescriptorSetLayout* pDescriptorSetLayout,
@@ -78,6 +78,7 @@ namespace LostPeterOpenGL
 		if (pShaderProgram == nullptr)
 		{
 			String msg = "*********************** GLStatePipelineCompute::Init: Failed to create shader program: " + nameShaderProgram;
+			F_LogError(msg.c_str());
 			return false;
 		}
 

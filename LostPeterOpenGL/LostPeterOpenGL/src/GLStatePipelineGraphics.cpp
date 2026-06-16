@@ -210,6 +210,7 @@ namespace LostPeterOpenGL
 		if (pShaderProgram == nullptr)
 		{
 			String msg = "*********************** GLStatePipelineGraphics::Init: Failed to create shader program: " + nameShaderProgram;
+			F_LogError(msg.c_str());
 			return false;
 		}
 
