@@ -1436,7 +1436,7 @@ void OpenGL_011_Texturing::createTextures()
 											g_TextureBorderColors[i],
 											true,
 											true,
-											false,
+											isGraphicsComputeShared,
 											isRenderTarget,
 											false,
 											FMath::ms_clBlack);
