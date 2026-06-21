@@ -133,7 +133,10 @@ License:
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_006_depth.png)
 
 ### <007> opengl_007_stencil
+[OpenGL学习例子007: opengl_007_stencil 模板操作](https://zhuanlan.zhihu.com/p/2015397278295283641)
+* sample007: Use stencil buffer to render outline
 
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_007_stencil.png)
 
 ### <008> opengl_008_blend
 
