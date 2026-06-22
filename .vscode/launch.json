@@ -157,6 +157,18 @@
 		"externalConsole": false,
 		"MIMode": "lldb"
 	},
+	{
+		"name": "Debug opengl_013_indirectdraw (MacOS)",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/MacOS/opengl_013_indirectdraw_d",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"externalConsole": false,
+		"MIMode": "lldb"
+	},
 
 
 
@@ -303,7 +315,17 @@
 		"environment": [],
 		"console": "externalTerminal"
 	},
-
+	{
+		"name": "Debug opengl_013_indirectdraw (Windows)",
+		"type": "cppvsdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/Bin/Windows/opengl_013_indirectdraw_d.exe",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${fileDirname}",
+		"environment": [],
+		"console": "externalTerminal"
+	},
 
 
     {

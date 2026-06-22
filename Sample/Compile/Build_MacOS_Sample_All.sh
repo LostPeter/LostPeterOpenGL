@@ -25,3 +25,4 @@ rebuild=${2}
 ./Build_MacOS_Sample.sh opengl_010_lighting $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_011_texturing $debug $rebuild
 ./Build_MacOS_Sample.sh opengl_012_shadering $debug $rebuild
+./Build_MacOS_Sample.sh opengl_013_indirectdraw $debug $rebuild

@@ -25,3 +25,4 @@ call ./Build_Windows_Sample.bat opengl_009_instancing %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_010_lighting %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_011_texturing %debug% %rebuild%
 call ./Build_Windows_Sample.bat opengl_012_shadering %debug% %rebuild%
+call ./Build_Windows_Sample.bat opengl_013_indirectdraw %debug% %rebuild%
