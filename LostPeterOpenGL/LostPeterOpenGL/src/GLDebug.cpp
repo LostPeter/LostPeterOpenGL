@@ -185,6 +185,10 @@ namespace LostPeterOpenGL
     {
         ObjectLabel(GL_BUFFER, id, -1, name.c_str());
     }
+	void GLDebug::SetGLBufferIndirectCommandName(uint32 id, const String& name)
+	{
+		ObjectLabel(GL_BUFFER, id, -1, name.c_str());
+	}
 
     void GLDebug::SetGLShaderName(uint32 id, const String& name)
     {

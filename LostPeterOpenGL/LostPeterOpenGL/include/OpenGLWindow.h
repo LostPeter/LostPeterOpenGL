@@ -533,6 +533,19 @@ namespace LostPeterOpenGL
                                                      size_t bufSize, 
                                                      uint8* pBuf);
 
+					//BufferIndirectCommand
+					virtual GLBufferIndirectCommand* createBufferIndirectCommand_DrawInstance(const String& nameBuffer,
+																							  uint32 bindingIndex,
+                                                                 							  GLenum usage,
+																							  int count);
+                    virtual void updateBufferIndirectCommand_DrawInstance(GLBufferIndirectCommand* pBufferIndirectCommand);
+                    
+                    virtual GLBufferIndirectCommand* createBufferIndirectCommand_DrawIndexedInstance(const String& nameBuffer,
+                                                                                                     uint32 bindingIndex,
+                                                                 							  		 GLenum usage,
+                                                                                                     int count);
+                    virtual void updateBufferIndirectCommand_DrawIndexedInstance(GLBufferIndirectCommand* pBufferIndirectCommand);
+
 
                     virtual bool createGLBufferVertex(const String& nameBuffer,
                                                       FMeshVertexType type,
@@ -580,6 +593,21 @@ namespace LostPeterOpenGL
                     virtual void bindGLBufferUniform(uint32 nBufferUniformID);
                     virtual void bindGLBufferUniformBlockIndex(uint32 nBufferUniformID, uint32 bindingIndex, size_t offset, size_t bufSize);
                     virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
+
+					virtual bool createGLBufferIndirectCommand(const String& nameBuffer,
+															   uint32 bindingIndex,
+															   GLenum usage,
+															   size_t bufSize, 
+															   uint8* pBuf,
+															   uint32& nBufferIndirectCommandID);
+					virtual void updateGLBufferIndirectCommand(size_t offset,
+															   size_t bufSize,
+															   uint8* pBuf,
+															   uint32 nBufferIndirectCommandID);
+					virtual void bindGLBufferIndirectCommand(uint32 nBufferIndirectCommandID);
+                    virtual void bindGLBufferIndirectCommandBlockIndex(uint32 nBufferIndirectCommandID, uint32 bindingIndex, size_t offset, size_t bufSize);
+                    virtual void destroyGLBufferIndirectCommand(uint32 nBufferIndirectCommandID);
+
 
                     virtual void* mapGLBuffer(uint32 nBufferID, GLenum target, GLenum access);
                     virtual void unMapGLBuffer(GLenum target);
@@ -1259,6 +1287,11 @@ namespace LostPeterOpenGL
                         virtual void drawIndexed(GLenum mode, GLsizei count, GLenum type, const void* indices);
 						virtual void drawIndexedInstance(GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei instancecount);
 						virtual void drawIndexedInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance);
+
+						virtual void drawInstanceIndirect(GLenum mode, const void* pIndirect);
+						virtual void drawIndexedInstanceIndirect(GLenum mode, GLenum type, const void* pIndirect);
+						virtual void drawMultiInstanceIndirect(GLenum mode, const void* pIndirect, GLsizei drawcount, GLsizei stride);
+						virtual void drawMultiIndexedInstanceIndirect(GLenum mode, GLenum type, const void* pIndirect, GLsizei drawcount, GLsizei stride);
 
 						virtual void dispatch(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z);
 

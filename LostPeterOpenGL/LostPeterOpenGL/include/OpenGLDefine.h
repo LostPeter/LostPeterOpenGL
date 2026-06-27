@@ -1067,6 +1067,44 @@ namespace LostPeterOpenGL
     };
 
 
+	//////////////////////////////// IndirectDraw ///////////////////////////////////
+	struct openglExport DrawArraysIndirectCommand
+	{
+		GLuint vertexCountPerInstance;
+		GLuint instanceCount;
+		GLuint baseVertexLocation;
+		GLuint startInstanceLocation;
+
+		DrawArraysIndirectCommand()
+			: vertexCountPerInstance(0)
+			, instanceCount(0)
+			, baseVertexLocation(0)
+			, startInstanceLocation(0)
+		{
+
+		}
+	};
+
+	struct openglExport DrawElementsIndirectCommand
+	{
+		GLuint indexCountPerInstance;
+		GLuint instanceCount;
+		GLuint startIndexLocation;
+		GLuint baseVertexLocation;
+		GLuint startInstanceLocation;
+
+		DrawElementsIndirectCommand()
+			: indexCountPerInstance(0)
+			, instanceCount(0)
+			, startIndexLocation(0)
+			, baseVertexLocation(0)
+			, startInstanceLocation(0)
+		{
+
+		}
+	};
+
+
 }; //LostPeterOpenGL
 
 #endif

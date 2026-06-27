@@ -23,6 +23,7 @@
 
 #include "GLDebug.h"
 #include "GLBuffer.h"
+#include "GLBufferIndirectCommand.h"
 #include "GLBufferStorage.h"
 #include "GLBufferUniform.h"
 #include "GLBufferVertex.h"

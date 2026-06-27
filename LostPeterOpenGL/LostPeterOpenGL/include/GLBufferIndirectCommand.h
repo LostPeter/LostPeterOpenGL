@@ -1,0 +1,61 @@
+/****************************************************************************
+* LostPeterOpenGL - Copyright (C) 2022 by LostPeter
+* 
+* Author:   LostPeter
+* Time:     2026-06-27
+* Github:   https://github.com/LostPeter/LostPeterOpenGL
+* Document: https://www.zhihu.com/people/lostpeter/posts
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+****************************************************************************/
+
+#ifndef _GL_BUFFER_INDIRECT_COMMAND_H_
+#define _GL_BUFFER_INDIRECT_COMMAND_H_
+
+#include "GLBuffer.h"
+
+namespace LostPeterOpenGL
+{
+    class openglExport GLBufferIndirectCommand : public GLBuffer
+    {
+    public:
+        GLBufferIndirectCommand(const String& nameBuffer);
+        virtual ~GLBufferIndirectCommand();
+
+    public:
+		std::vector<DrawArraysIndirectCommand> indirectDrawInstanceCommandCBs;
+        std::vector<DrawElementsIndirectCommand> indirectDrawIndexedInstanceCommandCBs;
+        GLenum eUsage;
+			
+		uint32 nBindingIndex;
+        uint32 nBufferIndirectCommandID;
+
+    public:
+        virtual void Destroy();
+        bool InitIndirectDrawInstance(uint32 bindingIndex,
+                          			  GLenum usage,
+						  			  int count);
+        bool InitIndirectDrawIndexedInstance(uint32 bindingIndex,
+											 GLenum usage,
+											 int count);
+        
+    public:
+		F_FORCEINLINE int GetBufferIndirectDrawInstanceSize() const { return (int)this->indirectDrawInstanceCommandCBs.size() * sizeof(DrawArraysIndirectCommand); }
+        F_FORCEINLINE void* GetBufferIndirectDrawInstance() const { return (void*)this->indirectDrawInstanceCommandCBs.data(); }
+        F_FORCEINLINE int GetBufferIndirectDrawIndexedInstanceSize() const { return (int)this->indirectDrawIndexedInstanceCommandCBs.size() * sizeof(DrawElementsIndirectCommand); }
+        F_FORCEINLINE void* GetBufferIndirectDrawIndexedInstance() const { return (void*)this->indirectDrawIndexedInstanceCommandCBs.data(); }
+
+		uint32 GetBindingIndex() const { return this->nBindingIndex; }
+
+    public:
+        void UpdateBuffer();
+        void UpdateBuffer(int index, const DrawArraysIndirectCommand& args);
+        void UpdateBuffer(const std::vector<DrawArraysIndirectCommand>& args);
+        void UpdateBuffer(int index, const DrawElementsIndirectCommand& args);
+        void UpdateBuffer(const  std::vector<DrawElementsIndirectCommand>& args);
+
+    };
+
+}; //LostPeterOpenGL
+
+#endif
