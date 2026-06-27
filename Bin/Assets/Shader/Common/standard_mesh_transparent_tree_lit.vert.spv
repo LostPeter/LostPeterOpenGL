@@ -2,7 +2,7 @@
 * LostPeterOpenGL - Copyright (C) 2022 by LostPeter
 * 
 * Author:   LostPeter
-* Time:     2026-06-27
+* Time:     2026-06-28
 * Github:   https://github.com/LostPeter/LostPeterOpenGL
 * Document: https://www.zhihu.com/people/lostpeter/posts
 *
@@ -25,17 +25,15 @@ out vec2 fragTexCoord;
 
 void main()
 {
-	int instanceIndexReal = gl_InstanceID + int(valueUIntConsts.valueUInt.value);
-
 	int viewIndex = 0;
 	TransformConstants trans = passConsts.g_Transforms[viewIndex];
-	ObjectConstant obj = objectConsts.objs[instanceIndexReal];
-	MaterialConstant mat = materialConsts.mats[instanceIndexReal];
+	ObjectConstant obj = objectConsts.objs[gl_InstanceID];
+	MaterialConstant mat = materialConsts.mats[gl_InstanceID];
 
     fragWorldPos = obj.g_MatWorld * vec4(inPosition, 1.0);
     gl_Position = trans.mat4Proj * trans.mat4View * fragWorldPos;
     fragWorldPos.xyz /= fragWorldPos.w;
-    fragWorldPos.w = instanceIndexReal;
+    fragWorldPos.w = gl_InstanceID;
     fragColor = inColor;
     mat3 normalMatrix = transpose(inverse(mat3(obj.g_MatWorld)));
 	fragWorldNormal = normalize(normalMatrix * inNormal);

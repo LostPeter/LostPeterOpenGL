@@ -333,6 +333,90 @@ struct HizDepthConstants
     vec4 vRtDepthSize;
 };
 
+//////////////////////////////// ValueConstants /////////////////////////////////
+struct ValueFloatConstant
+{
+    float value;
+    float reserve0;
+    float reserve1;
+    float reserve2;
+};
+layout (std140) uniform ValueFloatConstants
+{
+	ValueFloatConstant valueFloat;
+} valueFloatConsts;
+
+struct ValueIntConstant
+{
+    int value;
+    int reserve0;
+    int reserve1;
+    int reserve2;
+};
+layout (std140) uniform ValueIntConstants
+{
+	ValueIntConstant valueInt;
+} valueIntConsts;
+
+struct ValueUIntConstant
+{
+    uint value;
+    uint reserve0;
+    uint reserve1;
+    uint reserve2;
+};
+layout (std140) uniform ValueUIntConstants
+{
+	ValueUIntConstant valueUInt;
+} valueUIntConsts;
+
+struct ValueVector2Constant
+{
+    vec2 value;
+    float reserve0;
+    float reserve1;
+};
+// layout (std140) uniform ValueVector2Constants
+// {
+// 	ValueVector2Constant valueVector2;
+// } valueVector2Consts;
+
+struct ValueVector3Constant
+{
+    vec3 value;
+    float reserve0;
+};
+// layout (std140) uniform ValueVector3Constants
+// {
+// 	ValueVector3Constant valueVector3;
+// } valueVector3Consts;
+
+struct ValueVector4Constant
+{
+    vec4 value;
+};
+// layout (std140) uniform ValueVector4Constants
+// {
+// 	ValueVector4Constant valueVector4;
+// } valueVector4Consts;
+
+struct ValueMatrix3Constant
+{
+    mat3 value;
+};
+// layout (std140) uniform ValueMatrix3Constants
+// {
+// 	ValueMatrix3Constant valueMatrix3;
+// } valueMatrix3Consts;
+
+struct ValueMatrix4Constant
+{
+    mat4 value;
+};
+// layout (std140) uniform ValueMatrix4Constants
+// {
+// 	ValueMatrix4Constant valueMatrix4;
+// } valueMatrix4Consts;
 
 
 #endif

@@ -304,6 +304,15 @@ namespace LostPeterOpenGL
         DescriptorSet_CullInstance,                  //38: CullInstance
         DescriptorSet_BufferObjectLineFlat2D,        //39: BufferObjectLineFlat2D
         DescriptorSet_BufferObjectLineFlat3D,        //40: BufferObjectLineFlat3D
+		DescriptorSet_ValueFloatConstants,           //41: ValueFloatConstants
+        DescriptorSet_ValueIntConstants,             //42: ValueIntConstants
+        DescriptorSet_ValueUIntConstants,            //43: ValueUIntConstants
+        DescriptorSet_ValueVector2Constants,         //44: ValueVector2Constants
+        DescriptorSet_ValueVector3Constants,         //45: ValueVector3Constants
+        DescriptorSet_ValueVector4Constants,         //46: ValueVector4Constants
+        DescriptorSet_ValueMatrix3Constants,         //47: ValueMatrix3Constants
+        DescriptorSet_ValueMatrix4Constants,         //48: ValueMatrix4Constants
+		DescriptorSet_BufferIndirectDrawCommand, 	 //49: BufferIndirectDrawCommand
 
         DescriptorSet_Count,
     };

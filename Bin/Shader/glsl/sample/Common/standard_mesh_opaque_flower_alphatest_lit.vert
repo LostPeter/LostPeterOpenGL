@@ -25,15 +25,17 @@ out vec2 fragTexCoord;
 
 void main()
 {
+	int instanceIndexReal = gl_InstanceID + int(valueUIntConsts.valueUInt.value);
+
 	int viewIndex = 0;
 	TransformConstants trans = passConsts.g_Transforms[viewIndex];
-	ObjectConstant obj = objectConsts.objs[gl_InstanceID];
-	MaterialConstant mat = materialConsts.mats[gl_InstanceID];
+	ObjectConstant obj = objectConsts.objs[instanceIndexReal];
+	MaterialConstant mat = materialConsts.mats[instanceIndexReal];
 
     fragWorldPos = obj.g_MatWorld * vec4(inPosition, 1.0);
     gl_Position = trans.mat4Proj * trans.mat4View * fragWorldPos;
     fragWorldPos.xyz /= fragWorldPos.w;
-    fragWorldPos.w = gl_InstanceID;
+    fragWorldPos.w = instanceIndexReal;
     fragColor = inColor;
     mat3 normalMatrix = transpose(inverse(mat3(obj.g_MatWorld)));
 	fragWorldNormal = normalize(normalMatrix * inNormal);

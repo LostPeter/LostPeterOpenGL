@@ -149,6 +149,8 @@ namespace LostPeterOpenGL
 
 		uint32 GetUniformBlockIndex(const String& name);
         void BindUniformBlockBinding(uint32 nUniformBlockIndex, uint32 nUniformBlockBinding);
+
+		GLStatePipelineGraphics* NewStatePipelineGraphics(const String& nameStatePipelineGraphics);
 			
 	public:
 		void BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex);

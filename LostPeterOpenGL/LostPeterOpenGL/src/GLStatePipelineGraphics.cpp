@@ -276,6 +276,49 @@ namespace LostPeterOpenGL
 		this->poShaderProgram->SetUniformBlockBinding(nUniformBlockIndex, nUniformBlockBinding);
 	}
 
+	GLStatePipelineGraphics* GLStatePipelineGraphics::NewStatePipelineGraphics(const String& nameStatePipelineGraphics)
+	{
+		GLStatePipelineGraphics* pStatePipelineGraphics = Base::GetWindowPtr()->createStatePipelineGraphics(nameStatePipelineGraphics,
+                                                                                                            this->poDescriptorSetLayout,
+																											this->poShaderProgram,
+																											false,
+																											this->poTypeVertex,
+																											this->poTypePrimitive,
+																											this->poIsCull,
+																											this->poTypeFrontFace,
+																											this->poTypeCulling,
+																											this->poTypePolygonMode,
+																											this->poDepthEnabled,
+																											this->poDepthFuncCompare,
+																											this->poDepthTestEnabled,
+																											this->poDepthWriteEnabled,
+																											this->poStencilEnabled,
+																											this->poStencil_CompareFunction,
+																											this->poStencil_StencilFailureOp,
+																											this->poStencil_DepthFailureOp,
+																											this->poStencil_DepthStencilPassOp,
+																											this->poStencil_Ref,
+																											this->poStencil_Mask,
+																											this->poBlendEnabled,
+																											this->poBlendColorFactorSrc,
+																											this->poBlendColorFactorDst,
+																											this->poBlendColorOp,
+																											this->poBlendAlphaFactorSrc,
+																											this->poBlendAlphaFactorDst,
+																											this->poBlendAlphaOp,
+																											this->poColorWriteMask_Red,
+																											this->poColorWriteMask_Green,
+																											this->poColorWriteMask_Blue,
+																											this->poColorWriteMask_Alpha);
+        if (pStatePipelineGraphics == nullptr)
+        {
+            String msg = "*********************** GLStatePipelineGraphics::NewStatePipelineGraphics: Failed to create pipeline graphics: " + nameStatePipelineGraphics;
+            F_LogError(msg.c_str());
+            throw std::runtime_error(msg.c_str());
+        }
+        return pStatePipelineGraphics;
+	}
+
 	void GLStatePipelineGraphics::BindBufferUniform(GLBufferUniform* pBufferUnifom, uint32 nBindingIndex)
 	{
 		this->mapBufferUniform[nBindingIndex] = pBufferUnifom;
