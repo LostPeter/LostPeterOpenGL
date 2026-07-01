@@ -19,7 +19,6 @@ namespace LostPeterOpenGL
 
 		, eUsage(GL_STATIC_DRAW)
 		
-		, nBindingIndex(0)
 		, nBufferIndirectCommandID(0)
     {
 
@@ -36,18 +35,14 @@ namespace LostPeterOpenGL
         this->indirectDrawIndexedInstanceCommandCBs.clear();
     }
 
-	bool GLBufferIndirectCommand::InitIndirectDrawInstance(uint32 bindingIndex,
-														   GLenum usage,
+	bool GLBufferIndirectCommand::InitIndirectDrawInstance(GLenum usage,
 														   int count)
 	{
 		this->eUsage = usage;
         this->indirectDrawInstanceCommandCBs.resize(count);
         this->indirectDrawIndexedInstanceCommandCBs.clear();
 
-		this->nBindingIndex = bindingIndex;
-
 		if (!Base::GetWindowPtr()->createGLBufferIndirectCommand(GetName(),
-																 bindingIndex,
 																 usage,
 																 sizeof(DrawArraysIndirectCommand) * count,
 																 (uint8*)(this->indirectDrawInstanceCommandCBs.data()), 
@@ -59,18 +54,14 @@ namespace LostPeterOpenGL
 
 		return true;
 	}
-    bool GLBufferIndirectCommand::InitIndirectDrawIndexedInstance(uint32 bindingIndex,
-																  GLenum usage,
+    bool GLBufferIndirectCommand::InitIndirectDrawIndexedInstance(GLenum usage,
 																  int count)
 	{
 		this->eUsage = usage;
         this->indirectDrawInstanceCommandCBs.clear(); 
         this->indirectDrawIndexedInstanceCommandCBs.resize(count);
 
-		this->nBindingIndex = bindingIndex;
-
 		if (!Base::GetWindowPtr()->createGLBufferIndirectCommand(GetName(),
-																 bindingIndex,
 																 usage,
 																 sizeof(DrawElementsIndirectCommand) * count,
 																 (uint8*)(this->indirectDrawIndexedInstanceCommandCBs.data()), 

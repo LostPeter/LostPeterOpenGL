@@ -535,13 +535,11 @@ namespace LostPeterOpenGL
 
 					//BufferIndirectCommand
 					virtual GLBufferIndirectCommand* createBufferIndirectCommand_DrawInstance(const String& nameBuffer,
-																							  uint32 bindingIndex,
                                                                  							  GLenum usage,
 																							  int count);
                     virtual void updateBufferIndirectCommand_DrawInstance(GLBufferIndirectCommand* pBufferIndirectCommand);
                     
                     virtual GLBufferIndirectCommand* createBufferIndirectCommand_DrawIndexedInstance(const String& nameBuffer,
-                                                                                                     uint32 bindingIndex,
                                                                  							  		 GLenum usage,
                                                                                                      int count);
                     virtual void updateBufferIndirectCommand_DrawIndexedInstance(GLBufferIndirectCommand* pBufferIndirectCommand);
@@ -595,7 +593,6 @@ namespace LostPeterOpenGL
                     virtual void destroyGLBufferUniform(uint32 nBufferUniformID);
 
 					virtual bool createGLBufferIndirectCommand(const String& nameBuffer,
-															   uint32 bindingIndex,
 															   GLenum usage,
 															   size_t bufSize, 
 															   uint8* pBuf,
@@ -605,7 +602,6 @@ namespace LostPeterOpenGL
 															   uint8* pBuf,
 															   uint32 nBufferIndirectCommandID);
 					virtual void bindGLBufferIndirectCommand(uint32 nBufferIndirectCommandID);
-                    virtual void bindGLBufferIndirectCommandBlockIndex(uint32 nBufferIndirectCommandID, uint32 bindingIndex, size_t offset, size_t bufSize);
                     virtual void destroyGLBufferIndirectCommand(uint32 nBufferIndirectCommandID);
 
 

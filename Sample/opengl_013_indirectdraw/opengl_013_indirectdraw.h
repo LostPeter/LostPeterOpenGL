@@ -27,10 +27,12 @@ public:
     {
 		ModelObjectRend(const String& _nameObjectRend,
                         ModelObject* _pModelObject,
-                        MeshSub* _pMeshSub)
+                        MeshSub* _pMeshSub,
+                        int _indexRend)
             : nameObjectRend(_nameObjectRend)
             , pModelObject(_pModelObject)
             , pMeshSub(_pMeshSub)
+            , indexRend(_indexRend)
             , isShow(true)
             , isWireFrame(false)
             , isRotate(false)
@@ -133,6 +135,7 @@ public:
         String nameObjectRend;
         ModelObject* pModelObject;
         MeshSub* pMeshSub;
+        int indexRend;
         bool isShow;
         bool isWireFrame;
         bool isRotate;

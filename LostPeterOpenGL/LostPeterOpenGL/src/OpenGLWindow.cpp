@@ -1646,7 +1646,6 @@ namespace LostPeterOpenGL
                 F_LogInfo("  maxImageDimension3D: [%d]", size3D);
                 F_LogInfo("  maxImageDimensionCube: [%d]", sizeCubeMap);
                 
-                
             }
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL PhysicalDeviceProperties ****************");
 
@@ -1664,6 +1663,12 @@ namespace LostPeterOpenGL
 
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Features ****************");
             {
+                GLint maxVSBlocks;
+                GLint maxFSBlocks;
+                glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &maxVSBlocks);
+                glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS, &maxFSBlocks);
+                F_LogInfo("  GL Features: Max Vertex Uniform Blocks count: [%d]", maxVSBlocks);
+                F_LogInfo("  GL Features: Max Fragment Uniform Blocks count: [%d]", maxFSBlocks);
 
             }
             F_LogInfo("**************** OpenGLWindow::pickPhysicalDevice: GL Features ****************");
@@ -2453,13 +2458,11 @@ namespace LostPeterOpenGL
                 }
 
 				GLBufferIndirectCommand* OpenGLWindow::createBufferIndirectCommand_DrawInstance(const String& nameBuffer,
-																								uint32 bindingIndex,
 																								GLenum usage,
 																								int count)
 				{
 					GLBufferIndirectCommand* pBufferIndirectCommand = new GLBufferIndirectCommand(nameBuffer);
-                    if (!pBufferIndirectCommand->InitIndirectDrawInstance(bindingIndex,
-																		  usage,
+                    if (!pBufferIndirectCommand->InitIndirectDrawInstance(usage,
 																		  count))
                     {
                         F_LogError("*********************** OpenGLWindow::createBufferIndirectCommand_DrawInstance: Failed to create buffer indirect command: [%s] !", nameBuffer.c_str());
@@ -2474,13 +2477,11 @@ namespace LostPeterOpenGL
 				}	
                     
                 GLBufferIndirectCommand* OpenGLWindow::createBufferIndirectCommand_DrawIndexedInstance(const String& nameBuffer,
-                                                                                                       uint32 bindingIndex,
                                                                  							  		   GLenum usage,
                                                                                                        int count)
 				{
 					GLBufferIndirectCommand* pBufferIndirectCommand = new GLBufferIndirectCommand(nameBuffer);
-                    if (!pBufferIndirectCommand->InitIndirectDrawIndexedInstance(bindingIndex,
-																				 usage,
+                    if (!pBufferIndirectCommand->InitIndirectDrawIndexedInstance(usage,
 																				 count))
                     {
                         F_LogError("*********************** OpenGLWindow::createBufferIndirectCommand_DrawIndexedInstance: Failed to create buffer indirect command: [%s] !", nameBuffer.c_str());
@@ -2683,11 +2684,10 @@ namespace LostPeterOpenGL
                 }
 
 				bool OpenGLWindow::createGLBufferIndirectCommand(const String& nameBuffer,
-															   uint32 bindingIndex,
-															   GLenum usage,
-															   size_t bufSize, 
-															   uint8* pBuf,
-															   uint32& nBufferIndirectCommandID)
+															     GLenum usage,
+															     size_t bufSize, 
+															     uint8* pBuf,
+															     uint32& nBufferIndirectCommandID)
 				{
 					uint error;
                     glGenBuffers(1, &nBufferIndirectCommandID);
@@ -2708,7 +2708,6 @@ namespace LostPeterOpenGL
                     }
 
                     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-					glBindBufferRange(GL_DRAW_INDIRECT_BUFFER, bindingIndex, nBufferIndirectCommandID, 0, bufSize);
 
                     error = (uint)glGetError();
                     if (GL_NO_ERROR != error) 
@@ -2720,9 +2719,9 @@ namespace LostPeterOpenGL
                     return true;
 				}
 				void OpenGLWindow::updateGLBufferIndirectCommand(size_t offset,
-															   size_t bufSize,
-															   uint8* pBuf,
-															   uint32 nBufferIndirectCommandID)
+															     size_t bufSize,
+															     uint8* pBuf,
+															     uint32 nBufferIndirectCommandID)
 				{
 					glBindBuffer(GL_DRAW_INDIRECT_BUFFER, nBufferIndirectCommandID);
                     glBufferSubData(GL_DRAW_INDIRECT_BUFFER, offset, bufSize, pBuf);
@@ -2731,14 +2730,6 @@ namespace LostPeterOpenGL
 				void OpenGLWindow::bindGLBufferIndirectCommand(uint32 nBufferIndirectCommandID)
 				{
 					glBindBuffer(GL_DRAW_INDIRECT_BUFFER, nBufferIndirectCommandID); 
-				}
-                void OpenGLWindow::bindGLBufferIndirectCommandBlockIndex(uint32 nBufferIndirectCommandID, uint32 bindingIndex, size_t offset, size_t bufSize)
-                {
-					glBindBuffer(GL_DRAW_INDIRECT_BUFFER, nBufferIndirectCommandID);
-                    glBindBufferBase(GL_DRAW_INDIRECT_BUFFER, bindingIndex, nBufferIndirectCommandID);
-                    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-
-					glBindBufferRange(GL_DRAW_INDIRECT_BUFFER, bindingIndex, nBufferIndirectCommandID, offset, bufSize);
 				}
 				void OpenGLWindow::destroyGLBufferIndirectCommand(uint32 nBufferIndirectCommandID)
 				{

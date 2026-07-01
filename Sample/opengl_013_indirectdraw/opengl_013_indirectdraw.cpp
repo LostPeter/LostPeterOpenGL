@@ -386,7 +386,7 @@ static const int g_DescriptorSetLayoutCount = 4;
 static const char* g_nameDescriptorSetLayouts[g_DescriptorSetLayoutCount] =
 {
 	"PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",
-	"PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",
+	"PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS",
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS-TextureFS-TextureFS",
 
@@ -631,14 +631,14 @@ static const char* g_ObjectRend_NameDescriptorSetLayouts[2 * g_ObjectRend_Count]
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                          "", //object_grass-3
     "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-TextureFS",                                          "", //object_grass-4
 
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-1
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-2
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-3
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-4
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-5
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-6
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-7
-    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueVector4Constants-TextureFS",                    "", //object_flower-8
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-1
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-2
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-3
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-4
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-5
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-6
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-7
+    "PassConstants-ObjectConstants-MaterialConstants-InstanceConstants-ValueUIntConstants-TextureFS",                       "", //object_flower-8
 
 };
 static FVector3 g_ObjectRend_Tranforms[3 * g_ObjectRend_Count] = 
@@ -884,6 +884,7 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupVertexIndexBuffer(co
 
 void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectCommandBuffer()
 {
+    DescriptorSetLayout* pDSL = this->pRend->pModelObject->pWindow->findDescriptorSetLayout(g_ObjectRend_NameDescriptorSetLayouts[2 * this->pRend->indexRend + 0]);
     String nameBuffer;
     //1> Uniform Buffer
     {
@@ -891,7 +892,7 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectComma
         F_DELETE(this->poBufferUniform_Object)
         nameBuffer = "ObjectConstants-RendIndirect-" + pRend->pModelObject->nameObject;
         this->poBufferUniform_Object = this->pRend->pModelObject->pWindow->createBufferUniform(nameBuffer,
-																							   DescriptorSet_ObjectConstants,
+                                                                                               pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)),
 																							   GL_DYNAMIC_DRAW,
                                                                                                sizeof(ObjectConstants) * this->objectCBs.size(),
                                                                                                (uint8*)(this->objectCBs.data()),
@@ -907,7 +908,7 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectComma
         F_DELETE(this->poBufferUniform_Material)
         nameBuffer = "MaterialConstants-RendIndirect-" + pRend->pModelObject->nameObject;
         this->poBufferUniform_Material = this->pRend->pModelObject->pWindow->createBufferUniform(nameBuffer,
-																								 DescriptorSet_MaterialConstants,
+                                                                                                 pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_MaterialConstants)),
 																								 GL_DYNAMIC_DRAW,
                                                                                                  sizeof(MaterialConstants) * this->materialCBs.size(),
                                                                                                  (uint8*)(this->materialCBs.data()),
@@ -921,9 +922,9 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectComma
 
         //ValueMatrix4Constants
         F_DELETE(this->poBufferUniform_Offset)
-        nameBuffer = "ValueVector4Constants-RendIndirect-" + pRend->pModelObject->nameObject;
+        nameBuffer = "ValueUIntConstants-RendIndirect-" + pRend->pModelObject->nameObject;
         this->poBufferUniform_Offset = this->pRend->pModelObject->pWindow->createBufferUniform(nameBuffer,
-																							   DescriptorSet_ValueUIntConstants,
+                                                                                               pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ValueUIntConstants)),
 																							   GL_DYNAMIC_DRAW,
                                                                                                sizeof(ValueUIntConstants),
                                                                                                (uint8*)(&this->offsetCBs[0]),
@@ -941,7 +942,7 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectComma
             F_DELETE(this->poBufferUniform_Tessellation)
             nameBuffer = "TessellationConstants-RendIndirect-" + pRend->pModelObject->nameObject;
             this->poBufferUniform_Tessellation = this->pRend->pModelObject->pWindow->createBufferUniform(nameBuffer,
-																										 DescriptorSet_TessellationConstants,
+                                                                                                         pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_TessellationConstants)),
 																				 						 GL_DYNAMIC_DRAW,
                                                                                                          sizeof(TessellationConstants) * this->tessellationCBs.size(),
                                                                                                          (uint8*)(this->tessellationCBs.data()),
@@ -959,7 +960,6 @@ void OpenGL_013_IndirectDraw::ModelObjectRendIndirect::SetupUniformIndirectComma
     {
         nameBuffer = "IndirectCommandBuffer-" + pRend->pModelObject->nameObject;
         this->poBuffer_IndirectCommand = this->pRend->pModelObject->pWindow->createBufferIndirectCommand_DrawIndexedInstance(nameBuffer, 
-																															 DescriptorSet_BufferIndirectDrawCommand,
 																															 GL_STATIC_DRAW,
 																															 (int)this->countIndirectDraw);
         if (!this->poBuffer_IndirectCommand)
@@ -1141,7 +1141,7 @@ void OpenGL_013_IndirectDraw::loadModel_Custom()
 
                 MeshSub* pMeshSub = pModelObject->pMesh->aMeshSubs[indexMeshSub];
                 String nameObjectRend = g_ObjectRend_Configs[7 * nIndexObjectRend + 0];
-                ModelObjectRend* pRend = new ModelObjectRend(nameObjectRend, pModelObject, pMeshSub);
+                ModelObjectRend* pRend = new ModelObjectRend(nameObjectRend, pModelObject, pMeshSub, nIndexObjectRend);
 
                 pRend->countInstanceExt = g_Object_InstanceExtCount[i];
                 pRend->countInstance = pRend->countInstanceExt * 2 + 1;
@@ -1253,6 +1253,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
         int indexObject = pRend->pModelObject->index;
         int count_instance = pRend->countInstance;
         bool isObjectLighting = g_Object_IsLightings[indexObject];
+        
 
         pRend->instanceMatWorld.resize(MAX_OBJECT_COUNT);
         pRend->objectCBs.resize(MAX_OBJECT_COUNT);
@@ -1319,11 +1320,13 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
 
 		if (isCreateBuffer)
 		{
+            DescriptorSetLayout* pDSL = findDescriptorSetLayout(g_ObjectRend_NameDescriptorSetLayouts[2 * i + 0]);
+
             //ObjectConstants
 			F_DELETE(pRend->poBufferUniform_Object)
 			String nameBuffer = "ObjectConstants-" + pRend->pModelObject->nameObject;
 			pRend->poBufferUniform_Object = createBufferUniform(nameBuffer,
-																DescriptorSet_ObjectConstants,
+                                                                pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)),
 																GL_DYNAMIC_DRAW,
 																sizeof(ObjectConstants) * pRend->objectCBs.size(),
 																(uint8*)(pRend->objectCBs.data()),
@@ -1339,7 +1342,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
             F_DELETE(pRend->poBufferUniform_Material)
             nameBuffer = "MaterialConstants-" + pRend->pModelObject->nameObject;
             pRend->poBufferUniform_Material = createBufferUniform(nameBuffer,
-																  DescriptorSet_MaterialConstants,
+                                                                  pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_MaterialConstants)),
 																  GL_DYNAMIC_DRAW,
 																  sizeof(MaterialConstants) * pRend->materialCBs.size(),
 																  (uint8*)(pRend->materialCBs.data()),
@@ -1351,13 +1354,13 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
                 throw std::runtime_error(msg);
             }
 
-			//ValueVector4Constants
+			//ValueUIntConstants
             if (pRend->isUsedIndirectDraw)
             {
                 F_DELETE(pRend->poBufferUniform_Offset)
-                nameBuffer = "ValueVector4Constants-" + pRend->pModelObject->nameObject;
+                nameBuffer = "ValueUIntConstants-" + pRend->pModelObject->nameObject;
                 pRend->poBufferUniform_Offset = createBufferUniform(nameBuffer,
-																	DescriptorSet_ValueUIntConstants,
+                                                                    pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ValueUIntConstants)),
 																	GL_DYNAMIC_DRAW,
                                                                     sizeof(ValueUIntConstants),
                                                                     (uint8*)(&pRend->offsetCBs),
@@ -1376,7 +1379,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
                 F_DELETE(pRend->poBufferUniform_Tessellation)
                 nameBuffer = "TessellationConstants-" + pRend->pModelObject->nameObject;
                 pRend->poBufferUniform_Tessellation = createBufferUniform(nameBuffer,
-																		  DescriptorSet_TessellationConstants,
+                                                                          pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_TessellationConstants)),
 																		  GL_DYNAMIC_DRAW,
 																		  sizeof(TessellationConstants) * pRend->tessellationCBs.size(),
 																		  (uint8*)(pRend->tessellationCBs.data()),
@@ -1791,24 +1794,22 @@ void OpenGL_013_IndirectDraw::createDescriptorSets_Graphics(ModelObjectRend* pRe
 	for (int j = 0; j < count_ds; j++)
 	{
 		String& nameDescriptorSet = pStatePipelineGraphics->poDescriptorSetLayout->aLayouts[j];
+        uint32 nBindingIndex = (uint32)j;
 		
 		if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_PassConstants)) //PassConstants
 		{
-			uint32 nBindingIndex = (uint32)DescriptorSet_PassConstants;
 			uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
 			pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 		}
 		else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)) //ObjectConstants
 		{
 			uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-			uint32 nBindingIndex = (uint32)DescriptorSet_ObjectConstants;
 			pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 			pStatePipelineGraphics->BindBufferUniform(pBufferUniform_Object, nBindingIndex);
 		} 
 		else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_MaterialConstants)) //MaterialConstants
 		{
 			uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-			uint32 nBindingIndex = (uint32)DescriptorSet_MaterialConstants;
 			pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 			pStatePipelineGraphics->BindBufferUniform(pBufferUniform_Material, nBindingIndex);
 		}
@@ -1816,12 +1817,11 @@ void OpenGL_013_IndirectDraw::createDescriptorSets_Graphics(ModelObjectRend* pRe
 		{
 
 		}
-		else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_ValueVector4Constants)) //ValueVector4Constants
+		else if (nameDescriptorSet == Util_GetDescriptorSetTypeName(DescriptorSet_ValueUIntConstants)) //ValueUIntConstants
         {
             if (pBufferUniform_Offset != nullptr)
             {
 				uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-				uint32 nBindingIndex = (uint32)DescriptorSet_ValueVector4Constants;
 				pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 				pStatePipelineGraphics->BindBufferUniform(pBufferUniform_Offset, nBindingIndex);
             }
@@ -1831,7 +1831,6 @@ void OpenGL_013_IndirectDraw::createDescriptorSets_Graphics(ModelObjectRend* pRe
 			if (pBufferUniform_Tessellation != nullptr)
 			{
 				uint32 nUniformBlockIndex = pStatePipelineGraphics->GetUniformBlockIndex(nameDescriptorSet);
-				uint32 nBindingIndex = (uint32)DescriptorSet_TessellationConstants;
 				pStatePipelineGraphics->BindUniformBlockBinding(nUniformBlockIndex, nBindingIndex);
 				pStatePipelineGraphics->BindBufferUniform(pBufferUniform_Tessellation, nBindingIndex);
 			}
@@ -1931,6 +1930,9 @@ void OpenGL_013_IndirectDraw::updateCBs_Custom()
         if (pRendIndirect != nullptr)
         {
             pRendIndirect->UpdateUniformBuffer();
+
+            //PassConstants
+		    pRendIndirect->poStatePipelineGraphics->BindBufferUniform(pBufferUniform_Pass, (uint32)DescriptorSet_PassConstants);
             
             //ObjectConstants
             {
@@ -2605,7 +2607,7 @@ void OpenGL_013_IndirectDraw::drawModelObjectRendIndirect(ModelObjectRendIndirec
 		pRendIndirect->pBufferVertexIndex->BindVertexArray();
 		for (uint32_t i = 0; i < drawCount; i++)
 		{
-
+            
 		}
 	}
 	else if (pRendIndirect->pBufferVertex != nullptr)

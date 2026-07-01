@@ -401,6 +401,8 @@ namespace LostPeterOpenGL
         DescriptorSetName2IndexMap mapName2Index;
 
         void Init(const String& nameLayout);
+
+        uint32 FindIndex(const String& nameDescriptor);
     };
     typedef std::vector<DescriptorSetLayout> DescriptorSetLayoutVector;
     typedef std::vector<DescriptorSetLayout*> DescriptorSetLayoutPtrVector;

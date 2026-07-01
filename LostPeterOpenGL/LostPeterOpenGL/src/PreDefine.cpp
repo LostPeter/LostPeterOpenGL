@@ -538,5 +538,15 @@ namespace LostPeterOpenGL
             this->mapName2Index[this->aLayouts[i]] = i;
         }
     }
+    uint32 DescriptorSetLayout::FindIndex(const String& nameDescriptor)
+    {
+        DescriptorSetName2IndexMap::iterator itFind = this->mapName2Index.find(nameDescriptor);
+        if (itFind == this->mapName2Index.end())
+        {
+            F_Assert(itFind != this->mapName2Index.end() && "DescriptorSetLayout::FindIndex")
+        }
+        return itFind->second;
+    }
+
 
 }; //LostPeterOpenGL

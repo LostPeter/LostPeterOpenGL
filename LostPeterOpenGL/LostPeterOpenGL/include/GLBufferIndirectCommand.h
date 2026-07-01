@@ -27,16 +27,13 @@ namespace LostPeterOpenGL
         std::vector<DrawElementsIndirectCommand> indirectDrawIndexedInstanceCommandCBs;
         GLenum eUsage;
 			
-		uint32 nBindingIndex;
         uint32 nBufferIndirectCommandID;
 
     public:
         virtual void Destroy();
-        bool InitIndirectDrawInstance(uint32 bindingIndex,
-                          			  GLenum usage,
+        bool InitIndirectDrawInstance(GLenum usage,
 						  			  int count);
-        bool InitIndirectDrawIndexedInstance(uint32 bindingIndex,
-											 GLenum usage,
+        bool InitIndirectDrawIndexedInstance(GLenum usage,
 											 int count);
         
     public:
@@ -44,8 +41,6 @@ namespace LostPeterOpenGL
         F_FORCEINLINE void* GetBufferIndirectDrawInstance() const { return (void*)this->indirectDrawInstanceCommandCBs.data(); }
         F_FORCEINLINE int GetBufferIndirectDrawIndexedInstanceSize() const { return (int)this->indirectDrawIndexedInstanceCommandCBs.size() * sizeof(DrawElementsIndirectCommand); }
         F_FORCEINLINE void* GetBufferIndirectDrawIndexedInstance() const { return (void*)this->indirectDrawIndexedInstanceCommandCBs.data(); }
-
-		uint32 GetBindingIndex() const { return this->nBindingIndex; }
 
     public:
         void UpdateBuffer();
