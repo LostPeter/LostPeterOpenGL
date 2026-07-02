@@ -1328,7 +1328,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
 
             //ObjectConstants
 			F_DELETE(pRend->poBufferUniform_Object)
-			String nameBuffer = "ObjectConstants-" + pRend->pModelObject->nameObject;
+			String nameBuffer = "ObjectConstants-" + pRend->pModelObject->nameObject + "-" + FUtilString::SaveInt((int)i);
 			pRend->poBufferUniform_Object = createBufferUniform(nameBuffer,
                                                                 pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ObjectConstants)),
 																GL_DYNAMIC_DRAW,
@@ -1344,7 +1344,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
 
             //MaterialConstants
             F_DELETE(pRend->poBufferUniform_Material)
-            nameBuffer = "MaterialConstants-" + pRend->pModelObject->nameObject;
+            nameBuffer = "MaterialConstants-" + pRend->pModelObject->nameObject + "-" + FUtilString::SaveInt((int)i);
             pRend->poBufferUniform_Material = createBufferUniform(nameBuffer,
                                                                   pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_MaterialConstants)),
 																  GL_DYNAMIC_DRAW,
@@ -1362,7 +1362,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
             if (pRend->isUsedIndirectDraw)
             {
                 F_DELETE(pRend->poBufferUniform_Offset)
-                nameBuffer = "ValueUIntConstants-" + pRend->pModelObject->nameObject;
+                nameBuffer = "ValueUIntConstants-" + pRend->pModelObject->nameObject + "-" + FUtilString::SaveInt((int)i);
                 pRend->poBufferUniform_Offset = createBufferUniform(nameBuffer,
                                                                     pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_ValueUIntConstants)),
 																	GL_DYNAMIC_DRAW,
@@ -1381,7 +1381,7 @@ void OpenGL_013_IndirectDraw::rebuildInstanceCBs(bool isCreateBuffer)
             if (pRend->isUsedTessellation)
             {
                 F_DELETE(pRend->poBufferUniform_Tessellation)
-                nameBuffer = "TessellationConstants-" + pRend->pModelObject->nameObject;
+                nameBuffer = "TessellationConstants-" + pRend->pModelObject->nameObject + "-" + FUtilString::SaveInt((int)i);
                 pRend->poBufferUniform_Tessellation = createBufferUniform(nameBuffer,
                                                                           pDSL->FindIndex(Util_GetDescriptorSetTypeName(DescriptorSet_TessellationConstants)),
 																		  GL_DYNAMIC_DRAW,
@@ -1461,7 +1461,7 @@ void OpenGL_013_IndirectDraw::createGraphicsPipeline_Custom()
         }
 
         //poStatePipelineGraphics
-		String namePipelineGraphics = "PipelineGraphics-" + pRend->pModelObject->nameObject;
+		String namePipelineGraphics = "PipelineGraphics-" + pRend->pModelObject->nameObject + "-" + FUtilString::SaveInt((int)i);
         pRend->poStatePipelineGraphics = createStatePipelineGraphics(namePipelineGraphics,
 																	 pDSL,
 																	 pShaderVertex,
