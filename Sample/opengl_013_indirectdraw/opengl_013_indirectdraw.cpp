@@ -411,7 +411,11 @@ static const char* g_ShaderModulePaths[3 * g_ShaderCount] =
     "vert_standard_mesh_transparent_tree_lit",                 "vert",              "Assets/Shader/Common/standard_mesh_transparent_tree_lit.vert.spv", //standard_mesh_transparent_tree_lit vert  
     "vert_standard_mesh_opaque_tree_alphatest_lit",            "vert",              "Assets/Shader/Common/standard_mesh_opaque_tree_alphatest_lit.vert.spv", //standard_mesh_opaque_tree_alphatest_lit vert
     "vert_standard_mesh_opaque_grass_alphatest_lit",           "vert",              "Assets/Shader/Common/standard_mesh_opaque_grass_alphatest_lit.vert.spv", //standard_mesh_opaque_grass_alphatest_lit vert  
+#if F_PLATFORM == F_PLATFORM_MAC
     "vert_standard_mesh_opaque_flower_alphatest_lit",          "vert",              "Assets/Shader/Common/standard_mesh_opaque_flower_alphatest_lit.vert.spv", //standard_mesh_opaque_flower_alphatest_lit vert  
+#else
+    "vert_standard_mesh_opaque_flower_alphatest_lit",          "vert",              "Assets/Shader/Common/standard_mesh_opaque_flower2_alphatest_lit.vert.spv", //standard_mesh_opaque_flower2_alphatest_lit vert
+#endif
 
     ///////////////////////////////////////// tesc /////////////////////////////////////////
     
@@ -2605,18 +2609,66 @@ void OpenGL_013_IndirectDraw::drawModelObjectRendIndirect(ModelObjectRendIndirec
     if (pRendIndirect->pBufferVertexIndex != nullptr)
 	{
 		pRendIndirect->pBufferVertexIndex->BindVertexArray();
-		for (uint32_t i = 0; i < drawCount; i++)
-		{
-            
-		}
+        pRendIndirect->poBufferUniform_Offset->BindBufferUniformBlockIndex();
+        pRendIndirect->poBuffer_IndirectCommand->BindBufferIndirectCommand();
+
+        #if F_PLATFORM != F_PLATFORM_MAC
+             pRendIndirect->poBufferUniform_Offset->UpdateBuffer(sizeof(ValueUIntConstants),
+                                                                 (uint8*)&pRendIndirect->offsetCBs[0],
+                                                                 GL_WRITE_ONLY);
+        #endif
+
+        if (m_isDrawIndirectMulti)
+        {
+            size_t offset = 0;
+            drawMultiIndexedInstanceIndirect(pRend->poTypePrimitive, GL_UNSIGNED_INT, reinterpret_cast<void*>(offset), drawCount, sizeof(DrawElementsIndirectCommand));
+        }
+        else
+        {
+            for (uint32_t i = 0; i < drawCount; i++)
+            {
+            #if F_PLATFORM == F_PLATFORM_MAC
+                pRendIndirect->poBufferUniform_Offset->UpdateBuffer(sizeof(ValueUIntConstants),
+                                                                    (uint8*)&pRendIndirect->offsetCBs[i],
+                                                                    GL_WRITE_ONLY);
+            #endif
+
+                size_t offset = sizeof(DrawElementsIndirectCommand) * i;
+                drawIndexedInstanceIndirect(pRend->poTypePrimitive, GL_UNSIGNED_INT, reinterpret_cast<void*>(offset));
+            }
+        }
 	}
 	else if (pRendIndirect->pBufferVertex != nullptr)
 	{
 		pRendIndirect->pBufferVertex->BindVertexArray();
-		for (uint32_t i = 0; i < drawCount; i++)
-		{
-			
-		}
+        pRendIndirect->poBufferUniform_Offset->BindBufferUniformBlockIndex();
+        pRendIndirect->poBuffer_IndirectCommand->BindBufferIndirectCommand();
+
+        #if F_PLATFORM != F_PLATFORM_MAC
+             pRendIndirect->poBufferUniform_Offset->UpdateBuffer(sizeof(ValueUIntConstants),
+                                                                 (uint8*)&pRendIndirect->offsetCBs[0],
+                                                                 GL_WRITE_ONLY);
+        #endif
+
+        if (m_isDrawIndirectMulti)
+        {
+            size_t offset = 0;
+            drawMultiInstanceIndirect(pRend->poTypePrimitive, reinterpret_cast<void*>(offset), drawCount, sizeof(DrawArraysIndirectCommand));
+        }
+        else
+        {
+            for (uint32_t i = 0; i < drawCount; i++)
+            {
+            #if F_PLATFORM == F_PLATFORM_MAC
+                pRendIndirect->poBufferUniform_Offset->UpdateBuffer(sizeof(ValueUIntConstants),
+                                                                    (uint8*)&pRendIndirect->offsetCBs[i],
+                                                                    GL_WRITE_ONLY);
+            #endif
+            
+                size_t offset = sizeof(DrawArraysIndirectCommand) * i;
+                drawInstanceIndirect(pRend->poTypePrimitive, reinterpret_cast<void*>(offset));
+            }
+        }
 	}
 	else
     {	

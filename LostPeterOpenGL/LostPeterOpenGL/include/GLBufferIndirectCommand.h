@@ -49,6 +49,8 @@ namespace LostPeterOpenGL
         void UpdateBuffer(int index, const DrawElementsIndirectCommand& args);
         void UpdateBuffer(const  std::vector<DrawElementsIndirectCommand>& args);
 
+    public:
+        void BindBufferIndirectCommand(); 
     };
 
 }; //LostPeterOpenGL

@@ -117,5 +117,9 @@ namespace LostPeterOpenGL
         UpdateBuffer();
 	}
 
+	void GLBufferIndirectCommand::BindBufferIndirectCommand()
+	{
+		Base::GetWindowPtr()->bindGLBufferIndirectCommand(this->nBufferIndirectCommandID);
+	}
 
 }; //LostPeterOpenGL
