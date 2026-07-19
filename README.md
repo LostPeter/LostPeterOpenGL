@@ -139,7 +139,10 @@ License:
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_007_stencil.png)
 
 ### <008> opengl_008_blend
+[OpenGL学习例子008: opengl_008_blend 混合操作](https://zhuanlan.zhihu.com/p/2054557009719058978)
+* sample008: Use blend state to render transparent effect
 
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_008_blend.png)
 
 ### <009> opengl_009_instancing
 
