@@ -145,7 +145,10 @@ License:
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_008_blend.png)
 
 ### <009> opengl_009_instancing
+[OpenGL学习例子009: opengl_009_instancing 实例渲染](https://zhuanlan.zhihu.com/p/2087297190855296685)
+* sample009: OpenGL instance rendering
 
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_009_instancing.png)
 
 ### <010> opengl_010_lighting
 
