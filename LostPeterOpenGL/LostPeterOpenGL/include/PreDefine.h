@@ -235,7 +235,7 @@ namespace LostPeterOpenGL
 
     enum LightingType
     {
-        Lighting_Node = 0,                                //0:    None
+        Lighting_None = 0,                                //0:    None
         Lighting_Ambient,                                 //1:    Ambient
         Lighting_DiffuseLambert,                          //2:    DiffuseLambert
         Lighting_SpecularPhong,                           //3:    SpecularPhong
