@@ -151,7 +151,10 @@ License:
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_009_instancing.png)
 
 ### <010> opengl_010_lighting
+[OpenGL学习例子010: opengl_010_lighting 经典Lambert/Phong/Blinn-Phong光照](https://zhuanlan.zhihu.com/p/2094891725131085377)
+* sample010: OpenGL classic lighting model, Ambient, Lambert Diffuse, Phong Specular, Blinn-Phong Specular
 
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_010_lighting.png)
 
 ### <011> opengl_011_texturing
 
