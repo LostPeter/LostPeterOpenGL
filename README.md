@@ -157,7 +157,10 @@ License:
 ![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_010_lighting.png)
 
 ### <011> opengl_011_texturing
+[OpenGL学习例子011: opengl_011_texturing 基础-高级纹理使用集合](https://zhuanlan.zhihu.com/p/2097728477873043245)
+* sample011: OpenGL basic textureSampler, texture1D, texture2D, texture2DArray, texture3D, textureCubeMap, textureAnimation, textureBumpMap, textureNormalMap, textureParallaxMap, textureDisplacementMap usage
 
+![image](https://github.com/LostPeter/LostPeterOpenGL/blob/main/Images/opengl_011_texturing.png)
 
 ### <012> opengl_012_shadering
 
